@@ -41,7 +41,7 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // IMAGE URLS - paste your own image links here
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  banner: "https://your-image-url.com/fragrance-banner.jpg",
+  banner: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR53a60Ns--d2Xxjy5XFDCQIs-3F7K3REwUSL_jPAcvvA&s=10",
   oudNoir: "https://your-image-url.com/oud-noir-perfume.jpg",
   citrusBloom: "https://your-image-url.com/citrus-bloom-perfume.jpg",
   roseMuskMist: "https://your-image-url.com/rose-musk-body-mist.jpg",
@@ -635,10 +635,9 @@ export default function FragrancePage() {
           </nav>
 
           <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Shop All Fragrances</h1>
-          <p className="mt-3 text-lg sm:text-xl md:text-2xl">Find the scent that feels like you.</p>
+          <p className="mt-3 text-lg sm:text-xl md:text-2xl">Your Fragrance, Your Identity.</p>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 md:text-base">
-            Explore long-lasting perfumes, refreshing body mists and traditional attars. Discover your signature
-            fragrance and make every day a little more memorable.
+            Imaan’s Fragrance is designed for customers who appreciate distinctive scents, elegance, and personal expression. Our collection aims to include quality fragrance oils sourced from France and selected fragrances for different preferences and occasions.
           </p>
           <div className="mx-auto mt-6 h-px w-24 bg-white" />
         </div>

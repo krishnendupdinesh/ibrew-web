@@ -130,7 +130,7 @@ export default function Navbar() {
           <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-5 md:order-3">
             <Link
               href={LOGIN_PAGE}
-              className="flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-green-700 hover:bg-green-50 hover:text-green-800 sm:px-4"
+              className="flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-brown-700 hover:bg-brown-50 hover:text-brown-800 sm:px-4"
             >
               <User size={20} strokeWidth={1.8} />
               <span>Login</span>
@@ -140,7 +140,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setCartOpen(true)}
               aria-label={`Open cart, ${cartCount} items`}
-              className="relative flex items-center gap-3 rounded-lg bg-green-700 px-3 py-2.5 text-white transition-colors hover:bg-green-800 sm:px-4"
+              className="relative flex items-center gap-3 rounded-lg bg-[#4A382B] px-3 py-2.5 text-white transition-colors hover:bg-[#35271F] sm:px-4"
             >
               <ShoppingCart size={22} strokeWidth={1.8} />
 

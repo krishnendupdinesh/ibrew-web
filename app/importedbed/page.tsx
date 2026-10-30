@@ -41,7 +41,7 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // IMAGE URLS - paste your own image links here
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  banner: "https://your-image-url.com/mattress-banner.jpg",
+  banner: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEB8DOyD5wvbLArK7o6OoZ_ILH5sfKe-m4Taim01byRg&s=10",
   memoryFoam: "https://your-image-url.com/memory-foam-mattress.jpg",
   orthopedic: "https://your-image-url.com/orthopedic-mattress.jpg",
   pocketSpring: "https://your-image-url.com/pocket-spring-mattress.jpg",
@@ -640,10 +640,9 @@ export default function MattressPage() {
           </nav>
 
           <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Shop All Mattresses</h1>
-          <p className="mt-3 text-lg sm:text-xl md:text-2xl">Sleep better, wake up happier.</p>
+          <p className="mt-3 text-lg sm:text-xl md:text-2xl">Good nights ⭐️ Great mornings</p>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 md:text-base">
-            Explore memory foam, orthopedic and spring mattresses along with pillows, toppers and protectors. Find the
-            right support for your body and make every night a restful one.
+            Focused on premium mattresses and sleep solutions, Imaan’s Luxury Bedding aims to offer comfort, durability, and lasting value. We are an authorised dealer of Sleep Fine mattresses, manufactured at Three Star Foam Factory in Sharjah, UAE. The products use raw materials imported from Europe.
           </p>
           <div className="mx-auto mt-6 h-px w-24 bg-white" />
         </div>

@@ -635,10 +635,9 @@ export default function SpicesPage() {
           </nav>
 
           <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Shop All Spices</h1>
-          <p className="mt-3 text-lg sm:text-xl md:text-2xl">A pinch of spice, a lot of flavour.</p>
+          <p className="mt-3 text-lg sm:text-xl md:text-2xl">From Farms to Your Home.</p>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 md:text-base">
-            Explore fresh whole spices, finely ground powders and handcrafted masala blends. Find your favourite
-            flavours and make every meal a little more special.
+            Imaan’s Natural Spices aims to offer carefully selected spices sourced directly from farms and trusted suppliers, with a focus on freshness, natural aroma, and quality. Our range includes cardamom, black pepper, cloves, cinnamon, and other spices. Our long-term vision includes serving retail customers and suitable export markets.
           </p>
           <div className="mx-auto mt-6 h-px w-24 bg-white" />
         </div>

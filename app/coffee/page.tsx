@@ -41,13 +41,10 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // IMAGE URLS - paste your own image links here
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  banner: "https://your-image-url.com/coffee-banner.jpg",
+  banner: "images/ibrew-banner.jpeg",
   filterCoffee: "https://your-image-url.com/filter-coffee.jpg",
   instantCoffee: "https://your-image-url.com/instant-coffee.jpg",
   coffeeBeans: "https://your-image-url.com/coffee-beans.jpg",
-  coffeeSoap: "https://your-image-url.com/coffee-soap.jpg",
-  coffeeFaceWash: "https://your-image-url.com/coffee-face-wash.jpg",
-  coffeeScrub: "https://your-image-url.com/coffee-scrub.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -63,7 +60,7 @@ type ProductSize = {
 type Product = {
   id: string;
   name: string;
-  category: "Coffee Powder" | "Coffee Beans" | "Coffee Skincare";
+  category: "Coffee Powder" | "Coffee Beans";
   description: string;
   rating: number; // 0 to 5
   reviewCount: number;
@@ -128,49 +125,9 @@ const PRODUCTS: Product[] = [
       { label: "500g", price: 929, mrp: 999, stock: 3 },
     ],
   },
-  {
-    id: "coffee-soap",
-    name: "Coffee Soap Bar",
-    category: "Coffee Skincare",
-    description: "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
-    rating: 4.4,
-    reviewCount: 52,
-    badge: "Top seller",
-    image: IMAGES.coffeeSoap,
-    sizes: [
-      { label: "1 bar", price: 199, stock: 40 },
-      { label: "Pack of 3", price: 549, mrp: 597, stock: 20 },
-    ],
-  },
-  {
-    id: "coffee-face-wash",
-    name: "Coffee Face Wash",
-    category: "Coffee Skincare",
-    description: "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
-    rating: 4.3,
-    reviewCount: 41,
-    image: IMAGES.coffeeFaceWash,
-    sizes: [
-      { label: "50ml", price: 249, stock: 22 },
-      { label: "100ml", price: 349, mrp: 399, stock: 9 },
-    ],
-  },
-  {
-    id: "coffee-scrub",
-    name: "Coffee Body Scrub",
-    category: "Coffee Skincare",
-    description: "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
-    rating: 4.6,
-    reviewCount: 33,
-    image: IMAGES.coffeeScrub,
-    sizes: [
-      { label: "100g", price: 399, stock: 0 },
-      { label: "200g", price: 699, mrp: 799, stock: 0 },
-    ],
-  },
 ];
 
-const CATEGORY_OPTIONS = ["Coffee Powder", "Coffee Beans", "Coffee Skincare"];
+const CATEGORY_OPTIONS = ["Coffee Powder", "Coffee Beans"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },
@@ -635,10 +592,9 @@ export default function CoffeePage() {
           </nav>
 
           <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-6xl">Shop All Coffee</h1>
-          <p className="mt-3 text-lg sm:text-xl md:text-2xl">A little coffee, a lot of love.</p>
+          <p className="mt-3 text-lg sm:text-xl md:text-2xl">Brew Your Moment</p>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 md:text-base">
-            Explore aromatic coffee powders, whole beans and coffee-inspired skincare essentials. Find your favourite
-            blend and make every day a little more special.
+            iBrew by Imaan’s is our coffee brand for people who appreciate the taste and aroma of coffee. The range includes premium instant coffee, filter coffee, selected varieties and blends, and convenient coffee products for everyday enjoyment.
           </p>
           <div className="mx-auto mt-6 h-px w-24 bg-white" />
         </div>

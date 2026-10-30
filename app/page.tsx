@@ -245,7 +245,7 @@ type Category = {
 
 const categories: Category[] = [
   { label: "Coffee", href: "/coffee", bg: "#F0E2D6", fg: "#5A3420", Icon: Coffee, image: IMAGES.catCoffee },
-  { label: "Coffee skincare", href: "/coffee", bg: "#E2EDDF", fg: "#41633F", Icon: Droplets, image: IMAGES.catSkincare },
+  { label: "Coffee skincare", href: "/coffee-skin", bg: "#E2EDDF", fg: "#41633F", Icon: Droplets, image: IMAGES.catSkincare },
   { label: "Spices", href: "/spices", bg: "#FBEDC8", fg: "#9A5B00", Icon: Leaf, image: IMAGES.catSpices },
   { label: "Fragrance", href: "/fragrances", bg: "#F3E1EE", fg: "#7B3F6B", Icon: Flower2, image: IMAGES.catFragrance },
   { label: "Mattresses", href: "/importedbed", bg: "#E0E9F5", fg: "#34517A", Icon: BedDouble, image: IMAGES.catMattress },
