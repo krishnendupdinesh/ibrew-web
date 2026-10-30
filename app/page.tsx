@@ -42,18 +42,18 @@ const formatPrice = (n: number) => "₹" + n.toLocaleString("en-IN");
 // ---------------------------------------------------------------------------
 const IMAGES = {
   // Hero slides
-  heroCoffee: "https://your-image-url.com/hero-coffee.png",
-  heroSpices: "https://your-image-url.com/hero-spices.jpg",
-  heroFragrance: "https://your-image-url.com/hero-fragrance.png",
-  heroMattress: "https://your-image-url.com/hero-mattress.jpg",
-  heroSkincare: "https://your-image-url.com/hero-skincare.jpg",
+  heroCoffee: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_4TuRaK1Q9if9U1H5VQGkO9Z5V8DF5wA--pNSfLhlzw&s=10",
+  heroSpices: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNl51-7HI67lmMtQSgfP5b010GN_OCOlcBnV1YLNrwrw&s=10",
+  heroFragrance: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCgBzxL6OYMI_BOHCmzFwkD7gCsQhzVVkGy420vlTFw&s=10",
+  heroMattress: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoIgNNgg9P9AFPQ2U4jp9wBW3__jz8D6MXuI6Igl_VCA&s=10",
+  heroBulk: "https://plus.unsplash.com/premium_photo-1679858782272-8ee1ba3d4c12?w=600&auto=format&fit=crop&q=60",
 
   // Category icons
-  catCoffee: "https://your-image-url.com/cat-coffee.jpg",
-  catSkincare: "https://your-image-url.com/cat-skincare.jpg",
-  catSpices: "https://your-image-url.com/cat-spices.jpg",
-  catFragrance: "https://your-image-url.com/cat-fragrance.png",
-  catMattress: "https://your-image-url.com/cat-mattress.jpg",
+  catCoffee: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
+  catSkincare: "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg?_gl=1*1x7o20m*_ga*MTM1MTc1MTIyMy4xNzkyNzM1MTYw*_ga_8JE65Q40S6*czE3OTMzNDQ2MDAkbzEwJGcxJHQxNzkzMzQ0NjE0JGo0NiRsMCRoMA..",
+  catSpices: "https://static.toiimg.com/photo/64699039.cms",
+  catFragrance: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10",
+  catMattress: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s",
   catGroceries:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBwRhXv0fY4RJJhu_zDBrOBiu7_CygkvYGwKlDd6A5eQ&s=10",
   catDates:
@@ -117,8 +117,8 @@ const slides = [
   { title: "Export-quality spices", text: "Cardamom, pepper and more, picked for aroma and freshness.", cta: "Shop spices", href: "/spices", color: "#9A5B00", image: IMAGES.heroSpices },
   { title: "Imported fragrance and oils", text: "Warm, woody and floral fragrances from around the world.", cta: "Shop fragrance", href: "/perfumeoil", color: "#7B3F6B", image: IMAGES.heroFragrance },
   { title: "Sleep in luxury", text: "Imported mattresses for better nights.", cta: "Shop mattresses", href: "/importedbed", color: "#34517A", image: IMAGES.heroMattress },
-  { title: "Coffee skincare", text: "Handmade soap and face wash with the goodness of coffee.", cta: "Shop skincare", href: "/coffee", color: "#41633F", image: IMAGES.heroSkincare },
-  { title: "Buying in bulk?", text: "Special prices for shops, hotels, offices and events.", cta: "Get a bulk quote", href: "/bulk-order", color: INK, image: undefined },
+  // { title: "Coffee skincare", text: "Handmade soap and face wash with the goodness of coffee.", cta: "Shop skincare", href: "/coffee", color: "#41633F", image: IMAGES.heroSkincare },
+  { title: "Buying in bulk?", text: "Special prices for shops, hotels, offices and events.", cta: "Get a bulk quote", href: "/bulk-order", color: INK, image: IMAGES.heroBulk },
 ];
 
 function HeroCarousel() {
