@@ -140,7 +140,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setCartOpen(true)}
               aria-label={`Open cart, ${cartCount} items`}
-              className="relative flex items-center gap-3 rounded-lg bg-[#4A382B] px-3 py-2.5 text-white transition-colors hover:bg-[#35271F] sm:px-4"
+              className="relative flex items-center gap-3 rounded-lg bg-[#7A5A3C] px-3 py-2.5 text-white transition-colors hover:bg-[#35271F] sm:px-4"
             >
               <ShoppingCart size={22} strokeWidth={1.8} />
 
