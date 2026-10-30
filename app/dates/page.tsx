@@ -41,7 +41,7 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // IMAGE URLS - paste your own image links here
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  banner: "https://your-image-url.com/dates-banner.jpg",
+  banner: "https://plus.unsplash.com/premium_photo-1676208748373-a31d5af9f752?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
   medjool: "https://your-image-url.com/medjool-dates.jpg",
   ajwa: "https://your-image-url.com/ajwa-dates.jpg",
   kimia: "https://your-image-url.com/kimia-dates.jpg",
