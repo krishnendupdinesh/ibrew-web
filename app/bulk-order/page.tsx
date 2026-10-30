@@ -389,6 +389,9 @@ const EMPTY_FORM: ContactForm = {
 // ---------------------------------------------------------------------------
 const itemById = (id: string) => ITEMS.find((i) => i.id === id);
 
+// Returns "Label: value", or null when the value is empty (used for optional fields)
+const optional = (label: string, value: string) => (value.trim() ? `${label}: ${value}` : null);
+
 // Image that falls back to a category icon tile if the URL is missing or fails
 function ItemImage({ item, className }: { item: BulkItem; className?: string }) {
   const [failed, setFailed] = useState(false);
@@ -589,20 +592,21 @@ function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) 
     const itemLines = lines.length
       ? lines.map((l, i) => `${i + 1}. ${l.item.name} (${l.item.category}) - ${l.quantity} ${l.item.unit}`).join("\n")
       : "No items selected (see notes)";
+
     return [
       "Bulk quotation request",
       "",
       itemLines,
       "",
       `Name: ${form.name}`,
-      form.company && `Company: ${form.company}`,
+      optional("Company", form.company),
       `Email: ${form.email}`,
       `Phone: ${form.phone}`,
-      form.city && `City: ${form.city}`,
+      optional("City", form.city),
       `Needed: ${form.timeline}`,
-      form.notes && `Notes: ${form.notes}`,
+      optional("Notes", form.notes),
     ]
-      .filter((l) => l !== false && l !== "")
+      .filter((l): l is string => l !== null)
       .join("\n");
   };
 
