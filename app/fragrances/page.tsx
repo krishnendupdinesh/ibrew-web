@@ -41,7 +41,7 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // IMAGE URLS - paste your own image links here
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  banner: "https://images.unsplash.com/photo-1458538977777-0549b2370168?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+  banner: "images/fragrance.banner.jpeg",
   oudNoir: "https://your-image-url.com/oud-noir-perfume.jpg",
   citrusBloom: "https://your-image-url.com/citrus-bloom-perfume.jpg",
   roseMuskMist: "https://your-image-url.com/rose-musk-body-mist.jpg",

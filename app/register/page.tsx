@@ -22,7 +22,7 @@ const ubuntu = Ubuntu({
 });
 
 // Banner image behind the page title - paste your own link
-const BANNER = "https://your-image-url.com/register-banner.jpg";
+const BANNER = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D";
 
 const inputClass =
   "w-full min-w-0 rounded-md border bg-white px-3 py-3 text-sm outline-none focus:border-[#7A5A3C]";
