@@ -221,3 +221,90 @@ export function useSectionProducts<T extends { id: string; name: string; categor
   return items;
 }
 
+/**
+ * Merges locally saved admin products and backend API products across all sections.
+ */
+export function getAllMergedProducts(apiProducts?: StoreProduct[]): StoreProduct[] {
+  const deleted = new Set(readDeletedIds());
+  const local = readLocalCatalog().filter((p) => !deleted.has(p.id));
+  const seenKeys = new Set<string>();
+  const seenNames = new Set<string>();
+  const result: StoreProduct[] = [];
+
+  const keyFor = (item: { id?: string; slug?: string; name: string }) =>
+    (item.slug || item.id || item.name).toLowerCase().trim();
+  const nameKeyFor = (item: { name: string }) => item.name.toLowerCase().trim();
+
+  // 1. Local admin items first
+  for (const item of local) {
+    const k = keyFor(item);
+    const nk = nameKeyFor(item);
+    if (!seenKeys.has(k) && !seenNames.has(nk)) {
+      seenKeys.add(k);
+      seenNames.add(nk);
+      result.push(item);
+    }
+  }
+
+  // 2. Backend API products
+  if (Array.isArray(apiProducts)) {
+    for (const item of apiProducts) {
+      if (deleted.has(item.id)) continue;
+      const k = keyFor(item);
+      const nk = nameKeyFor(item);
+      if (!seenKeys.has(k) && !seenNames.has(nk)) {
+        seenKeys.add(k);
+        seenNames.add(nk);
+        result.push(item);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * React hook to retrieve all storefront products across all 7 categories.
+ */
+export function useAllProducts(): { products: StoreProduct[]; loading: boolean } {
+  const [products, setProducts] = useState<StoreProduct[]>(() => getAllMergedProducts());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    const refresh = async () => {
+      try {
+        const res = await fetch("/api/products", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.products) && active) {
+            setProducts(getAllMergedProducts(data.products));
+            setLoading(false);
+            return;
+          }
+        }
+      } catch {
+        // Fallback to local catalog
+      }
+      if (active) {
+        setProducts(getAllMergedProducts());
+        setLoading(false);
+      }
+    };
+
+    refresh();
+
+    const handleUpdate = () => refresh();
+    window.addEventListener("storage", handleUpdate);
+    window.addEventListener(UPDATE_EVENT, handleUpdate);
+    return () => {
+      active = false;
+      window.removeEventListener("storage", handleUpdate);
+      window.removeEventListener(UPDATE_EVENT, handleUpdate);
+    };
+  }, []);
+
+  return { products, loading };
+}
+

@@ -1,5 +1,626 @@
 [
   {
+    "id": "28",
+    "slug": "full-cream-milk",
+    "name": "Full Cream Milk",
+    "section": "groceries",
+    "category": "Dairy & Bakery",
+    "description": "Rich and creamy pasteurised milk. Delivered chilled and fresh every morning.",
+    "detail": "Rich pasteurised milk",
+    "image": "",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": false,
+    "rating": 4.7,
+    "reviewCount": 340,
+    "sizes": [
+      {
+        "label": "500ml",
+        "price": 33,
+        "stock": 60
+      },
+      {
+        "label": "1L",
+        "price": 66,
+        "stock": 45
+      }
+    ],
+    "createdAt": "2026-10-30T17:16:23.000Z",
+    "updatedAt": "2026-10-30T17:16:23.000Z"
+  },
+  {
+    "id": "34",
+    "slug": "medjool-dates",
+    "name": "Medjool Dates",
+    "section": "dates",
+    "category": "Premium Dates",
+    "description": "Large, soft and caramel-like dates. Naturally sweet and perfect for snacking.",
+    "detail": "Large, soft & caramel-like",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiV5zULTMNb3gWuNP_KftdHmqVNK4pytWCe2JkTxV8IA&s=10",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.8,
+    "reviewCount": 142,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 399,
+        "mrp": 449,
+        "stock": 24
+      },
+      {
+        "label": "500g",
+        "price": 749,
+        "mrp": 849,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1399,
+        "mrp": 1599,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "31",
+    "slug": "basmati-rice",
+    "name": "Basmati Rice",
+    "section": "groceries",
+    "category": "Staples & Grains",
+    "description": "Long-grain, aged basmati with a lovely aroma. Cooks up fluffy and non-sticky.",
+    "detail": "Long-grain aged basmati",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBwRhXv0fY4RJJhu_zDBrOBiu7_CygkvYGwKlDd6A5eQ&s=10",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.8,
+    "reviewCount": 285,
+    "sizes": [
+      {
+        "label": "1kg",
+        "price": 129,
+        "mrp": 149,
+        "stock": 35
+      },
+      {
+        "label": "5kg",
+        "price": 599,
+        "mrp": 699,
+        "stock": 12
+      },
+      {
+        "label": "10kg",
+        "price": 1149,
+        "mrp": 1349,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "20",
+    "slug": "memory-foam-mattress",
+    "name": "Memory Foam Mattress",
+    "section": "importedbed",
+    "category": "Memory Foam",
+    "description": "Contouring memory foam that relieves pressure points and keeps your spine aligned all night.",
+    "detail": "Queen size, medium firm",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling",
+      "Imported"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "sizes": [
+      {
+        "label": "Single 72x36\"",
+        "price": 8999,
+        "mrp": 11999,
+        "stock": 14
+      },
+      {
+        "label": "Double 75x48\"",
+        "price": 12999,
+        "mrp": 16999,
+        "stock": 10
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 14999,
+        "mrp": 17999,
+        "stock": 6
+      },
+      {
+        "label": "King 78x72\"",
+        "price": 18999,
+        "mrp": 24999,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "14",
+    "slug": "oud-noir",
+    "name": "Oud Noir Eau de Parfum",
+    "section": "fragrances",
+    "category": "Perfume",
+    "description": "Deep, woody and smoky with warm amber. A bold scent that lasts all day.",
+    "detail": "Warm, woody fragrance",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling",
+      "Imported"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.8,
+    "reviewCount": 142,
+    "sizes": [
+      {
+        "label": "30ml",
+        "price": 899,
+        "mrp": 999,
+        "stock": 24
+      },
+      {
+        "label": "50ml",
+        "price": 1999,
+        "mrp": 2299,
+        "stock": 12
+      },
+      {
+        "label": "100ml",
+        "price": 2999,
+        "mrp": 3499,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "7",
+    "slug": "turmeric-powder",
+    "name": "Turmeric Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
+    "detail": "High curcumin golden haldi",
+    "image": "https://static.toiimg.com/photo/64699039.cms",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 69,
+        "mrp": 79,
+        "stock": 40
+      },
+      {
+        "label": "200g",
+        "price": 125,
+        "mrp": 149,
+        "stock": 22
+      },
+      {
+        "label": "500g",
+        "price": 289,
+        "mrp": 349,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "4",
+    "slug": "coffee-soap",
+    "name": "Coffee Soap Bar",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
+    "detail": "Coffee-inspired skincare",
+    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "sizes": [
+      {
+        "label": "1 bar",
+        "price": 199,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 3",
+        "price": 549,
+        "mrp": 597,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "1",
+    "slug": "filter-coffee",
+    "name": "Filter Coffee Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
+    "detail": "Medium roast, strong aroma",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 24
+      },
+      {
+        "label": "500g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1199,
+        "mrp": 1399,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "10",
+    "slug": "black-pepper",
+    "name": "Black Pepper Whole",
+    "section": "spices",
+    "category": "Whole Spices",
+    "description": "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
+    "detail": "Bold and aromatic",
+    "image": "",
+    "badge": "Most Selling",
+    "tags": [
+      "Most Selling"
+    ],
+    "isBestSeller": false,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 119,
+        "stock": 40
+      },
+      {
+        "label": "100g",
+        "price": 299,
+        "mrp": 329,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "37",
+    "slug": "dry-dates",
+    "name": "Dry Dates (Kharek)",
+    "section": "dates",
+    "category": "Dry Dates",
+    "description": "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
+    "detail": "Rich chewy dried dates",
+    "image": "",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 179,
+        "stock": 40
+      },
+      {
+        "label": "500g",
+        "price": 329,
+        "mrp": 369,
+        "stock": 20
+      },
+      {
+        "label": "1kg",
+        "price": 599,
+        "mrp": 699,
+        "stock": 10
+      }
+    ],
+    "createdAt": "2026-10-30T17:16:23.000Z",
+    "updatedAt": "2026-10-30T17:16:23.000Z"
+  },
+  {
+    "id": "23",
+    "slug": "memory-foam-topper",
+    "name": "Gel Memory Foam Topper",
+    "section": "importedbed",
+    "category": "Accessories",
+    "description": "Cooling gel-infused topper that adds a soft comfort layer to any mattress.",
+    "detail": "Cooling gel comfort layer",
+    "image": "",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "sizes": [
+      {
+        "label": "Single 72x36\"",
+        "price": 2999,
+        "stock": 25
+      },
+      {
+        "label": "Double 75x48\"",
+        "price": 3999,
+        "mrp": 4999,
+        "stock": 20
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 4999,
+        "mrp": 5999,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-10-30T17:16:23.000Z",
+    "updatedAt": "2026-10-30T17:16:23.000Z"
+  },
+  {
+    "id": "17",
+    "slug": "vanilla-mist",
+    "name": "Vanilla Sugar Body Mist",
+    "section": "fragrances",
+    "category": "Body Mist",
+    "description": "Warm vanilla with a hint of caramel. Sweet, cosy and gently long lasting.",
+    "detail": "Warm vanilla & caramel",
+    "image": "",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.4,
+    "reviewCount": 58,
+    "sizes": [
+      {
+        "label": "100ml",
+        "price": 349,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 2",
+        "price": 599,
+        "mrp": 698,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-10-30T17:16:23.000Z",
+    "updatedAt": "2026-10-31T04:14:04.000Z"
+  },
+  {
+    "id": "35",
+    "slug": "ajwa-dates",
+    "name": "Ajwa Dates",
+    "section": "dates",
+    "category": "Premium Dates",
+    "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
+    "detail": "Authentic Madinah dates",
+    "image": "",
+    "badge": "Premium",
+    "tags": [
+      "Premium",
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.9,
+    "reviewCount": 96,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 599,
+        "stock": 30
+      },
+      {
+        "label": "500g",
+        "price": 1099,
+        "mrp": 1249,
+        "stock": 18
+      },
+      {
+        "label": "1kg",
+        "price": 2049,
+        "mrp": 2399,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "18",
+    "slug": "sandalwood-attar",
+    "name": "Sandalwood Attar",
+    "section": "fragrances",
+    "category": "Attar",
+    "description": "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
+    "detail": "Alcohol-free roll-on attar",
+    "image": "",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.7,
+    "reviewCount": 49,
+    "sizes": [
+      {
+        "label": "6ml",
+        "price": 349,
+        "stock": 22
+      },
+      {
+        "label": "12ml",
+        "price": 599,
+        "mrp": 699,
+        "stock": 9
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "12",
+    "slug": "garam-masala",
+    "name": "Garam Masala",
+    "section": "spices",
+    "category": "Spice Blends",
+    "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
+    "detail": "Fragrant roasted spice blend",
+    "image": "",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.3,
+    "reviewCount": 41,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 99,
+        "stock": 22
+      },
+      {
+        "label": "100g",
+        "price": 179,
+        "mrp": 199,
+        "stock": 9
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
+    "id": "11",
+    "slug": "green-cardamom",
+    "name": "Green Cardamom",
+    "section": "spices",
+    "category": "Whole Spices",
+    "description": "Plump, aromatic green pods sorted for freshness and aroma.",
+    "detail": "Fragrant green pods",
+    "image": "",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.8,
+    "reviewCount": 94,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 449,
+        "mrp": 520,
+        "stock": 18
+      },
+      {
+        "label": "100g",
+        "price": 849,
+        "mrp": 980,
+        "stock": 10
+      }
+    ],
+    "createdAt": "2026-10-30T16:54:19.000Z",
+    "updatedAt": "2026-10-30T16:54:19.000Z"
+  },
+  {
     "id": "43",
     "slug": "tomato-6940",
     "name": "Tomato",
@@ -87,46 +708,6 @@
         "price": 449,
         "mrp": 499,
         "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
-  },
-  {
-    "id": "37",
-    "slug": "dry-dates",
-    "name": "Dry Dates (Kharek)",
-    "section": "dates",
-    "category": "Dry Dates",
-    "description": "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
-    "detail": "Rich chewy dried dates",
-    "image": "",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 179,
-        "stock": 40
-      },
-      {
-        "label": "500g",
-        "price": 329,
-        "mrp": 369,
-        "stock": 20
-      },
-      {
-        "label": "1kg",
-        "price": 599,
-        "mrp": 699,
-        "stock": 10
       }
     ],
     "createdAt": "2026-10-30T17:16:23.000Z",
@@ -259,40 +840,6 @@
         "price": 235,
         "mrp": 270,
         "stock": 0
-      }
-    ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
-  },
-  {
-    "id": "28",
-    "slug": "full-cream-milk",
-    "name": "Full Cream Milk",
-    "section": "groceries",
-    "category": "Dairy & Bakery",
-    "description": "Rich and creamy pasteurised milk. Delivered chilled and fresh every morning.",
-    "detail": "Rich pasteurised milk",
-    "image": "",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": false,
-    "rating": 4.7,
-    "reviewCount": 340,
-    "sizes": [
-      {
-        "label": "500ml",
-        "price": 33,
-        "stock": 60
-      },
-      {
-        "label": "1L",
-        "price": 66,
-        "stock": 45
       }
     ],
     "createdAt": "2026-10-30T17:16:23.000Z",
@@ -436,46 +983,6 @@
     "updatedAt": "2026-10-30T17:16:23.000Z"
   },
   {
-    "id": "23",
-    "slug": "memory-foam-topper",
-    "name": "Gel Memory Foam Topper",
-    "section": "importedbed",
-    "category": "Accessories",
-    "description": "Cooling gel-infused topper that adds a soft comfort layer to any mattress.",
-    "detail": "Cooling gel comfort layer",
-    "image": "",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "Single 72x36\"",
-        "price": 2999,
-        "stock": 25
-      },
-      {
-        "label": "Double 75x48\"",
-        "price": 3999,
-        "mrp": 4999,
-        "stock": 20
-      },
-      {
-        "label": "Queen 78x60\"",
-        "price": 4999,
-        "mrp": 5999,
-        "stock": 15
-      }
-    ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
-  },
-  {
     "id": "22",
     "slug": "pocket-spring-mattress",
     "name": "Pocket Spring Mattress",
@@ -546,40 +1053,6 @@
     ],
     "createdAt": "2026-10-30T17:16:23.000Z",
     "updatedAt": "2026-10-30T17:16:23.000Z"
-  },
-  {
-    "id": "17",
-    "slug": "vanilla-mist",
-    "name": "Vanilla Sugar Body Mist",
-    "section": "fragrances",
-    "category": "Body Mist",
-    "description": "Warm vanilla with a hint of caramel. Sweet, cosy and gently long lasting.",
-    "detail": "Warm vanilla & caramel",
-    "image": "",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.4,
-    "reviewCount": 58,
-    "sizes": [
-      {
-        "label": "100ml",
-        "price": 349,
-        "stock": 40
-      },
-      {
-        "label": "Pack of 2",
-        "price": 599,
-        "mrp": 698,
-        "stock": 20
-      }
-    ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-31T04:14:04.000Z"
   },
   {
     "id": "15",
@@ -712,89 +1185,6 @@
     "updatedAt": "2026-10-30T16:54:19.000Z"
   },
   {
-    "id": "35",
-    "slug": "ajwa-dates",
-    "name": "Ajwa Dates",
-    "section": "dates",
-    "category": "Premium Dates",
-    "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
-    "detail": "Authentic Madinah dates",
-    "image": "",
-    "badge": "Premium",
-    "tags": [
-      "Premium",
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.9,
-    "reviewCount": 96,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 599,
-        "stock": 30
-      },
-      {
-        "label": "500g",
-        "price": 1099,
-        "mrp": 1249,
-        "stock": 18
-      },
-      {
-        "label": "1kg",
-        "price": 2049,
-        "mrp": 2399,
-        "stock": 0
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "34",
-    "slug": "medjool-dates",
-    "name": "Medjool Dates",
-    "section": "dates",
-    "category": "Premium Dates",
-    "description": "Large, soft and caramel-like dates. Naturally sweet and perfect for snacking.",
-    "detail": "Large, soft & caramel-like",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiV5zULTMNb3gWuNP_KftdHmqVNK4pytWCe2JkTxV8IA&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.8,
-    "reviewCount": 142,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 399,
-        "mrp": 449,
-        "stock": 24
-      },
-      {
-        "label": "500g",
-        "price": 749,
-        "mrp": 849,
-        "stock": 12
-      },
-      {
-        "label": "1kg",
-        "price": 1399,
-        "mrp": 1599,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
     "id": "32",
     "slug": "toor-dal",
     "name": "Toor Dal",
@@ -821,48 +1211,6 @@
         "price": 169,
         "mrp": 189,
         "stock": 3
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "31",
-    "slug": "basmati-rice",
-    "name": "Basmati Rice",
-    "section": "groceries",
-    "category": "Staples & Grains",
-    "description": "Long-grain, aged basmati with a lovely aroma. Cooks up fluffy and non-sticky.",
-    "detail": "Long-grain aged basmati",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBwRhXv0fY4RJJhu_zDBrOBiu7_CygkvYGwKlDd6A5eQ&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.8,
-    "reviewCount": 285,
-    "sizes": [
-      {
-        "label": "1kg",
-        "price": 129,
-        "mrp": 149,
-        "stock": 35
-      },
-      {
-        "label": "5kg",
-        "price": 599,
-        "mrp": 699,
-        "stock": 12
-      },
-      {
-        "label": "10kg",
-        "price": 1149,
-        "mrp": 1349,
-        "stock": 4
       }
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
@@ -902,89 +1250,6 @@
     "updatedAt": "2026-10-30T16:54:19.000Z"
   },
   {
-    "id": "20",
-    "slug": "memory-foam-mattress",
-    "name": "Memory Foam Mattress",
-    "section": "importedbed",
-    "category": "Memory Foam",
-    "description": "Contouring memory foam that relieves pressure points and keeps your spine aligned all night.",
-    "detail": "Queen size, medium firm",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling",
-      "Imported"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "Single 72x36\"",
-        "price": 8999,
-        "mrp": 11999,
-        "stock": 14
-      },
-      {
-        "label": "Double 75x48\"",
-        "price": 12999,
-        "mrp": 16999,
-        "stock": 10
-      },
-      {
-        "label": "Queen 78x60\"",
-        "price": 14999,
-        "mrp": 17999,
-        "stock": 6
-      },
-      {
-        "label": "King 78x72\"",
-        "price": 18999,
-        "mrp": 24999,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "18",
-    "slug": "sandalwood-attar",
-    "name": "Sandalwood Attar",
-    "section": "fragrances",
-    "category": "Attar",
-    "description": "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
-    "detail": "Alcohol-free roll-on attar",
-    "image": "",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.7,
-    "reviewCount": 49,
-    "sizes": [
-      {
-        "label": "6ml",
-        "price": 349,
-        "stock": 22
-      },
-      {
-        "label": "12ml",
-        "price": 599,
-        "mrp": 699,
-        "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
     "id": "16",
     "slug": "rose-musk-mist",
     "name": "Rose Musk Body Mist",
@@ -1014,152 +1279,6 @@
         "price": 2499,
         "mrp": 2899,
         "stock": 6
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "14",
-    "slug": "oud-noir",
-    "name": "Oud Noir Eau de Parfum",
-    "section": "fragrances",
-    "category": "Perfume",
-    "description": "Deep, woody and smoky with warm amber. A bold scent that lasts all day.",
-    "detail": "Warm, woody fragrance",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling",
-      "Imported"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.8,
-    "reviewCount": 142,
-    "sizes": [
-      {
-        "label": "30ml",
-        "price": 899,
-        "mrp": 999,
-        "stock": 24
-      },
-      {
-        "label": "50ml",
-        "price": 1999,
-        "mrp": 2299,
-        "stock": 12
-      },
-      {
-        "label": "100ml",
-        "price": 2999,
-        "mrp": 3499,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "12",
-    "slug": "garam-masala",
-    "name": "Garam Masala",
-    "section": "spices",
-    "category": "Spice Blends",
-    "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
-    "detail": "Fragrant roasted spice blend",
-    "image": "",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.3,
-    "reviewCount": 41,
-    "sizes": [
-      {
-        "label": "50g",
-        "price": 99,
-        "stock": 22
-      },
-      {
-        "label": "100g",
-        "price": 179,
-        "mrp": 199,
-        "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "11",
-    "slug": "green-cardamom",
-    "name": "Green Cardamom",
-    "section": "spices",
-    "category": "Whole Spices",
-    "description": "Plump, aromatic green pods sorted for freshness and aroma.",
-    "detail": "Fragrant green pods",
-    "image": "",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.8,
-    "reviewCount": 94,
-    "sizes": [
-      {
-        "label": "50g",
-        "price": 449,
-        "mrp": 520,
-        "stock": 18
-      },
-      {
-        "label": "100g",
-        "price": 849,
-        "mrp": 980,
-        "stock": 10
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "10",
-    "slug": "black-pepper",
-    "name": "Black Pepper Whole",
-    "section": "spices",
-    "category": "Whole Spices",
-    "description": "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
-    "detail": "Bold and aromatic",
-    "image": "",
-    "badge": "Most Selling",
-    "tags": [
-      "Most Selling"
-    ],
-    "isBestSeller": false,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "50g",
-        "price": 119,
-        "stock": 40
-      },
-      {
-        "label": "100g",
-        "price": 299,
-        "mrp": 329,
-        "stock": 20
       }
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
@@ -1238,48 +1357,6 @@
     "updatedAt": "2026-10-30T16:54:19.000Z"
   },
   {
-    "id": "7",
-    "slug": "turmeric-powder",
-    "name": "Turmeric Powder",
-    "section": "spices",
-    "category": "Ground Spices",
-    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
-    "detail": "High curcumin golden haldi",
-    "image": "https://static.toiimg.com/photo/64699039.cms",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 69,
-        "mrp": 79,
-        "stock": 40
-      },
-      {
-        "label": "200g",
-        "price": 125,
-        "mrp": 149,
-        "stock": 22
-      },
-      {
-        "label": "500g",
-        "price": 289,
-        "mrp": 349,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
     "id": "6",
     "slug": "coffee-scrub",
     "name": "Coffee Body Scrub",
@@ -1338,41 +1415,6 @@
         "price": 349,
         "mrp": 399,
         "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "4",
-    "slug": "coffee-soap",
-    "name": "Coffee Soap Bar",
-    "section": "coffee-skin",
-    "category": "Soap",
-    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
-    "detail": "Coffee-inspired skincare",
-    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "1 bar",
-        "price": 199,
-        "stock": 40
-      },
-      {
-        "label": "Pack of 3",
-        "price": 549,
-        "mrp": 597,
-        "stock": 20
       }
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
@@ -1449,47 +1491,5 @@
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
     "updatedAt": "2026-10-30T16:58:30.000Z"
-  },
-  {
-    "id": "1",
-    "slug": "filter-coffee",
-    "name": "Filter Coffee Powder",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
-    "detail": "Medium roast, strong aroma",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 24
-      },
-      {
-        "label": "500g",
-        "price": 649,
-        "mrp": 749,
-        "stock": 12
-      },
-      {
-        "label": "1kg",
-        "price": 1199,
-        "mrp": 1399,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
   }
 ]

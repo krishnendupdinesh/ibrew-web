@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
+  ChevronRight,
   Heart,
   Lock,
   LogOut,
@@ -19,15 +20,26 @@ import {
 } from "lucide-react";
 import { useCart } from "../lib/cartStore";
 import { useWishlist } from "../lib/wishlistStore";
+import { useAllProducts, type StoreProduct } from "../lib/productStore";
 
 // ---------------------------------------------------------------------------
 // SETTINGS - change these to match your site
 // ---------------------------------------------------------------------------
 const LOGIN_PAGE = "/login";
-const SEARCH_PAGE = "/coffee"; // search fallback
+const SEARCH_PAGE = "/search";
 const CART_PAGE = "/cart";
 
 const formatPrice = (price: number) => `₹${price.toLocaleString("en-IN")}`;
+
+const SECTION_LABELS: Record<string, string> = {
+  coffee: "Coffee",
+  "coffee-skin": "Skincare",
+  spices: "Spices",
+  fragrances: "Fragrances",
+  importedbed: "Imported Beds",
+  groceries: "Groceries",
+  dates: "Dates",
+};
 
 interface LoggedUser {
   id: string;
@@ -45,8 +57,13 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const [searchText, setSearchText] = useState("");
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [authUser, setAuthUser] = useState<LoggedUser | null>(null);
+
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const { products: allProducts } = useAllProducts();
 
   const {
     items: cartItems,
@@ -155,13 +172,75 @@ export default function Navbar() {
     };
   }, [cartOpen]);
 
+  // Close search dropdown on click outside or Escape
+  useEffect(() => {
+    if (!showSearchDropdown) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        setShowSearchDropdown(false);
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowSearchDropdown(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [showSearchDropdown]);
+
+  // Live matching products
+  const matchingProducts = useMemo(() => {
+    const q = searchText.trim().toLowerCase();
+    if (!q) return [];
+    const tokens = q.split(/\s+/).filter(Boolean);
+    return allProducts.filter((p) => {
+      const text = [
+        p.name,
+        p.category,
+        p.section,
+        p.description,
+        p.detail,
+        p.badge,
+        ...(p.tags || []),
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return tokens.every((token) => text.includes(token));
+    });
+  }, [searchText, allProducts]);
+
+  const dropdownPreview = useMemo(() => {
+    return matchingProducts.slice(0, 5);
+  }, [matchingProducts]);
+
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
-
+    setShowSearchDropdown(false);
     const query = searchText.trim();
-    if (!query) return;
-
+    if (!query) {
+      router.push(SEARCH_PAGE);
+      return;
+    }
     router.push(`${SEARCH_PAGE}?q=${encodeURIComponent(query)}`);
+  };
+
+  const handleClearSearch = () => {
+    setSearchText("");
+    setShowSearchDropdown(false);
+    searchInputRef.current?.focus();
+  };
+
+  const handleSelectProduct = (product: StoreProduct) => {
+    setShowSearchDropdown(false);
+    router.push(`${SEARCH_PAGE}?q=${encodeURIComponent(product.name)}`);
   };
 
   return (
@@ -179,22 +258,131 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* 2. Search bar */}
-          <form
-            onSubmit={handleSearch}
-            role="search"
-            className="order-3 flex w-full items-center gap-3 rounded-xl border border-neutral-200 bg-neutral-100 px-4 py-2.5 focus-within:border-[#7A5A3C] md:order-2 md:flex-1"
-          >
-            <Search size={18} className="shrink-0 text-neutral-500" />
-            <input
-              type="search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder='Search "coffee beans"'
-              aria-label="Search products"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-500"
-            />
-          </form>
+          {/* 2. Search bar with instant live dropdown */}
+          <div ref={searchContainerRef} className="relative order-3 w-full md:order-2 md:flex-1">
+            <form
+              onSubmit={handleSearch}
+              role="search"
+              className="flex w-full items-center gap-2.5 rounded-xl border border-neutral-200 bg-neutral-100 px-3.5 py-2.5 transition-all focus-within:border-[#7A5A3C] focus-within:bg-white focus-within:shadow-xs"
+            >
+              <Search size={18} className="shrink-0 text-neutral-500" />
+              <input
+                ref={searchInputRef}
+                type="search"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                  setShowSearchDropdown(true);
+                }}
+                onFocus={() => {
+                  if (searchText.trim().length > 0) setShowSearchDropdown(true);
+                }}
+                placeholder="Search coffee, spices, dates, fragrances..."
+                aria-label="Search products"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-500"
+              />
+              {searchText && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="rounded-full p-1 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700 transition"
+                  title="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </form>
+
+            {/* Instant search popup */}
+            {showSearchDropdown && searchText.trim().length > 0 && (
+              <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-xl">
+                {dropdownPreview.length > 0 ? (
+                  <div className="py-2">
+                    <div className="px-3.5 pb-1 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                      Products ({matchingProducts.length})
+                    </div>
+                    {dropdownPreview.map((item) => {
+                      const minPrice = Math.min(...item.sizes.map((s) => s.price));
+                      const isOutOfStock = item.sizes.every((s) => s.stock === 0);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSelectProduct(item)}
+                          className="flex w-full items-center gap-3 px-3.5 py-2 text-left transition hover:bg-[#FAF7F2]"
+                        >
+                          {/* Thumbnail */}
+                          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-neutral-200 bg-neutral-50 flex items-center justify-center">
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="h-full w-full object-contain p-0.5"
+                                onError={(e) => {
+                                  (e.target as HTMLElement).style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <span className="text-[10px] font-bold text-neutral-400">IB</span>
+                            )}
+                          </div>
+
+                          {/* Info */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="truncate text-xs font-semibold text-neutral-900">
+                                {item.name}
+                              </span>
+                              <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600">
+                                {SECTION_LABELS[item.section] || item.section}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5 text-[11px]">
+                              <span className="font-bold text-[#7A5A3C]">
+                                {minPrice > 0 ? `From ${formatPrice(minPrice)}` : "Price on request"}
+                              </span>
+                              <span
+                                className={`text-[10px] ${
+                                  isOutOfStock ? "text-red-500" : "text-emerald-600 font-medium"
+                                }`}
+                              >
+                                {isOutOfStock ? "Out of Stock" : "In Stock"}
+                              </span>
+                            </div>
+                          </div>
+
+                          <ChevronRight size={14} className="text-neutral-400 shrink-0" />
+                        </button>
+                      );
+                    })}
+
+                    <div className="border-t border-neutral-100 mt-1 pt-1 px-2">
+                      <button
+                        type="button"
+                        onClick={handleSearch}
+                        className="flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-center text-xs font-bold text-[#7A5A3C] hover:bg-[#FAF3E8] transition"
+                      >
+                        <span>
+                          View all {matchingProducts.length} results for &ldquo;
+                          {searchText.trim()}&rdquo;
+                        </span>
+                        <ArrowRight size={13} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 text-center">
+                    <p className="text-xs text-neutral-600">
+                      No products found for &ldquo;<span className="font-semibold">{searchText.trim()}</span>&rdquo;
+                    </p>
+                    <p className="mt-1 text-[11px] text-neutral-400">
+                      Try searching for coffee, oud, dates, cardamom, pepper, mattress...
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* 3. Login / Logout + Cart buttons */}
           <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-4 md:order-3">
