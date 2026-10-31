@@ -493,8 +493,7 @@ function ItemCard({ item, quantity, onSetQuantity }: ItemCardProps) {
           <button
             type="button"
             onClick={() => onSetQuantity(item.id, item.moq)}
-            className="h-10 w-full rounded-lg border px-4 text-sm font-bold uppercase transition active:scale-95"
-            style={{ borderColor: BROWN, background: "#FFFFFF", color: BROWN }}
+            className="h-10 w-full cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-4 text-sm font-bold uppercase text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white active:scale-95"
           >
             Add to quote
           </button>
@@ -692,8 +691,7 @@ function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) 
             <button
               type="button"
               onClick={onClose}
-              className="mt-8 rounded-lg border px-8 py-3 text-xs uppercase tracking-widest transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
-              style={{ borderColor: BROWN, color: BROWN }}
+              className="mt-8 cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-8 py-3 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
             >
               Back to products
             </button>
@@ -896,15 +894,13 @@ function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) 
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildMessage())}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-bold uppercase tracking-wider"
-                    style={{ borderColor: BROWN, color: BROWN }}
+                    className="flex items-center gap-2 rounded-lg border border-[#7A5A3C] bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white"
                   >
                     <MessageCircle aria-hidden className="h-4 w-4" /> WhatsApp
                   </a>
                   <a
                     href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Bulk quotation request")}&body=${encodeURIComponent(buildMessage())}`}
-                    className="flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-bold uppercase tracking-wider"
-                    style={{ borderColor: BROWN, color: BROWN }}
+                    className="flex items-center gap-2 rounded-lg border border-[#7A5A3C] bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white"
                   >
                     <Mail aria-hidden className="h-4 w-4" /> Email
                   </a>
@@ -915,8 +911,7 @@ function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) 
             <button
               type="submit"
               disabled={status === "sending"}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold uppercase tracking-wider text-white transition active:scale-[0.98] disabled:opacity-60"
-              style={{ background: BROWN }}
+              className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-[0.98] disabled:opacity-60"
             >
               <Send aria-hidden className="h-4 w-4" />
               {status === "sending" ? "Sending..." : "Send request"}
@@ -1006,8 +1001,7 @@ export default function BulkOrderPage() {
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="mt-8 inline-flex h-12 items-center gap-2 rounded-lg bg-white px-8 text-sm font-bold uppercase tracking-wider transition active:scale-95"
-            style={{ color: BROWN }}
+            className="mt-8 inline-flex h-12 cursor-pointer items-center gap-2 rounded-lg bg-white px-8 text-sm font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white active:scale-95"
           >
             <FileText aria-hidden className="h-4 w-4" />
             Request quotation
@@ -1050,12 +1044,11 @@ export default function BulkOrderPage() {
                 type="button"
                 onClick={() => setActiveCategory(chip)}
                 aria-pressed={on}
-                className="shrink-0 rounded-full border px-4 py-2 text-xs uppercase tracking-wider transition-colors"
-                style={{
-                  borderColor: BROWN,
-                  background: on ? BROWN : "transparent",
-                  color: on ? CREAM : BROWN,
-                }}
+                className={`shrink-0 cursor-pointer rounded-full border border-[#7A5A3C] px-4 py-2 text-xs uppercase tracking-wider transition-colors ${
+                  on
+                    ? "bg-[#7A5A3C] text-[#F5EDE0]"
+                    : "bg-transparent text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
+                }`}
               >
                 {chip} ({count})
               </button>
@@ -1097,16 +1090,14 @@ export default function BulkOrderPage() {
                     setQuery("");
                     setActiveCategory("All");
                   }}
-                  className="rounded-lg border px-6 py-2 text-xs uppercase tracking-widest transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
-                  style={{ borderColor: BROWN, color: BROWN }}
+                  className="cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-6 py-2 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
                 >
                   Clear filters
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
-                  className="rounded-lg px-6 py-2 text-xs uppercase tracking-widest text-white"
-                  style={{ background: BROWN }}
+                  className="cursor-pointer rounded-lg bg-[#7A5A3C] px-6 py-2 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:bg-[#1F1A17]"
                 >
                   Request quotation
                 </button>
@@ -1127,8 +1118,7 @@ export default function BulkOrderPage() {
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="flex h-11 shrink-0 items-center gap-2 rounded-lg px-6 text-sm font-bold uppercase tracking-wider text-white transition active:scale-95"
-            style={{ background: BROWN }}
+            className="flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-lg bg-[#7A5A3C] px-6 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-95"
           >
             <FileText aria-hidden className="h-4 w-4" />
             Request quotation

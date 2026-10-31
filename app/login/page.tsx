@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Ubuntu } from "next/font/google";
 import { Eye, EyeOff, LogIn } from "lucide-react";
@@ -21,8 +21,8 @@ const ubuntu = Ubuntu({
   display: "swap",
 });
 
-// Banner image behind the page title - paste your own link
-const BANNER = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D";
+const BANNER =
+  "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D";
 
 const inputClass =
   "w-full min-w-0 rounded-md border bg-white px-3 py-3 text-sm outline-none focus:border-[#7A5A3C]";
@@ -32,19 +32,25 @@ function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next");
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Prefetch common destination routes so post-login redirect is instantaneous
+  useEffect(() => {
+    router.prefetch("/admin");
+    router.prefetch("/");
+  }, [router]);
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     setError("");
 
-    if (!email.trim() || !password) {
-      setError("Enter your email and password.");
+    if (!identifier.trim() || !password) {
+      setError("Enter your username or email and password.");
       return;
     }
 
@@ -53,19 +59,26 @@ function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: identifier.trim(), password }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Could not log in. Try again.");
+        setError(data.error ?? "Wrong username/email or password.");
         setLoading(false);
         return;
       }
 
-      // Admins go to the dashboard, everyone else to where they were headed
+      try {
+        window.sessionStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+        window.localStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ibrew-auth-changed"));
+      } catch {
+        // ignore storage quota errors
+      }
+
       const safe = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
-      router.push(data.user.role === "admin" ? safe ?? "/admin" : safe ?? "/");
-      router.refresh();
+      const target = data.user.role === "admin" ? safe ?? "/admin" : safe ?? "/";
+      router.replace(target);
     } catch {
       setError("Could not reach the server. Check your connection and try again.");
       setLoading(false);
@@ -73,17 +86,18 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
+    <form onSubmit={handleLoginSubmit} noValidate className="space-y-4">
       <div>
-        <label htmlFor="email" className="mb-1 block text-xs font-medium">
-          Email
+        <label htmlFor="identifier" className="mb-1 block text-xs font-medium">
+          Email or Username
         </label>
         <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="identifier"
+          type="text"
+          autoComplete="username"
+          placeholder="Enter your email or username"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           className={inputClass}
           style={{ borderColor: LINE }}
         />
@@ -98,6 +112,7 @@ function LoginForm() {
             id="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
+            placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={`${inputClass} pr-11`}
@@ -107,7 +122,7 @@ function LoginForm() {
             type="button"
             onClick={() => setShowPassword((s) => !s)}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-0 top-0 flex h-full w-11 items-center justify-center"
+            className="absolute right-0 top-0 flex h-full w-11 cursor-pointer items-center justify-center"
             style={{ color: MUTED }}
           >
             {showPassword ? <EyeOff aria-hidden className="h-4 w-4" /> : <Eye aria-hidden className="h-4 w-4" />}
@@ -116,7 +131,11 @@ function LoginForm() {
       </div>
 
       {error && (
-        <p role="alert" className="rounded-md border px-3 py-2 text-sm" style={{ borderColor: ERROR, color: ERROR }}>
+        <p
+          role="alert"
+          className="rounded-md border px-3 py-2.5 text-xs font-medium"
+          style={{ borderColor: ERROR, color: ERROR, background: "#FEF3F2" }}
+        >
           {error}
         </p>
       )}
@@ -124,8 +143,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold uppercase tracking-wider text-white transition active:scale-[0.98] disabled:opacity-60"
-        style={{ background: BROWN }}
+        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-[0.98] disabled:opacity-60"
       >
         <LogIn aria-hidden className="h-4 w-4" />
         {loading ? "Logging in..." : "Log in"}
@@ -137,9 +155,17 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className={`${ubuntu.className} min-h-screen`} style={{ background: "#FFFFFF", color: INK }}>
-      <section className="relative overflow-hidden bg-black text-white">
-        <img src={BANNER} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-black/60" />
+      <section
+        className="relative overflow-hidden text-white"
+        style={{ background: "linear-gradient(135deg, #2D1908 0%, #5A3420 50%, #1F1A17 100%)" }}
+      >
+        <img
+          src={BANNER}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+        />
         <div className="relative z-10 px-4 py-12 text-center sm:py-16">
           <nav aria-label="Breadcrumb" className="mb-3 text-[11px] uppercase tracking-[0.25em] sm:text-xs">
             <Link href="/" className="transition-colors hover:text-white/70">
@@ -151,7 +177,7 @@ export default function LoginPage() {
             <span aria-current="page">Log in</span>
           </nav>
           <h1 className="text-3xl font-bold sm:text-4xl">Welcome back</h1>
-          <p className="mt-2 text-sm md:text-base">Log in to track your quotation requests.</p>
+          <p className="mt-2 text-sm md:text-base">Log in to your account to continue.</p>
         </div>
       </section>
 

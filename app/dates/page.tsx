@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
+import { useSectionProducts } from "../../lib/productStore";
+import { addToCart } from "../../lib/cartStore";
+import { toggleWishlistItem, useWishlist } from "../../lib/wishlistStore";
 import {
   ChevronDown,
   Droplets,
@@ -63,11 +67,13 @@ type ProductSize = {
 type Product = {
   id: string;
   name: string;
-  category: "Premium Dates" | "Dry Dates" | "Date Products";
+  category: string;
   description: string;
   rating: number; // 0 to 5
   reviewCount: number;
   badge?: string;
+  isBestSeller?: boolean;
+  isMostSelling?: boolean;
   image: string;
   sizes: ProductSize[];
 };
@@ -189,7 +195,7 @@ const SORT_OPTIONS = [
 //   { title: "Everyday Essentials", text: "Dates and date-based products for every kitchen.", Icon: Droplets },
 // ];
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 24;
 
 // ---------------------------------------------------------------------------
 // HELPERS
@@ -306,29 +312,39 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
   // Start on the first size that is in stock
   const firstAvailable = Math.max(0, product.sizes.findIndex((s) => s.stock > 0));
 
+  const router = useRouter();
   const [sizeIndex, setSizeIndex] = useState(firstAvailable);
-  const [quantity, setQuantity] = useState(0); // 0 = show the ADD button
 
-  const size = product.sizes[sizeIndex];
+  const size = product.sizes[sizeIndex] ?? product.sizes[0] ?? { label: "Standard", price: 0, stock: 0 };
   const outOfStock = size.stock === 0;
   const lowStock = !outOfStock && size.stock <= 5;
   const discount = size.mrp ? Math.round((1 - size.price / size.mrp) * 100) : 0;
 
-  const updateQuantity = (newQuantity: number, sizeToUse: ProductSize = size) => {
-    setQuantity(newQuantity);
+  const handleAdd = () => {
+    addToCart(
+      {
+        productId: product.id,
+        name: product.name,
+        size: size.label,
+        price: size.price,
+        mrp: size.mrp,
+        image: product.image,
+        category: product.category,
+      },
+      1
+    );
     onCartChange({
       productId: product.id,
       name: product.name,
-      size: sizeToUse.label,
-      price: sizeToUse.price,
-      quantity: newQuantity,
+      size: size.label,
+      price: size.price,
+      quantity: 1,
       image: product.image,
     });
+    router.push("/cart");
   };
 
-  // Changing the size removes the old size from the cart
   const chooseSize = (index: number) => {
-    if (quantity > 0) updateQuantity(0);
     setSizeIndex(index);
   };
 
@@ -342,12 +358,12 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
           className={`absolute inset-0 h-full w-full object-contain p-2 ${outOfStock ? "opacity-40" : ""}`}
         />
 
-        {(product.badge || discount > 0) && !outOfStock && (
+        {(product.badge || product.isMostSelling || product.isBestSeller || discount > 0) && !outOfStock && (
           <span
             className="absolute left-0 top-0 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
             style={{ background: BROWN }}
           >
-            {discount > 0 ? `${discount}% off` : product.badge}
+            {product.badge || (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : `${discount}% off`)}
           </span>
         )}
 
@@ -393,41 +409,14 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
           )}
         </p>
 
-        {!outOfStock && quantity === 0 && (
+        {!outOfStock && (
           <button
             type="button"
-            onClick={() => updateQuantity(1)}
-            className="h-9 min-w-[72px] rounded-lg border px-4 text-sm font-bold uppercase transition active:scale-95"
-            style={{ borderColor: BROWN, background: "#FFFFFF", color: BROWN }}
+            onClick={handleAdd}
+            className="h-9 min-w-[72px] cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-4 text-sm font-bold uppercase text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white active:scale-95"
           >
             Add
           </button>
-        )}
-
-        {!outOfStock && quantity > 0 && (
-          <div
-            className="flex h-9 min-w-[72px] items-center justify-between rounded-lg text-white"
-            style={{ background: BROWN }}
-          >
-            <button
-              type="button"
-              onClick={() => updateQuantity(quantity - 1)}
-              aria-label={`Decrease quantity of ${product.name}`}
-              className="px-2 py-2"
-            >
-              <Minus className="h-3.5 w-3.5" />
-            </button>
-            <span className="min-w-4 text-center text-sm font-bold tabular-nums">{quantity}</span>
-            <button
-              type="button"
-              onClick={() => updateQuantity(quantity + 1)}
-              disabled={quantity >= size.stock}
-              aria-label={`Increase quantity of ${product.name}`}
-              className="px-2 py-2 disabled:opacity-40"
-            >
-              <Plus className="h-3.5 w-3.5" />
-            </button>
-          </div>
         )}
       </div>
     </article>
@@ -445,13 +434,14 @@ type FilterState = {
 };
 
 type FilterPanelProps = {
+  categories?: string[];
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   activeCount: number;
   onClear: () => void;
 };
 
-function FilterPanel({ filters, onChange, activeCount, onClear }: FilterPanelProps) {
+function FilterPanel({ categories = CATEGORY_OPTIONS, filters, onChange, activeCount, onClear }: FilterPanelProps) {
   const toggleCategory = (category: string) => {
     const next = filters.categories.includes(category)
       ? filters.categories.filter((c) => c !== category)
@@ -474,7 +464,7 @@ function FilterPanel({ filters, onChange, activeCount, onClear }: FilterPanelPro
       <div className="border-b py-5" style={{ borderColor: LINE }}>
         <h3 className={sectionTitle}>Type</h3>
         <ul className="space-y-3">
-          {CATEGORY_OPTIONS.map((category) => (
+          {categories.map((category) => (
             <li key={category}>
               <label className="flex cursor-pointer items-center gap-3 text-sm">
                 <input
@@ -542,11 +532,17 @@ function FilterPanel({ filters, onChange, activeCount, onClear }: FilterPanelPro
 const EMPTY_FILTERS: FilterState = { categories: [], inStockOnly: false, minPrice: "", maxPrice: "" };
 
 export default function DatesPage() {
+  const products = useSectionProducts("dates", PRODUCTS);
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
+
+  const categoryOptions = useMemo(
+    () => Array.from(new Set([...CATEGORY_OPTIONS, ...products.map((p) => p.category).filter(Boolean)])),
+    [products]
+  );
   const [sort, setSort] = useState("featured");
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const { wishedIds: wishlist } = useWishlist();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // TODO: connect this to your own cart (context, store or API).
@@ -556,7 +552,20 @@ export default function DatesPage() {
   };
 
   const toggleWish = (id: string) => {
-    setWishlist((list) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]));
+    const product = products.find((p) => p.id === id);
+    if (!product) return;
+    const size = product.sizes.find((s) => s.stock > 0) ?? product.sizes[0];
+    toggleWishlistItem({
+      productId: product.id,
+      name: product.name,
+      size: size?.label,
+      price: size?.price ?? 0,
+      mrp: size?.mrp,
+      image: product.image,
+      category: product.category,
+      badge: product.badge || (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : undefined),
+      inStock: !isSoldOut(product),
+    });
   };
 
   const updateFilters = (next: FilterState) => {
@@ -596,7 +605,7 @@ export default function DatesPage() {
     const max = filters.maxPrice ? Number(filters.maxPrice) : Infinity;
     const search = query.trim().toLowerCase();
 
-    const list = PRODUCTS.filter((p) => {
+    const list = products.filter((p) => {
       const price = lowestPrice(p);
       if (filters.inStockOnly && isSoldOut(p)) return false;
       if (price < min || price > max) return false;
@@ -612,11 +621,11 @@ export default function DatesPage() {
     if (sort === "rating") list.sort((a, b) => b.rating - a.rating);
 
     return list;
-  }, [filters, sort, query]);
+  }, [products, filters, sort, query]);
 
   const shownProducts = filteredProducts.slice(0, visibleCount);
 
-  const filterPanel = <FilterPanel filters={filters} onChange={updateFilters} activeCount={activeCount} onClear={clearAll} />;
+  const filterPanel = <FilterPanel categories={categoryOptions} filters={filters} onChange={updateFilters} activeCount={activeCount} onClear={clearAll} />;
 
   return (
     <div className={`${ubuntu.className} min-h-screen overflow-x-hidden`} style={{ background: CREAM, color: INK }}>
@@ -701,7 +710,7 @@ export default function DatesPage() {
 
         {/* Quick type chips (phones and tablets) */}
         <div className={`${hideScrollbar} -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 lg:hidden`}>
-          {CATEGORY_OPTIONS.map((category) => {
+          {categoryOptions.map((category) => {
             const on = filters.categories.includes(category);
             return (
               <button
@@ -714,12 +723,11 @@ export default function DatesPage() {
                   })
                 }
                 aria-pressed={on}
-                className="shrink-0 rounded-full border px-4 py-2 text-xs uppercase tracking-wider transition-colors"
-                style={{
-                  borderColor: BROWN,
-                  background: on ? BROWN : "transparent",
-                  color: on ? CREAM : BROWN,
-                }}
+                className={`shrink-0 cursor-pointer rounded-full border border-[#7A5A3C] px-4 py-2 text-xs uppercase tracking-wider transition-colors ${
+                  on
+                    ? "bg-[#7A5A3C] text-[#F5EDE0]"
+                    : "bg-transparent text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
+                }`}
               >
                 {category}
               </button>
@@ -758,8 +766,7 @@ export default function DatesPage() {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="mt-6 rounded-lg border px-6 py-2 text-xs uppercase tracking-widest transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
-                  style={{ borderColor: BROWN, color: BROWN }}
+                  className="mt-6 cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-6 py-2 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
                 >
                   Clear filters
                 </button>
@@ -771,8 +778,7 @@ export default function DatesPage() {
                 <button
                   type="button"
                   onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
-                  className="rounded-lg border px-10 py-3 text-xs uppercase tracking-widest transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
-                  style={{ borderColor: BROWN, color: BROWN }}
+                  className="cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-10 py-3 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
                 >
                   Load more
                 </button>
@@ -818,8 +824,7 @@ export default function DatesPage() {
             <button
               type="button"
               onClick={() => setMobileFiltersOpen(false)}
-              className="mt-6 w-full rounded-lg border py-3 text-xs uppercase tracking-widest transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
-              style={{ borderColor: BROWN, color: BROWN }}
+              className="mt-6 w-full cursor-pointer rounded-lg border border-[#7A5A3C] bg-white py-3 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
             >
               Show {filteredProducts.length} products
             </button>

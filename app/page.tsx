@@ -1,9 +1,12 @@
-
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
+import { readLocalCatalog, type StoreProduct } from "../lib/productStore";
+import { addToCart, setCartItemQuantity, useCart } from "../lib/cartStore";
+import { toggleWishlistItem, useWishlist } from "../lib/wishlistStore";
 import {
   BadgeCheck,
   BedDouble,
@@ -13,8 +16,11 @@ import {
   Coffee,
   Droplets,
   Flower2,
+  Heart,
   Leaf,
+  Minus,
   Package,
+  Plus,
   ShieldCheck,
   ShoppingBasket,
   Truck,
@@ -115,9 +121,8 @@ const SLIDE_DELAY_MS = 4000;
 const slides = [
   { title: "Fresh ground coffee, at your door", text: "Filter and instant blends, roasted and packed with care.", cta: "Shop coffee", href: "/coffee", color: "#5A3420", image: IMAGES.heroCoffee },
   { title: "Export-quality spices", text: "Cardamom, pepper and more, picked for aroma and freshness.", cta: "Shop spices", href: "/spices", color: "#9A5B00", image: IMAGES.heroSpices },
-  { title: "Imported fragrance and oils", text: "Warm, woody and floral fragrances from around the world.", cta: "Shop fragrance", href: "/perfumeoil", color: "#7B3F6B", image: IMAGES.heroFragrance },
+  { title: "Imported fragrance and oils", text: "Warm, woody and floral fragrances from around the world.", cta: "Shop fragrance", href: "/fragrances", color: "#7B3F6B", image: IMAGES.heroFragrance },
   { title: "Sleep in luxury", text: "Imported mattresses for better nights.", cta: "Shop mattresses", href: "/importedbed", color: "#34517A", image: IMAGES.heroMattress },
-  // { title: "Coffee skincare", text: "Handmade soap and face wash with the goodness of coffee.", cta: "Shop skincare", href: "/coffee", color: "#41633F", image: IMAGES.heroSkincare },
   { title: "Buying in bulk?", text: "Special prices for shops, hotels, offices and events.", cta: "Get a bulk quote", href: "/bulk-order", color: INK, image: IMAGES.heroBulk },
 ];
 
@@ -171,7 +176,6 @@ function HeroCarousel() {
           <div
             key={slide.title}
             aria-hidden={i !== index}
-            // Phones: tall. Laptops: screen height minus navbar and category row.
             className="relative h-[48svh] min-h-[280px] max-h-[430px] w-full shrink-0 sm:h-[56svh] sm:min-h-[340px] lg:h-[calc(100svh-270px)] lg:min-h-[420px] lg:max-h-[720px]"
             style={{ background: slide.color }}
           >
@@ -202,8 +206,7 @@ function HeroCarousel() {
               <Link
                 href={slide.href}
                 tabIndex={i === index ? 0 : -1}
-                className="mt-5 inline-flex h-11 w-fit items-center rounded-lg bg-white px-6 text-sm font-semibold transition active:scale-95"
-                style={{ color: INK }}
+                className="mt-5 inline-flex h-11 w-fit items-center rounded-lg bg-white px-6 text-sm font-semibold text-[#1F1A17] transition hover:bg-[#7A5A3C] hover:text-white active:scale-95"
               >
                 {slide.cta}
               </Link>
@@ -221,9 +224,8 @@ function HeroCarousel() {
             onClick={() => goTo(i)}
             aria-label={`Go to slide ${i + 1}`}
             aria-current={i === index}
-            className={`h-1.5 rounded-full bg-white transition-all duration-300 ${
-              i === index ? "w-6" : "w-1.5 opacity-60"
-            }`}
+            className={`h-1.5 rounded-full bg-white transition-all duration-300 ${i === index ? "w-6" : "w-1.5 opacity-60"
+              }`}
           />
         ))}
       </div>
@@ -332,31 +334,53 @@ function PromoCards() {
 // ---------------------------------------------------------------------------
 // 4. PRODUCT RAILS (swipe on phones, arrows on desktop)
 // ---------------------------------------------------------------------------
-type ProductCategory = "coffee" | "skincare" | "spices" | "perfumes" | "mattresses";
+type ProductCategory =
+  | "coffee"
+  | "skincare"
+  | "spices"
+  | "perfumes"
+  | "mattresses"
+  | "groceries"
+  | "dates";
 
 type Product = {
   id: string;
   name: string;
+  size?: string;
   detail: string;
   price: number;
   oldPrice?: number;
   badge?: string;
   image: string;
   category: ProductCategory;
+  stock?: number;
+  isBestSeller?: boolean;
+  isMostSelling?: boolean;
+  featuredOnHome?: boolean;
 };
 
-const products: Product[] = [
-  { id: "filter-coffee-250", name: "Filter coffee powder 250g", detail: "Medium roast, strong aroma", price: 349, oldPrice: 399, category: "coffee", image: IMAGES.productCoffee },
-  { id: "instant-coffee-100", name: "Instant coffee jar 100g", detail: "Pure, no chicory", price: 299, category: "coffee", badge: "Bestseller", image: IMAGES.productCoffee },
-  { id: "coffee-soap", name: "Coffee soap bar", detail: "Coffee-inspired skincare", price: 199, category: "skincare", badge: "Top seller", image: IMAGES.productSkincare },
+const DEFAULT_HOME_PRODUCTS: Product[] = [
+  { id: "filter-coffee-250", name: "Filter coffee powder 250g", detail: "Medium roast, strong aroma", price: 349, oldPrice: 399, category: "coffee", badge: "Bestseller", isBestSeller: true, isMostSelling: true, image: IMAGES.productCoffee },
+  { id: "instant-coffee-100", name: "Instant coffee jar 100g", detail: "Pure, no chicory", price: 299, category: "coffee", badge: "Most Selling", isBestSeller: true, isMostSelling: true, image: IMAGES.productCoffee },
+  { id: "coffee-soap", name: "Coffee soap bar", detail: "Coffee-inspired skincare", price: 199, category: "skincare", badge: "Top seller", isBestSeller: true, isMostSelling: true, image: IMAGES.productSkincare },
   { id: "coffee-facewash-100", name: "Coffee face wash 100ml", detail: "Daily cleansing care", price: 349, oldPrice: 399, category: "skincare", image: IMAGES.productSkincare },
-  { id: "black-pepper-100", name: "Whole black pepper 100g", detail: "Bold and aromatic", price: 299, category: "spices", image: IMAGES.productPepper },
-  { id: "cardamom-50", name: "Green cardamom 50g", detail: "Fragrant green pods", price: 449, oldPrice: 520, category: "spices", image: IMAGES.productCardamom },
-  { id: "oud-noir-50", name: "Oud Noir 50ml", detail: "Warm, woody fragrance", price: 1999, category: "perfumes", badge: "Imported", image: IMAGES.productOud },
+  { id: "black-pepper-100", name: "Whole black pepper 100g", detail: "Bold and aromatic", price: 299, category: "spices", badge: "Most Selling", isMostSelling: true, image: IMAGES.productPepper },
+  { id: "cardamom-50", name: "Green cardamom 50g", detail: "Fragrant green pods", price: 449, oldPrice: 520, category: "spices", badge: "Bestseller", isBestSeller: true, image: IMAGES.productCardamom },
+  { id: "oud-noir-50", name: "Oud Noir 50ml", detail: "Warm, woody fragrance", price: 1999, category: "perfumes", badge: "Bestseller", isBestSeller: true, isMostSelling: true, image: IMAGES.productOud },
   { id: "rose-mist-50", name: "Rose Mist 50ml", detail: "Light and floral", price: 1799, oldPrice: 2199, category: "perfumes", image: IMAGES.productRose },
   { id: "cotton-sheet-set", name: "Cotton bedsheet set", detail: "King size, soft cotton", price: 2499, category: "mattresses", image: IMAGES.productSheet },
-  { id: "foam-mattress-queen", name: "Memory foam mattress", detail: "Queen size, medium firm", price: 14999, oldPrice: 17999, category: "mattresses", badge: "Imported", image: IMAGES.productMattress },
+  { id: "foam-mattress-queen", name: "Memory foam mattress", detail: "Queen size, medium firm", price: 14999, oldPrice: 17999, category: "mattresses", badge: "Bestseller", isBestSeller: true, isMostSelling: true, image: IMAGES.productMattress },
 ];
+
+const SECTION_TO_HOME_CAT: Record<string, ProductCategory> = {
+  coffee: "coffee",
+  "coffee-skin": "skincare",
+  spices: "spices",
+  fragrances: "perfumes",
+  importedbed: "mattresses",
+  groceries: "groceries",
+  dates: "dates",
+};
 
 type ProductCardProps = {
   product: Product;
@@ -364,35 +388,61 @@ type ProductCardProps = {
 };
 
 function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const [justAdded, setJustAdded] = useState(false);
+  const { isWished } = useWishlist();
+  const wished = isWished(product.id);
+  const outOfStock = product.stock !== undefined && product.stock <= 0;
 
   const discountPercent = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
     : 0;
 
-  // Show "Added" for 1.5 seconds after clicking
-  useEffect(() => {
-    if (!justAdded) return;
-    const timer = setTimeout(() => setJustAdded(false), 1500);
-    return () => clearTimeout(timer);
-  }, [justAdded]);
-
-  const handleAddClick = () => {
-    onAddToCart(product);
-    setJustAdded(true);
-  };
+  const displayBadge =
+    product.badge ||
+    (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : undefined);
 
   return (
     <article className="w-[150px] shrink-0 snap-start rounded-xl border border-black/10 bg-white p-2 sm:w-[184px]">
       <div className="relative aspect-square overflow-hidden rounded-lg" style={{ background: CREAM }}>
-        <Photo src={product.image} alt={product.name} className="h-full w-full object-cover" />
+        <Photo
+          src={product.image}
+          alt={product.name}
+          className={`h-full w-full object-cover ${outOfStock ? "opacity-40" : ""}`}
+        />
 
-        {(discountPercent > 0 || product.badge) && (
+        {(displayBadge || discountPercent > 0) && !outOfStock && (
           <span
             className="absolute left-0 top-2 rounded-r-md px-2 py-0.5 text-[10px] font-semibold text-white"
             style={{ background: BROWN }}
           >
-            {discountPercent > 0 ? `${discountPercent}% off` : product.badge}
+            {displayBadge ? displayBadge : `${discountPercent}% off`}
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={() =>
+            toggleWishlistItem({
+              productId: product.id,
+              name: product.name,
+              size: product.size,
+              price: product.price,
+              mrp: product.oldPrice,
+              image: product.image,
+              category: product.category,
+              badge: displayBadge,
+              inStock: !outOfStock,
+            })
+          }
+          aria-pressed={wished}
+          aria-label={wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+          className="absolute right-1.5 top-1.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[#B42318] shadow-xs transition hover:bg-white"
+        >
+          <Heart className="h-4 w-4" strokeWidth={1.6} fill={wished ? "#B42318" : "none"} />
+        </button>
+
+        {outOfStock && (
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-neutral-700/85 px-2 py-0.5 text-[10px] font-semibold text-white">
+            Out of Stock
           </span>
         )}
       </div>
@@ -408,19 +458,23 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleAddClick}
-          aria-live="polite"
-          className="h-8 min-w-[58px] rounded-lg border px-3 text-xs font-bold transition active:scale-95"
-          style={{
-            borderColor: BROWN,
-            background: justAdded ? BROWN : CREAM,
-            color: justAdded ? "#fff" : BROWN,
-          }}
-        >
-          {justAdded ? "Added" : "Add"}
-        </button>
+        {outOfStock ? (
+          <button
+            type="button"
+            disabled
+            className="h-8 min-w-[58px] rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold text-neutral-400 opacity-60"
+          >
+            Sold
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onAddToCart(product)}
+            className="h-8 min-w-[58px] cursor-pointer rounded-lg border border-[#7A5A3C] bg-[#F5EDE0] px-3 text-xs font-bold text-[#7A5A3C] transition hover:bg-[#7A5A3C] hover:text-white active:scale-95"
+          >
+            Add
+          </button>
+        )}
       </div>
     </article>
   );
@@ -429,13 +483,14 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
 type RailProps = {
   title: string;
   href: string;
-  categories: ProductCategory[];
+  items: Product[];
   onAddToCart: (product: Product) => void;
 };
 
-function Rail({ title, href, categories: shownCategories, onAddToCart }: RailProps) {
+function Rail({ title, href, items, onAddToCart }: RailProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const railProducts = products.filter((p) => shownCategories.includes(p.category));
+
+  if (items.length === 0) return null;
 
   // direction: -1 = left, 1 = right
   const scrollRail = (direction: -1 | 1) => {
@@ -449,7 +504,7 @@ function Rail({ title, href, categories: shownCategories, onAddToCart }: RailPro
         <h2 className="text-lg font-bold tracking-tight sm:text-2xl">{title}</h2>
 
         <div className="flex items-center gap-2">
-          <Link href={href} className="text-sm font-semibold" style={{ color: BROWN }}>
+          <Link href={href} className="text-sm font-semibold text-[#7A5A3C] hover:underline">
             See all
           </Link>
 
@@ -458,7 +513,7 @@ function Rail({ title, href, categories: shownCategories, onAddToCart }: RailPro
             type="button"
             onClick={() => scrollRail(-1)}
             aria-label={`Scroll ${title} left`}
-            className="hidden h-8 w-8 items-center justify-center rounded-full border border-black/15 bg-white transition hover:bg-neutral-100 md:flex"
+            className="hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-black/15 bg-white text-[#1F1A17] transition hover:border-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white md:flex"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -466,7 +521,7 @@ function Rail({ title, href, categories: shownCategories, onAddToCart }: RailPro
             type="button"
             onClick={() => scrollRail(1)}
             aria-label={`Scroll ${title} right`}
-            className="hidden h-8 w-8 items-center justify-center rounded-full border border-black/15 bg-white transition hover:bg-neutral-100 md:flex"
+            className="hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-black/15 bg-white text-[#1F1A17] transition hover:border-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white md:flex"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -477,8 +532,12 @@ function Rail({ title, href, categories: shownCategories, onAddToCart }: RailPro
         ref={scrollRef}
         className={`-mx-4 flex snap-x gap-3 overflow-x-auto scroll-smooth px-4 pb-1 sm:mx-0 sm:px-0 ${hideScrollbar}`}
       >
-        {railProducts.map((product) => (
-          <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+        {items.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onAddToCart={onAddToCart}
+          />
         ))}
       </div>
     </section>
@@ -506,8 +565,7 @@ function BulkBanner() {
 
         <Link
           href="/bulk-order"
-          className="inline-flex h-11 shrink-0 items-center rounded-lg bg-white px-6 text-sm font-semibold transition active:scale-95"
-          style={{ color: INK }}
+          className="inline-flex h-11 shrink-0 items-center rounded-lg bg-white px-6 text-sm font-semibold text-[#1F1A17] transition hover:bg-[#7A5A3C] hover:text-white active:scale-95"
         >
           Get a bulk quote
         </Link>
@@ -545,11 +603,85 @@ function Promises() {
 // HOME PAGE (the navbar lives in its own file, rendered from layout.tsx)
 // ---------------------------------------------------------------------------
 export default function HomePage() {
-  // TODO: connect this to your own cart (context, store or API).
-  // It is called with the product whenever "Add" is clicked.
+  const router = useRouter();
+  const [catalog, setCatalog] = useState<Product[]>(DEFAULT_HOME_PRODUCTS);
+  const { items: cartItems } = useCart();
+
+  useEffect(() => {
+    const mapToHomeProducts = (list: StoreProduct[]): Product[] =>
+      list
+        .filter((p) => p.featuredOnHome !== false)
+        .map((p) => {
+          const sizes = p.sizes && p.sizes.length ? p.sizes : [{ label: "", price: 0, stock: 0 }];
+          const firstAvailable = sizes.find((s) => s.stock > 0) ?? sizes[0];
+          const totalStock = sizes.reduce((sum, s) => sum + (Number(s.stock) || 0), 0);
+          return {
+            id: p.id,
+            name: p.name,
+            size: firstAvailable.label || undefined,
+            detail: p.detail || p.description || "",
+            price: firstAvailable.price,
+            oldPrice: firstAvailable.mrp,
+            badge: p.badge || undefined,
+            image: p.image || "",
+            category: SECTION_TO_HOME_CAT[p.section] ?? "coffee",
+            stock: totalStock,
+            isBestSeller: Boolean(p.isBestSeller),
+            isMostSelling: Boolean(p.isMostSelling),
+          };
+        });
+
+    const refresh = () => {
+      const local = readLocalCatalog();
+      if (local.length > 0) {
+        const mappedLocal = mapToHomeProducts(local);
+        if (mappedLocal.length > 0) setCatalog(mappedLocal);
+      }
+
+      fetch("/api/products", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (!data?.products?.length) return;
+          const mapped = mapToHomeProducts(data.products);
+          if (mapped.length > 0) setCatalog(mapped);
+        })
+        .catch(() => { });
+    };
+
+    refresh();
+    window.addEventListener("storage", refresh);
+    window.addEventListener("ibrew-products-updated", refresh);
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("ibrew-products-updated", refresh);
+    };
+  }, []);
+
   const handleAddToCart = (product: Product) => {
-    console.log("Add to cart:", product.id);
+    addToCart(
+      {
+        productId: product.id,
+        name: product.name,
+        size: product.size,
+        price: product.price,
+        mrp: product.oldPrice,
+        image: product.image,
+        category: product.category,
+        subtitle: product.detail,
+      },
+      1
+    );
+    router.push("/cart");
   };
+
+  const bestAndMostSelling = catalog.filter(
+    (p) =>
+      p.isMostSelling ||
+      p.isBestSeller ||
+      p.badge === "Most Selling" ||
+      p.badge === "Bestseller" ||
+      p.badge === "Top seller"
+  );
 
   return (
     <main className={`${ubuntu.className} min-h-screen overflow-x-hidden bg-white`} style={{ color: INK }}>
@@ -557,10 +689,42 @@ export default function HomePage() {
       <Categories />
       <PromoCards />
 
-      <Rail title="Coffee and skincare" href="/coffee" categories={["coffee", "skincare"]} onAddToCart={handleAddToCart} />
-      <Rail title="Spices" href="/spices" categories={["spices"]} onAddToCart={handleAddToCart} />
-      <Rail title="Fragrance" href="/perfumeoil" categories={["perfumes"]} onAddToCart={handleAddToCart} />
-      <Rail title="Mattresses" href="/importedbed" categories={["mattresses"]} onAddToCart={handleAddToCart} />
+      <Rail
+        title="Most selling & Bestsellers"
+        href="/coffee"
+        items={bestAndMostSelling}
+        onAddToCart={handleAddToCart}
+      />
+      <Rail
+        title="Coffee and skincare"
+        href="/coffee"
+        items={catalog.filter((p) => p.category === "coffee" || p.category === "skincare")}
+        onAddToCart={handleAddToCart}
+      />
+      <Rail
+        title="Spices"
+        href="/spices"
+        items={catalog.filter((p) => p.category === "spices")}
+        onAddToCart={handleAddToCart}
+      />
+      <Rail
+        title="Fragrance"
+        href="/fragrances"
+        items={catalog.filter((p) => p.category === "perfumes")}
+        onAddToCart={handleAddToCart}
+      />
+      <Rail
+        title="Mattresses"
+        href="/importedbed"
+        items={catalog.filter((p) => p.category === "mattresses")}
+        onAddToCart={handleAddToCart}
+      />
+      <Rail
+        title="Dates & Groceries"
+        href="/dates"
+        items={catalog.filter((p) => p.category === "dates" || p.category === "groceries")}
+        onAddToCart={handleAddToCart}
+      />
 
       <BulkBanner />
       <Promises />

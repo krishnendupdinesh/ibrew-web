@@ -78,7 +78,16 @@ export default function RegisterPage() {
         setLoading(false);
         return;
       }
-      router.push(data.user.role === "admin" ? "/admin" : "/");
+      try {
+        window.sessionStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+        window.localStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ibrew-auth-changed"));
+      } catch {
+        // ignore storage errors
+      }
+      const nextParam = new URLSearchParams(window.location.search).get("next");
+      const safeNext = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null;
+      router.push(data.user.role === "admin" ? "/admin" : safeNext ?? "/");
       router.refresh();
     } catch {
       setServerError("Could not reach the server. Check your connection and try again.");
@@ -226,8 +235,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold uppercase tracking-wider text-white transition active:scale-[0.98] disabled:opacity-60"
-              style={{ background: BROWN }}
+              className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-[0.98] disabled:opacity-60"
             >
               <UserPlus aria-hidden className="h-4 w-4" />
               {loading ? "Creating account..." : "Create account"}
