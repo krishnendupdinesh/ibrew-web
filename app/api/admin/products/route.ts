@@ -51,14 +51,16 @@ export async function GET(req: NextRequest) {
       const data = await res.json();
       if (Array.isArray(data?.products)) {
         const backendList: StoreProduct[] = data.products;
-        const seen = new Set(backendList.map((p) => (p.slug || p.id || p.name).toLowerCase()));
-        const extraFromLocal = localCatalog.filter(
-          (p) => !seen.has((p.slug || p.id || p.name).toLowerCase())
-        );
-        const merged = [...extraFromLocal, ...backendList];
-        writeServerCatalog(merged);
-        return NextResponse.json({ products: merged });
+        writeServerCatalog(backendList);
+        return NextResponse.json({ products: backendList });
       }
+    }
+    if (res.status === 401 || res.status === 403) {
+      const errData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errData.error || "Admins only." },
+        { status: res.status }
+      );
     }
   } catch {
     // Fallback to local server file
@@ -144,7 +146,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    // Try saving to Express + MongoDB backend if running
+    // Try saving to Express + MySQL backend if running
     try {
       const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products`, {
         method: "POST",
@@ -154,6 +156,13 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify(body),
       });
+      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400) {
+        const errData = await backendRes.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errData.error || "Unauthorized or invalid product data." },
+          { status: backendRes.status }
+        );
+      }
       if (backendRes.ok) {
         const backendData = await backendRes.json();
         if (backendData?.product) {

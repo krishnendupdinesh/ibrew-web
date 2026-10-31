@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local runtime caches / credentials
+!.env.example
+.admin-credentials.json
+/data/products.json

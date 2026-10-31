@@ -68,7 +68,10 @@ export async function POST(request: Request) {
     // Sync to Express backend if running
     fetch(`${BACKEND_URL}/api/auth/reset-password`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        cookie: request.headers.get("cookie") || "",
+      },
       body: JSON.stringify({
         email: currentCreds.email,
         currentPassword: currentCreds.passwordPlain,

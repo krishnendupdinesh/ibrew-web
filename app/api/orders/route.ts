@@ -75,18 +75,34 @@ export async function POST(request: Request) {
       deliveredAt: null,
     };
 
-    // 1. Save immediately in server memory
-    addServerOrder(newOrder);
+    // 1. Try saving in Express + MySQL backend first (validates & deducts stock transactionally)
+    try {
+      const upstream = await fetch(`${BACKEND_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: request.headers.get("cookie") || "",
+        },
+        body: JSON.stringify(newOrder),
+        signal: AbortSignal.timeout(4000),
+      });
 
-    // 2. Sync with Express backend asynchronously
-    fetch(`${BACKEND_URL}/api/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newOrder),
-      signal: AbortSignal.timeout(2500),
-    }).catch(() => {});
+      const upstreamData = await upstream.json().catch(() => ({}));
+      if (!upstream.ok) {
+        return NextResponse.json(
+          { error: upstreamData.error || "Could not place order." },
+          { status: upstream.status }
+        );
+      }
 
-    return NextResponse.json({ order: newOrder }, { status: 201 });
+      const savedOrder: StoreOrder = upstreamData.order || newOrder;
+      addServerOrder(savedOrder);
+      return NextResponse.json({ order: savedOrder }, { status: 201 });
+    } catch {
+      // Fallback if Express backend is offline: save in server memory
+      addServerOrder(newOrder);
+      return NextResponse.json({ order: newOrder }, { status: 201 });
+    }
   } catch {
     return NextResponse.json({ error: "Could not place order." }, { status: 400 });
   }

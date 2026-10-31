@@ -23,6 +23,13 @@ export async function PATCH(
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(2000),
       });
+      if (res.status === 401 || res.status === 403 || res.status === 400 || res.status === 404) {
+        const errData = await res.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errData.error || "Could not update order." },
+          { status: res.status }
+        );
+      }
       if (res.ok) {
         const data = await res.json();
         if (data.order) {
@@ -49,14 +56,24 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { cookie: request.headers.get("cookie") || "" },
+      signal: AbortSignal.timeout(2000),
+    });
+    if (res.status === 401 || res.status === 403 || res.status === 404) {
+      const errData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errData.error || "Could not delete order." },
+        { status: res.status }
+      );
+    }
+  } catch {
+    // ignore backend error if offline
+  }
+
   deleteServerOrder(id);
-
-  fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(id)}`, {
-    method: "DELETE",
-    headers: { cookie: request.headers.get("cookie") || "" },
-    signal: AbortSignal.timeout(2000),
-  }).catch(() => {});
-
   return NextResponse.json({ message: "Order deleted." });
 }
 

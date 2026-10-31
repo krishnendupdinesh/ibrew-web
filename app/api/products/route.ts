@@ -26,13 +26,11 @@ export async function GET(req: NextRequest) {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data?.products)) {
-        // Merge any items in localCatalog that aren't in backend yet so newly added items never disappear
         const backendList: StoreProduct[] = data.products;
-        const seen = new Set(backendList.map((p) => (p.slug || p.id || p.name).toLowerCase()));
-        const extraFromLocal = filterCatalogBySection(localCatalog, section).filter(
-          (p) => !seen.has((p.slug || p.id || p.name).toLowerCase())
-        );
-        return NextResponse.json({ products: [...extraFromLocal, ...backendList] });
+        if (!section) {
+          writeServerCatalog(backendList);
+        }
+        return NextResponse.json({ products: backendList });
       }
     }
   } catch {

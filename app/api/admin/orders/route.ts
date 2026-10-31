@@ -14,6 +14,13 @@ export async function GET(request: Request) {
       signal: AbortSignal.timeout(1800),
     });
 
+    if (res.status === 401 || res.status === 403) {
+      const errData = await res.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errData.error || "Admins only." },
+        { status: res.status }
+      );
+    }
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.orders)) {

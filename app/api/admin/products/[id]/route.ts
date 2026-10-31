@@ -85,6 +85,13 @@ export async function PUT(
         },
         body: JSON.stringify(body),
       });
+      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400 || backendRes.status === 404) {
+        const errData = await backendRes.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errData.error || "Could not update product." },
+          { status: backendRes.status }
+        );
+      }
       if (backendRes.ok) {
         const backendData = await backendRes.json();
         if (backendData?.product) updatedProduct = backendData.product;
@@ -115,6 +122,40 @@ export async function PATCH(
     const body = await req.json();
     const catalog = readServerCatalog();
     const idx = catalog.findIndex((p) => p.id === id || p.slug === id);
+
+    // 1. Try Express + MySQL backend first
+    try {
+      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: req.headers.get("cookie") || "",
+        },
+        body: JSON.stringify(body),
+      });
+      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400 || backendRes.status === 404) {
+        const errData = await backendRes.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errData.error || "Could not update product." },
+          { status: backendRes.status }
+        );
+      }
+      if (backendRes.ok) {
+        const backendData = await backendRes.json();
+        if (backendData?.product) {
+          if (idx >= 0) {
+            catalog[idx] = backendData.product;
+            writeServerCatalog(catalog);
+          } else {
+            writeServerCatalog([backendData.product, ...catalog]);
+          }
+          return NextResponse.json({ product: backendData.product });
+        }
+      }
+    } catch {
+      // fallback to local server catalog below
+    }
+
     if (idx < 0) {
       return NextResponse.json({ error: "Product not found." }, { status: 404 });
     }
@@ -162,27 +203,6 @@ export async function PATCH(
       if (sizes.length > 0) existing.sizes = sizes;
     }
 
-    try {
-      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: req.headers.get("cookie") || "",
-        },
-        body: JSON.stringify(body),
-      });
-      if (backendRes.ok) {
-        const backendData = await backendRes.json();
-        if (backendData?.product) {
-          catalog[idx] = backendData.product;
-          writeServerCatalog(catalog);
-          return NextResponse.json({ product: backendData.product });
-        }
-      }
-    } catch {
-      // fallback to local server catalog
-    }
-
     catalog[idx] = existing;
     writeServerCatalog(catalog);
     return NextResponse.json({ product: existing });
@@ -198,12 +218,19 @@ export async function DELETE(
   try {
     const { id } = await context.params;
     try {
-      await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
+      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
         method: "DELETE",
         headers: {
           cookie: req.headers.get("cookie") || "",
         },
       });
+      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 404) {
+        const errData = await backendRes.json().catch(() => ({}));
+        return NextResponse.json(
+          { error: errData.error || "Could not delete product." },
+          { status: backendRes.status }
+        );
+      }
     } catch {
       // ignore backend error
     }
