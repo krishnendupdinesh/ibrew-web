@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { getServerOrders, setServerOrders } from "../../../../lib/serverOrderStore";
 import type { StoreOrder } from "../../../../lib/orderStore";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
 export async function GET(request: Request) {
   const localMem = getServerOrders();
+  const backendUrl = getBackendUrl();
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/admin/orders`, {
+    const res = await fetch(`${backendUrl}/api/admin/orders`, {
       headers: { cookie: request.headers.get("cookie") || "" },
       cache: "no-store",
       signal: AbortSignal.timeout(1800),

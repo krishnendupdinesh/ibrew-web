@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Ubuntu } from "next/font/google";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // STYLE TOKENS (same as the other pages)
@@ -87,8 +87,8 @@ export default function RegisterPage() {
       }
       const nextParam = new URLSearchParams(window.location.search).get("next");
       const safeNext = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null;
-      router.push(data.user.role === "admin" ? "/admin" : safeNext ?? "/");
-      router.refresh();
+      router.replace(data.user.role === "admin" ? "/admin" : safeNext ?? "/");
+
     } catch {
       setServerError("Could not reach the server. Check your connection and try again.");
       setLoading(false);
@@ -235,10 +235,20 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-[0.98] disabled:opacity-60"
+              className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#1F1A17] active:scale-[0.98] disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-75"
             >
-              <UserPlus aria-hidden className="h-4 w-4" />
-              {loading ? "Creating account..." : "Create account"}
+              {loading ? (
+                <>
+                  <Loader2 aria-hidden className="h-4 w-4 animate-spin text-white" />
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <UserPlus aria-hidden className="h-4 w-4" />
+                  <span>Create account</span>
+                </>
+              )}
+
             </button>
           </form>
         </div>

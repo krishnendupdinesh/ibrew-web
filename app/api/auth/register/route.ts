@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import {
-  registerLocalCustomer,
   signJwtHs256,
   validateCustomerRegistrationNotAdmin,
   type AuthUser,
 } from "../../../../lib/serverAuth";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
 function attachTokenCookie(res: NextResponse, user: AuthUser) {
   const token = signJwtHs256(user);
@@ -47,20 +45,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: reservedError }, { status: 403 });
     }
 
-    // Try Express backend first, fallback to local customer store
+    // Save customer permanently to MySQL database
+    const backendUrl = getBackendUrl();
     try {
-      const upstream = await fetch(`${BACKEND_URL}/api/auth/register`, {
+      const upstream = await fetch(`${backendUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, password }),
-        signal: AbortSignal.timeout(4000),
+        signal: AbortSignal.timeout(5000),
       });
 
-      const data = await upstream.json();
+      const data = await upstream.json().catch(() => ({}));
       if (!upstream.ok) {
         return NextResponse.json(
           { error: data.error || "Could not create your account." },
-          { status: upstream.status }
+          { status: upstream.status || 400 }
         );
       }
 
@@ -71,22 +70,17 @@ export async function POST(request: Request) {
         phone: data.user.phone || "",
         role: "customer",
       };
-      registerLocalCustomer(name, email, phone, password);
+
       const res = NextResponse.json({ user }, { status: 201 });
       return attachTokenCookie(res, user);
-    } catch {
-      const localResult = registerLocalCustomer(name, email, phone, password);
-      if (localResult.error || !localResult.user) {
-        return NextResponse.json(
-          { error: localResult.error || "Could not create your account." },
-          { status: 409 }
-        );
-      }
-      const res = NextResponse.json({ user: localResult.user }, { status: 201 });
-      return attachTokenCookie(res, localResult.user);
+    } catch (err) {
+      console.error("Backend register fetch error:", err);
+      return NextResponse.json(
+        { error: "Could not reach database server. Please try again." },
+        { status: 503 }
+      );
     }
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 }
-

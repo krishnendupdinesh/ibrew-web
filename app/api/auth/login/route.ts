@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import {
   checkDefaultAdmin,
-  checkLocalCustomer,
   signJwtHs256,
   type AuthUser,
 } from "../../../../lib/serverAuth";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
 function attachTokenCookie(res: NextResponse, user: AuthUser) {
   const token = signJwtHs256(user);
@@ -35,34 +33,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Instant path: Permanent Admin Username or Email + Permanent Password (< 1ms)
+    // 1. Admin shortcut check for configured admin credentials
     const adminUser = checkDefaultAdmin(identifier, password);
     if (adminUser) {
       const res = NextResponse.json({ user: adminUser });
       return attachTokenCookie(res, adminUser);
     }
 
-    // 2. Check local customer store
-    const localCust = checkLocalCustomer(identifier, password);
-    if (localCust) {
-      const res = NextResponse.json({ user: localCust });
-      return attachTokenCookie(res, localCust);
-    }
-
-    // 3. Proxy to Express backend on 127.0.0.1:5001
+    // 2. Authenticate customer directly against MySQL backend
+    const backendUrl = getBackendUrl();
     try {
-      const upstream = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      const upstream = await fetch(`${backendUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: identifier, password }),
-        signal: AbortSignal.timeout(4000),
+        signal: AbortSignal.timeout(5000),
       });
 
-      const data = await upstream.json();
+      const data = await upstream.json().catch(() => ({}));
       if (!upstream.ok) {
         return NextResponse.json(
-          { error: data.error || "Wrong username/email or password." },
-          { status: upstream.status }
+          { error: data.error || "Invalid email or password." },
+          { status: upstream.status || 401 }
         );
       }
 
@@ -76,9 +68,10 @@ export async function POST(request: Request) {
 
       const res = NextResponse.json({ user });
       return attachTokenCookie(res, user);
-    } catch {
+    } catch (err) {
+      console.error("Backend login fetch error:", err);
       return NextResponse.json(
-        { error: "Wrong username/email or password." },
+        { error: "Invalid email or password." },
         { status: 401 }
       );
     }

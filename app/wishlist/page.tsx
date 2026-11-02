@@ -11,8 +11,9 @@ import {
   ShoppingCart,
   Trash2,
 } from "lucide-react";
-import { useWishlist, type WishlistItem } from "../../lib/wishlistStore";
+import { useWishlist, writeWishlist, type WishlistItem } from "../../lib/wishlistStore";
 import { addToCart } from "../../lib/cartStore";
+import { truncateWords } from "../../lib/productStore";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -45,26 +46,33 @@ export default function WishlistPage() {
       },
       1
     );
+    remove(item.productId);
     router.push("/cart");
   };
 
   const handleMoveAllToCart = () => {
-    items.forEach((item) => {
-      if (item.inStock !== false) {
-        addToCart(
-          {
-            productId: item.productId,
-            name: item.name,
-            size: item.size,
-            price: item.price,
-            mrp: item.mrp,
-            image: item.image,
-            category: item.category,
-          },
-          1
-        );
-      }
+    const inStockItems = items.filter((item) => item.inStock !== false);
+    if (inStockItems.length === 0) return;
+
+    inStockItems.forEach((item) => {
+      addToCart(
+        {
+          productId: item.productId,
+          name: item.name,
+          size: item.size,
+          price: item.price,
+          mrp: item.mrp,
+          image: item.image,
+          category: item.category,
+        },
+        1
+      );
     });
+
+    const inStockIds = new Set(inStockItems.map((i) => i.productId));
+    const remaining = items.filter((i) => !inStockIds.has(i.productId));
+    writeWishlist(remaining);
+
     router.push("/cart");
   };
 
@@ -185,20 +193,27 @@ export default function WishlistPage() {
               return (
                 <article
                   key={item.productId}
-                  className="flex min-w-0 flex-col rounded-xl border bg-white p-3.5 shadow-2xs transition hover:border-[#7A5A3C]/50"
+                  className="group flex min-w-0 flex-col rounded-xl border bg-white p-3.5 shadow-2xs transition hover:border-[#7A5A3C]/50 hover:shadow-md"
                   style={{ borderColor: SAND }}
                 >
-                  <div className="relative aspect-square overflow-hidden rounded-lg bg-[#FAF7F2]">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
                     {item.image ? (
                       <img
                         src={item.image}
                         alt={item.name}
-                        className={`h-full w-full object-contain p-2 ${outOfStock ? "opacity-40" : ""}`}
+                        className={`absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[#7A5A3C]/40">
-                        <ShoppingBag className="h-10 w-10" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-3 text-center bg-[#E9DCC6]/40 text-[#7A5A3C]">
+                        <ShoppingBag className="h-8 w-8 text-[#7A5A3C]/40" />
+                        <span className="text-xs font-medium">Photo coming soon</span>
                       </div>
+                    )}
+
+                    {outOfStock && (
+                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
+                        Out of Stock
+                      </span>
                     )}
 
                     {(item.badge || discount > 0) && !outOfStock && (
@@ -231,6 +246,15 @@ export default function WishlistPage() {
                     {item.name}
                   </h3>
 
+                  {item.description && (
+                    <p
+                      className="mt-1 line-clamp-2 min-h-[2.2em] text-xs leading-4 text-neutral-500"
+                      title={item.description}
+                    >
+                      {truncateWords(item.description, 14)}
+                    </p>
+                  )}
+
                   {item.size && (
                     <p className="mt-1 text-xs text-[#1F1A17]/65">Size: {item.size}</p>
                   )}
@@ -251,9 +275,9 @@ export default function WishlistPage() {
                       <button
                         type="button"
                         disabled
-                        className="h-9 min-w-[72px] rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase text-neutral-400"
+                        className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
                       >
-                        Sold Out
+                        Out of Stock
                       </button>
                     ) : (
                       <button

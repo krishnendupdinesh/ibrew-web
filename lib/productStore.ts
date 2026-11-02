@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+export function truncateWords(text?: string, maxWords = 14): string {
+  if (!text) return "";
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text.trim();
+  return words.slice(0, maxWords).join(" ") + "...";
+}
+
 export type ProductSection =
   | "coffee"
   | "coffee-skin"
@@ -41,6 +48,107 @@ export type StoreProduct = {
 const STORAGE_KEY = "ibrew_catalog_v1";
 const DELETED_KEY = "ibrew_deleted_ids_v1";
 const UPDATE_EVENT = "ibrew-products-updated";
+const SYNC_CHANNEL_NAME = "ibrew-catalog-sync";
+const SYNC_STORAGE_KEY = "ibrew_catalog_sync_timestamp";
+
+/**
+ * Broadcasts catalog changes across tabs, windows, and components.
+ */
+export function broadcastCatalogChange(): void {
+  if (typeof window === "undefined") return;
+
+  // 1. Cross-tab BroadcastChannel
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      const bc = new BroadcastChannel(SYNC_CHANNEL_NAME);
+      bc.postMessage({ type: "CATALOG_UPDATED", timestamp: Date.now() });
+      bc.close();
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Cross-window / cross-tab storage event
+  try {
+    window.localStorage.setItem(SYNC_STORAGE_KEY, String(Date.now()));
+  } catch {
+    // ignore
+  }
+
+  // 3. Same-window custom event
+  try {
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT, { detail: { timestamp: Date.now() } }));
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Subscribes to catalog updates via BroadcastChannel, localStorage storage events,
+ * window focus, document visibility changes, and a lightweight 15s polling fallback.
+ */
+export function subscribeCatalogChanges(onUpdate: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+
+  let bc: BroadcastChannel | null = null;
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      bc = new BroadcastChannel(SYNC_CHANNEL_NAME);
+      bc.onmessage = () => {
+        onUpdate();
+      };
+    }
+  } catch {
+    // ignore
+  }
+
+  const handleStorage = (e: StorageEvent) => {
+    if (e.key === SYNC_STORAGE_KEY || e.key === STORAGE_KEY || e.key === null) {
+      onUpdate();
+    }
+  };
+
+  const handleCustom = () => {
+    onUpdate();
+  };
+
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") {
+      onUpdate();
+    }
+  };
+
+  const handleFocus = () => {
+    onUpdate();
+  };
+
+  // 15-second background sync interval when tab/window is visible
+  const intervalId = window.setInterval(() => {
+    if (document.visibilityState === "visible") {
+      onUpdate();
+    }
+  }, 15000);
+
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(UPDATE_EVENT, handleCustom);
+  window.addEventListener("focus", handleFocus);
+  document.addEventListener("visibilitychange", handleVisibility);
+
+  return () => {
+    if (bc) {
+      try {
+        bc.close();
+      } catch {
+        // ignore
+      }
+    }
+    window.clearInterval(intervalId);
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(UPDATE_EVENT, handleCustom);
+    window.removeEventListener("focus", handleFocus);
+    document.removeEventListener("visibilitychange", handleVisibility);
+  };
+}
 
 export function readLocalCatalog(): StoreProduct[] {
   if (typeof window === "undefined") return [];
@@ -48,7 +156,14 @@ export function readLocalCatalog(): StoreProduct[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
+    if (deleted.size === 0) return parsed;
+    return parsed.filter((p) => {
+      const pid = String(p.id).toLowerCase().trim();
+      const pslug = p.slug ? String(p.slug).toLowerCase().trim() : "";
+      return !deleted.has(pid) && (!pslug || !deleted.has(pslug));
+    });
   } catch {
     return [];
   }
@@ -60,7 +175,7 @@ export function readDeletedIds(): string[] {
     const raw = window.localStorage.getItem(DELETED_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.map((s) => String(s).trim()).filter(Boolean) : [];
   } catch {
     return [];
   }
@@ -70,7 +185,7 @@ export function writeLocalCatalog(products: StoreProduct[]) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-    window.dispatchEvent(new Event(UPDATE_EVENT));
+    broadcastCatalogChange();
   } catch {
     // ignore storage quota errors
   }
@@ -89,132 +204,112 @@ export function upsertLocalProduct(product: StoreProduct) {
   return next;
 }
 
-export function removeLocalProduct(id: string) {
+export function removeLocalProduct(id: string, slug?: string) {
   if (typeof window === "undefined") return;
   try {
     const deleted = new Set(readDeletedIds());
-    deleted.add(id);
+    if (id) deleted.add(String(id).trim());
+    if (slug) deleted.add(String(slug).trim());
     window.localStorage.setItem(DELETED_KEY, JSON.stringify(Array.from(deleted)));
   } catch {
     // ignore
   }
-  const list = readLocalCatalog().filter((p) => p.id !== id && p.slug !== id);
+  const targetId = String(id).toLowerCase().trim();
+  const targetSlug = slug ? String(slug).toLowerCase().trim() : targetId;
+  const list = readLocalCatalog().filter((p) => {
+    const pid = String(p.id).toLowerCase().trim();
+    const pslug = p.slug ? String(p.slug).toLowerCase().trim() : "";
+    return pid !== targetId && pid !== targetSlug && pslug !== targetId && pslug !== targetSlug;
+  });
   writeLocalCatalog(list);
+  broadcastCatalogChange();
 }
 
 /**
- * Merges static page defaults, locally saved admin products, and backend API products
- * for a given storefront section (e.g. "coffee", "spices", "dates").
- * Newly added products for that section always appear at the top.
+ * Merges backend MySQL API products with static page defaults.
+ * Backend MySQL products are the single source of truth.
  */
-export function mergeSectionProducts<T extends { id: string; name: string; category: string }>(
+export function mergeSectionProducts<T extends { id: string; name: string; category: string; slug?: string }>(
   section: ProductSection,
   staticDefaults: T[],
   apiProducts?: StoreProduct[]
 ): T[] {
-  const deleted = new Set(readDeletedIds());
-  const localForSection = readLocalCatalog().filter(
-    (p) => p.section === section && !deleted.has(p.id)
-  );
+  const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
+  const isDeleted = (item: { id?: string; slug?: string }) => {
+    if (item.id && deleted.has(String(item.id).toLowerCase().trim())) return true;
+    if (item.slug && deleted.has(String(item.slug).toLowerCase().trim())) return true;
+    return false;
+  };
 
-  // Build map keyed by normalized id/slug/name so edited default products replace their static version
-  // and brand new products appear first
-  const sourceList: StoreProduct[] = [];
-  const seenKeys = new Set<string>();
-
-  const keyFor = (item: { id?: string; slug?: string; name: string }) =>
-    (item.slug || item.id || item.name).toLowerCase().trim();
-
-  const nameKeyFor = (item: { name: string }) => item.name.toLowerCase().trim();
-  const seenNames = new Set<string>();
-
-  // 1. Local admin changes & additions first
-  for (const item of localForSection) {
-    const k = keyFor(item);
-    const nk = nameKeyFor(item);
-    if (!seenKeys.has(k) && !seenNames.has(nk)) {
-      seenKeys.add(k);
-      seenNames.add(nk);
-      sourceList.push(item);
-    }
-  }
-
-  // 2. Backend API products for this section
+  // 1. Backend API products from MySQL (ground truth)
+  // When the API has returned a list, it is authoritative. Never resurrect deleted items from staticDefaults!
   if (Array.isArray(apiProducts)) {
-    for (const item of apiProducts) {
-      if (item.section && item.section !== section) continue;
-      if (deleted.has(item.id)) continue;
-      const k = keyFor(item);
-      const nk = nameKeyFor(item);
-      if (!seenKeys.has(k) && !seenNames.has(nk)) {
-        seenKeys.add(k);
-        seenNames.add(nk);
-        sourceList.push(item);
-      }
-    }
+    const sectionApiProducts = apiProducts.filter(
+      (p) => (!p.section || p.section === section) && !isDeleted(p)
+    );
+    return sectionApiProducts as unknown as T[];
   }
 
-  // 3. Static defaults on the page (if not already overridden or deleted)
-  for (const def of staticDefaults) {
-    if (deleted.has(def.id)) continue;
-    const k = keyFor(def);
-    const nk = nameKeyFor(def);
-    if (!seenKeys.has(k) && !seenNames.has(nk)) {
-      seenKeys.add(k);
-      seenNames.add(nk);
-      sourceList.push(def as unknown as StoreProduct);
-    }
+  // 2. Fallback when API products haven't loaded yet: local cache, else static defaults
+  const localForSection = readLocalCatalog().filter((p) => p.section === section && !isDeleted(p));
+  if (localForSection.length > 0) {
+    return localForSection as unknown as T[];
   }
 
-  return sourceList as unknown as T[];
+  return staticDefaults.filter((p) => !isDeleted(p));
 }
 
 /**
  * React hook used by each category page (/coffee, /coffee-skin, /spices, /fragrances,
- * /importedbed, /groceries, /dates) to display live products added or updated in Admin.
+ * /importedbed, /groceries, /dates) to display live products added or updated in MySQL backend.
  */
 export function useSectionProducts<T extends { id: string; name: string; category: string }>(
   section: ProductSection,
   staticDefaults: T[]
 ): T[] {
+  // Always initialize with staticDefaults so server SSR HTML matches client hydration HTML identically.
   const [items, setItems] = useState<T[]>(staticDefaults);
 
   useEffect(() => {
     let active = true;
 
-    const refresh = async () => {
-      // Immediately apply any local admin products
-      const initialMerged = mergeSectionProducts(section, staticDefaults);
-      if (active) setItems(initialMerged);
+    // After hydration on client, check if there are cached local items
+    const local = readLocalCatalog().filter((p) => p.section === section);
+    if (local.length > 0) {
+      setItems(local as unknown as T[]);
+    }
 
+    const refresh = async () => {
       try {
-        const res = await fetch(`/api/products?section=${section}`, {
+        const res = await fetch(`/api/products?section=${section}&_t=${Date.now()}`, {
           cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
         });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data?.products) && active) {
             const merged = mergeSectionProducts(section, staticDefaults, data.products);
             setItems(merged);
+            return;
           }
         }
       } catch {
-        // Fallback to local + static defaults already set above
+        // Fallback to existing items
+      }
+      if (active) {
+        setItems(mergeSectionProducts(section, staticDefaults));
       }
     };
 
     refresh();
+    const unsubscribe = subscribeCatalogChanges(refresh);
 
-    const handleStorageOrCustom = () => {
-      refresh();
-    };
-
-    window.addEventListener("storage", handleStorageOrCustom);
-    window.addEventListener(UPDATE_EVENT, handleStorageOrCustom);
     return () => {
       active = false;
-      window.removeEventListener("storage", handleStorageOrCustom);
-      window.removeEventListener(UPDATE_EVENT, handleStorageOrCustom);
+      unsubscribe();
     };
   }, [section, staticDefaults]);
 
@@ -222,60 +317,53 @@ export function useSectionProducts<T extends { id: string; name: string; categor
 }
 
 /**
- * Merges locally saved admin products and backend API products across all sections.
+ * Merges backend API products across all sections.
  */
 export function getAllMergedProducts(apiProducts?: StoreProduct[]): StoreProduct[] {
-  const deleted = new Set(readDeletedIds());
-  const local = readLocalCatalog().filter((p) => !deleted.has(p.id));
-  const seenKeys = new Set<string>();
-  const seenNames = new Set<string>();
-  const result: StoreProduct[] = [];
+  const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
+  const isDeleted = (item: { id?: string; slug?: string }) => {
+    if (item.id && deleted.has(String(item.id).toLowerCase().trim())) return true;
+    if (item.slug && deleted.has(String(item.slug).toLowerCase().trim())) return true;
+    return false;
+  };
 
-  const keyFor = (item: { id?: string; slug?: string; name: string }) =>
-    (item.slug || item.id || item.name).toLowerCase().trim();
-  const nameKeyFor = (item: { name: string }) => item.name.toLowerCase().trim();
-
-  // 1. Local admin items first
-  for (const item of local) {
-    const k = keyFor(item);
-    const nk = nameKeyFor(item);
-    if (!seenKeys.has(k) && !seenNames.has(nk)) {
-      seenKeys.add(k);
-      seenNames.add(nk);
-      result.push(item);
-    }
-  }
-
-  // 2. Backend API products
   if (Array.isArray(apiProducts)) {
-    for (const item of apiProducts) {
-      if (deleted.has(item.id)) continue;
-      const k = keyFor(item);
-      const nk = nameKeyFor(item);
-      if (!seenKeys.has(k) && !seenNames.has(nk)) {
-        seenKeys.add(k);
-        seenNames.add(nk);
-        result.push(item);
-      }
-    }
+    return apiProducts.filter((p) => !isDeleted(p));
   }
-
-  return result;
+  const local = readLocalCatalog().filter((p) => !isDeleted(p));
+  if (local.length > 0) {
+    return local;
+  }
+  return [];
 }
 
 /**
  * React hook to retrieve all storefront products across all 7 categories.
  */
 export function useAllProducts(): { products: StoreProduct[]; loading: boolean } {
-  const [products, setProducts] = useState<StoreProduct[]>(() => getAllMergedProducts());
+  // Initialize with empty array so server SSR and client hydration are identical.
+  const [products, setProducts] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
 
+    // After hydration, apply local cache if available before network returns
+    const local = readLocalCatalog();
+    if (local.length > 0) {
+      setProducts(local);
+      setLoading(false);
+    }
+
     const refresh = async () => {
       try {
-        const res = await fetch("/api/products", { cache: "no-store" });
+        const res = await fetch(`/api/products?_t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
+        });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data?.products) && active) {
@@ -294,17 +382,13 @@ export function useAllProducts(): { products: StoreProduct[]; loading: boolean }
     };
 
     refresh();
+    const unsubscribe = subscribeCatalogChanges(refresh);
 
-    const handleUpdate = () => refresh();
-    window.addEventListener("storage", handleUpdate);
-    window.addEventListener(UPDATE_EVENT, handleUpdate);
     return () => {
       active = false;
-      window.removeEventListener("storage", handleUpdate);
-      window.removeEventListener(UPDATE_EVENT, handleUpdate);
+      unsubscribe();
     };
   }, []);
 
   return { products, loading };
 }
-

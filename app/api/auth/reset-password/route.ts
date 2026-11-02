@@ -7,8 +7,7 @@ import {
   verifyJwtHs256,
   type AuthUser,
 } from "../../../../lib/serverAuth";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
 function attachTokenCookie(res: NextResponse, user: AuthUser) {
   const token = signJwtHs256(user);
@@ -37,7 +36,6 @@ export async function GET() {
       name: creds.name,
       username: creds.username,
       email: creds.email,
-      password: creds.passwordPlain,
     },
   });
 }
@@ -66,7 +64,7 @@ export async function POST(request: Request) {
     const updatedCreds = updateAdminPassword(newPassword);
 
     // Sync to Express backend if running
-    fetch(`${BACKEND_URL}/api/auth/reset-password`, {
+    fetch(`${getBackendUrl()}/api/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -95,7 +93,6 @@ export async function POST(request: Request) {
         name: updatedCreds.name,
         username: updatedCreds.username,
         email: updatedCreds.email,
-        password: updatedCreds.passwordPlain,
       },
       message: "Admin password updated successfully!",
     });

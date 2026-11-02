@@ -213,8 +213,10 @@ export function useCart() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setItems(readCart());
-    setHydrated(true);
+    queueMicrotask(() => {
+      setItems(readCart());
+      setHydrated(true);
+    });
 
     const handleUpdate = () => {
       setItems(readCart());

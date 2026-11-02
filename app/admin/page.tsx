@@ -19,6 +19,7 @@ import {
   Home,
   Image as ImageIcon,
   KeyRound,
+  Loader2,
   LogOut,
   Mail,
   MessageCircle,
@@ -45,6 +46,8 @@ import {
   removeLocalProduct,
   upsertLocalProduct,
   writeLocalCatalog,
+  broadcastCatalogChange,
+  subscribeCatalogChanges,
 } from "../../lib/productStore";
 import {
   type OrderStatus,
@@ -66,6 +69,38 @@ const MUTED = "rgba(31,26,23,0.65)";
 const LINE = "rgba(31,26,23,0.15)";
 const ERROR = "#B42318";
 const SUCCESS = "#1B5E3A";
+
+const COURIER_PRESETS = [
+  "Delhivery",
+  "Blue Dart",
+  "DTDC",
+  "India Post",
+  "FedEx",
+  "Shadowfax",
+  "Ekart",
+  "Xpressbees",
+];
+
+function getCourierTrackingUrl(courierName: string, trackingNumber: string): string {
+  const c = courierName.trim().toLowerCase();
+  const t = trackingNumber.trim();
+  if (!t) return "";
+
+  if (c.includes("delhivery")) return `https://www.delhivery.com/track/package/${encodeURIComponent(t)}`;
+  if (c.includes("bluedart") || c.includes("blue dart"))
+    return `https://www.bluedart.com/tracking?trackNumber=${encodeURIComponent(t)}`;
+  if (c.includes("dtdc"))
+    return `https://www.dtdc.in/tracking/tracking_results.asp?TType=awb_no&strCNNO=${encodeURIComponent(t)}`;
+  if (c.includes("india post") || c.includes("speed post") || c.includes("post"))
+    return `https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx`;
+  if (c.includes("fedex")) return `https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(t)}`;
+  if (c.includes("shadowfax")) return `https://tracker.shadowfax.in/#/${encodeURIComponent(t)}`;
+  if (c.includes("ekart")) return `https://ekartlogistics.com/shipmenttrack/${encodeURIComponent(t)}`;
+  if (c.includes("xpressbees") || c.includes("xpress"))
+    return `https://www.xpressbees.com/track?isAwb=Yes&trackid=${encodeURIComponent(t)}`;
+
+  return `https://www.google.com/search?q=${encodeURIComponent(`${courierName} tracking ${t}`)}`;
+}
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -284,7 +319,7 @@ function ProductModal({ initial, defaultSection, onClose, onSaved }: ProductModa
     setCustomCategory("");
   };
 
-  // Compress / convert uploaded image file into a clean data URL
+  // Compress and normalize uploaded image into a uniform 800x800 square data URL
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -297,24 +332,26 @@ function ProductModal({ initial, defaultSection, onClose, onSaved }: ProductModa
     reader.onload = () => {
       const img = new window.Image();
       img.onload = () => {
-        const MAX_DIM = 800;
-        let { width, height } = img;
-        if (width > MAX_DIM || height > MAX_DIM) {
-          if (width > height) {
-            height = Math.round((height * MAX_DIM) / width);
-            width = MAX_DIM;
-          } else {
-            width = Math.round((width * MAX_DIM) / height);
-            height = MAX_DIM;
-          }
-        }
+        // Enforce identical square dimensions (800x800) for every uploaded product image
+        const TARGET_SIZE = 800;
         const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = TARGET_SIZE;
+        canvas.height = TARGET_SIZE;
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+          // Fill background with clean white so any aspect ratio fits evenly
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(0, 0, TARGET_SIZE, TARGET_SIZE);
+
+          // Center and zoom image to fill the entire 800x800 square fully without distortion or white bars
+          const scale = Math.max(TARGET_SIZE / img.width, TARGET_SIZE / img.height);
+          const drawWidth = Math.round(img.width * scale);
+          const drawHeight = Math.round(img.height * scale);
+          const offsetX = Math.round((TARGET_SIZE - drawWidth) / 2);
+          const offsetY = Math.round((TARGET_SIZE - drawHeight) / 2);
+
+          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
           setImage(dataUrl);
           setFormError("");
         } else {
@@ -427,6 +464,7 @@ function ProductModal({ initial, defaultSection, onClose, onSaved }: ProductModa
       }
 
       upsertLocalProduct(data.product);
+      broadcastCatalogChange();
       onSaved(data.product, !initial);
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "Could not save product.");
@@ -732,7 +770,7 @@ function ProductModal({ initial, defaultSection, onClose, onSaved }: ProductModa
                     <img
                       src={image}
                       alt="Product preview"
-                      className="h-full w-full object-cover"
+                      className="absolute inset-0 h-full w-full object-cover object-center"
                     />
                     <button
                       type="button"
@@ -1364,6 +1402,7 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | "all">("all");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const showNotice = (text: string, href?: string, pageLabel?: string) => {
     setNotice({ text, href, pageLabel });
@@ -1452,16 +1491,31 @@ export default function AdminPage() {
   }, [router]);
 
   useEffect(() => {
-    load();
+    queueMicrotask(() => {
+      load();
+    });
 
     const syncLocalOrders = () => {
       setOrders(readLocalOrders());
     };
     window.addEventListener("ibrew-orders-updated", syncLocalOrders);
     window.addEventListener("storage", syncLocalOrders);
+
+    const unsubscribeCatalog = subscribeCatalogChanges(() => {
+      fetch(`/api/admin/products?_t=${Date.now()}`, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (Array.isArray(data?.products)) {
+            setProducts(data.products);
+          }
+        })
+        .catch(() => {});
+    });
+
     return () => {
       window.removeEventListener("ibrew-orders-updated", syncLocalOrders);
       window.removeEventListener("storage", syncLocalOrders);
+      unsubscribeCatalog();
     };
   }, [load]);
 
@@ -1587,14 +1641,16 @@ export default function AdminPage() {
     const previous = products;
     const next = products.filter((p) => p.id !== product.id);
     setProducts(next);
-    removeLocalProduct(product.id);
+    removeLocalProduct(product.id, product.slug);
     try {
       const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
+      broadcastCatalogChange();
       showNotice(`Deleted "${product.name}".`);
     } catch {
       setProducts(previous);
       writeLocalCatalog(previous);
+      broadcastCatalogChange();
       setError("Could not delete the product.");
     }
   };
@@ -1605,6 +1661,7 @@ export default function AdminPage() {
       writeLocalCatalog(next);
       return next;
     });
+    broadcastCatalogChange();
     setModalOpen(false);
     setEditingProduct(null);
     const sec = sectionMeta(saved.section);
@@ -1634,15 +1691,25 @@ export default function AdminPage() {
   };
 
   const logout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
       window.sessionStorage.removeItem("ibrew_auth_user");
       window.localStorage.removeItem("ibrew_auth_user");
+    } catch {
+      // ignore
+    }
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore
+    }
+    try {
       window.dispatchEvent(new Event("ibrew-auth-changed"));
     } catch {
       // ignore
     }
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.replace("/login");
   };
 
   const stats = useMemo(
@@ -1811,9 +1878,18 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={logout}
-              className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-medium uppercase tracking-widest text-[#1F1A17] transition-colors hover:bg-neutral-100"
+              disabled={isLoggingOut}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-medium uppercase tracking-widest text-[#1F1A17] transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-75"
             >
-              <LogOut aria-hidden className="h-4 w-4" /> Log out
+              {isLoggingOut ? (
+                <>
+                  <Loader2 aria-hidden className="h-4 w-4 animate-spin text-[#7A5A3C]" /> Logging out...
+                </>
+              ) : (
+                <>
+                  <LogOut aria-hidden className="h-4 w-4" /> Log out
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -2024,6 +2100,17 @@ export default function AdminPage() {
                               >
                                 {order.paymentMethod.toUpperCase()} · {pMeta.label}
                               </span>
+                              {order.confirmedAt && (
+                                <span className="rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-bold text-[#065F46]">
+                                  ✓ Confirmed
+                                </span>
+                              )}
+                              {(order.courierName || order.trackingNumber) && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F3FF] px-2.5 py-0.5 text-[10px] font-bold text-[#5B21B6]">
+                                  <Truck className="h-3 w-3" />
+                                  <span>{order.courierName || "Courier"}: {order.trackingNumber || "Assigned"}</span>
+                                </span>
+                              )}
                             </div>
 
                             <p className="mt-1 text-sm font-medium text-[#1F1A17]">
@@ -2105,12 +2192,12 @@ export default function AdminPage() {
                                     className="flex items-center justify-between gap-3 p-3"
                                   >
                                     <div className="flex items-center gap-3">
-                                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[#E9DCC6] bg-[#FAF7F2]">
+                                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[#E9DCC6] bg-[#FAF7F2]">
                                         {item.image ? (
                                           <img
                                             src={item.image}
                                             alt={item.name}
-                                            className="h-full w-full object-cover"
+                                            className="absolute inset-0 h-full w-full object-cover object-center"
                                           />
                                         ) : (
                                           <div className="flex h-full items-center justify-center">
@@ -2309,9 +2396,43 @@ export default function AdminPage() {
 
                                 {/* Courier & Tracking Details */}
                                 <div className="border-t pt-3 space-y-2.5" style={{ borderColor: LINE }}>
-                                  <p className="text-xs font-semibold text-[#1F1A17]">
-                                    Dispatch &amp; Tracking Info
-                                  </p>
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-xs font-semibold text-[#1F1A17]">
+                                      Dispatch &amp; Tracking Info
+                                    </p>
+                                    {draft.trackingNumber && (
+                                      <a
+                                        href={getCourierTrackingUrl(draft.courierName, draft.trackingNumber)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5B21B6] hover:underline"
+                                      >
+                                        <ExternalLink className="h-3 w-3" />
+                                        <span>Test Tracking Link ↗</span>
+                                      </a>
+                                    )}
+                                  </div>
+
+                                  {/* Quick Courier Preset Chips */}
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    <span className="text-[11px] font-semibold text-[#7A5A3C]">
+                                      Presets:
+                                    </span>
+                                    {COURIER_PRESETS.map((cp) => (
+                                      <button
+                                        key={cp}
+                                        type="button"
+                                        onClick={() => setOrderDraftField(order, "courierName", cp)}
+                                        className={`cursor-pointer rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                                          draft.courierName.toLowerCase() === cp.toLowerCase()
+                                            ? "border-[#5B21B6] bg-[#5B21B6] text-white"
+                                            : "border-neutral-300 bg-white text-neutral-700 hover:border-[#7A5A3C]"
+                                        }`}
+                                      >
+                                        {cp}
+                                      </button>
+                                    ))}
+                                  </div>
                                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                     <input
                                       type="text"
@@ -2584,7 +2705,7 @@ export default function AdminPage() {
                               <img
                                 src={p.image}
                                 alt={p.name}
-                                className="h-full w-full object-cover"
+                                className="absolute inset-0 h-full w-full object-cover object-center"
                               />
                             ) : (
                               <span

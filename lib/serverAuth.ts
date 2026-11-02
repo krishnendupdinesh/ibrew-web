@@ -28,13 +28,8 @@ export interface AdminCredentials {
   passwordPlain: string;
 }
 
-interface StoredCustomer extends AuthUser {
-  passwordPlain: string;
-}
-
 const g = globalThis as unknown as {
   __ibrewAdminCreds?: AdminCredentials;
-  __ibrewCustomerStore?: Map<string, StoredCustomer>;
 };
 
 function loadPersistedAdminCreds(): AdminCredentials {
@@ -88,13 +83,6 @@ export function updateAdminPassword(newPassword: string): AdminCredentials {
   g.__ibrewAdminCreds = updated;
   savePersistedAdminCreds(updated);
   return updated;
-}
-
-function getCustomerStore(): Map<string, StoredCustomer> {
-  if (!g.__ibrewCustomerStore) {
-    g.__ibrewCustomerStore = new Map<string, StoredCustomer>();
-  }
-  return g.__ibrewCustomerStore;
 }
 
 function base64UrlEncode(input: Buffer | string): string {
@@ -202,57 +190,5 @@ export function validateCustomerRegistrationNotAdmin(
     return "This password is not allowed. Please choose a different password.";
   }
 
-  return null;
-}
-
-export function registerLocalCustomer(
-  name: string,
-  email: string,
-  phone: string,
-  password: string
-): { user?: AuthUser; error?: string } {
-  const reservedErr = validateCustomerRegistrationNotAdmin(email, password, name);
-  if (reservedErr) return { error: reservedErr };
-
-  const store = getCustomerStore();
-  const normEmail = email.trim().toLowerCase();
-  if (store.has(normEmail)) {
-    return { error: "An account with this email already exists." };
-  }
-
-  const created: StoredCustomer = {
-    id: `cust-${Date.now()}`,
-    name: name.trim(),
-    email: normEmail,
-    phone: phone.trim(),
-    role: "customer",
-    passwordPlain: password,
-  };
-  store.set(normEmail, created);
-
-  return {
-    user: {
-      id: created.id,
-      name: created.name,
-      email: created.email,
-      phone: created.phone,
-      role: "customer",
-    },
-  };
-}
-
-export function checkLocalCustomer(identifier: string, password: string): AuthUser | null {
-  const store = getCustomerStore();
-  const norm = identifier.trim().toLowerCase();
-  const found = store.get(norm);
-  if (found && found.passwordPlain === password) {
-    return {
-      id: found.id,
-      name: found.name,
-      email: found.email,
-      phone: found.phone,
-      role: "customer",
-    };
-  }
   return null;
 }

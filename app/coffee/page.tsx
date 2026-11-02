@@ -239,10 +239,10 @@ function SizeDropdown({ sizes, selectedIndex, onSelect }: SizeDropdownProps) {
                   setOpen(false);
                 }}
                 className="flex w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm hover:bg-neutral-50"
-                style={{ color: size.stock === 0 ? MUTED : INK, fontWeight: i === selectedIndex ? 700 : 400 }}
+                style={{ color: (Number(size.stock) || 0) <= 0 ? MUTED : INK, fontWeight: i === selectedIndex ? 700 : 400 }}
               >
                 <span>{size.label}</span>
-                <span className="text-xs">{size.stock === 0 ? "Out of stock" : formatPrice(size.price)}</span>
+                <span className="text-xs">{(Number(size.stock) || 0) <= 0 ? "Out of stock" : formatPrice(size.price)}</span>
               </button>
             </li>
           ))}
@@ -271,8 +271,8 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
   const [sizeIndex, setSizeIndex] = useState(firstAvailable);
 
   const size = product.sizes[sizeIndex] ?? product.sizes[0] ?? { label: "Standard", price: 0, stock: 0 };
-  const outOfStock = size.stock === 0;
-  const lowStock = !outOfStock && size.stock <= 5;
+  const outOfStock = (Number(size.stock) || 0) <= 0;
+  const lowStock = !outOfStock && Number(size.stock) <= 5;
   const discount = size.mrp ? Math.round((1 - size.price / size.mrp) * 100) : 0;
 
   const handleAdd = () => {
@@ -320,12 +320,28 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
           >
             {product.badge || (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : `${discount}% off`)}
           </span>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
         )}
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-neutral-600/80 px-2 py-1 text-[11px] font-medium text-white">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
             Out of Stock
           </span>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
         )}
 
         <button
@@ -361,16 +377,32 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
             <span className="text-[11px] line-through" style={{ color: MUTED }}>
               {formatPrice(size.mrp)}
             </span>
-          )}
+          ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
+        )}
         </p>
 
-        {!outOfStock && (
+        {!outOfStock ? (
           <button
             type="button"
             onClick={handleAdd}
             className="h-9 min-w-[72px] cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-4 text-sm font-bold uppercase text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white active:scale-95"
           >
             Add
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
           </button>
         )}
       </div>
@@ -725,7 +757,15 @@ export default function CoffeePage() {
                   Clear filters
                 </button>
               </div>
-            )}
+            ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
+        )}
 
             {visibleCount < filteredProducts.length && (
               <div className="mt-10 text-center">
@@ -737,7 +777,15 @@ export default function CoffeePage() {
                   Load more
                 </button>
               </div>
-            )}
+            ) : (
+          <button
+            type="button"
+            disabled
+            className="h-9 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
+        )}
           </div>
         </div>
       </section>

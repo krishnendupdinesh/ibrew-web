@@ -21,6 +21,11 @@ import {
 } from "lucide-react";
 import { useCart, type CartItem } from "../../lib/cartStore";
 import { prependLocalOrder, type StoreOrder } from "../../lib/orderStore";
+import {
+  broadcastCatalogChange,
+  readLocalCatalog,
+  writeLocalCatalog,
+} from "../../lib/productStore";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -72,6 +77,7 @@ export default function CartCheckoutPage() {
   const [orderNotes, setOrderNotes] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");
   const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const syncAuth = useCallback(() => {
     try {
@@ -112,7 +118,7 @@ export default function CartCheckoutPage() {
   }, []);
 
   useEffect(() => {
-    syncAuth();
+    queueMicrotask(() => syncAuth());
     window.addEventListener("ibrew-auth-changed", syncAuth);
     window.addEventListener("storage", syncAuth);
     return () => {
@@ -144,7 +150,7 @@ export default function CartCheckoutPage() {
   const grandTotal = subtotal + shippingFee;
   const amountForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
 
@@ -205,35 +211,91 @@ export default function CartCheckoutPage() {
       deliveredAt: null,
     };
 
-    // Save locally immediately and sync with server API
-    prependLocalOrder(orderPayload);
-    fetch("/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderPayload),
-    }).catch(() => {});
+    setIsSubmitting(true);
 
-    setPlacedOrder({
-      orderId,
-      items: [...cartItems],
-      subtotal,
-      shipping: shippingFee,
-      total: grandTotal,
-      savings: totalSavings,
-      customerName: fullName.trim(),
-      phone: phone.trim(),
-      address: `${address.trim()}, ${city.trim()}, ${stateName.trim()} - ${pincode.trim()}`,
-      paymentMethod:
-        paymentMethod === "cod"
-          ? "Cash on Delivery (COD)"
-          : paymentMethod === "upi"
-          ? "UPI / QR Payment"
-          : "Credit / Debit Card",
-    });
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
 
-    clear();
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setFormError(data.error || "Could not place order. Please try again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const savedOrder = data.order || orderPayload;
+      prependLocalOrder(savedOrder);
+
+      // 1. Immediately deduct stock counter in local catalog cache
+      try {
+        const localCatalog = readLocalCatalog();
+        if (localCatalog.length > 0) {
+          const updatedCatalog = localCatalog.map((product) => {
+            let changed = false;
+            const nextSizes = (product.sizes || []).map((s) => {
+              const matched = cartItems.find((ci) => {
+                const idMatches =
+                  ci.productId === product.id ||
+                  (product.slug && ci.productId === product.slug) ||
+                  (product.name && ci.name && ci.name.toLowerCase().trim() === product.name.toLowerCase().trim());
+                const sizeMatches =
+                  !ci.size ||
+                  !s.label ||
+                  ci.size.toLowerCase().trim() === s.label.toLowerCase().trim() ||
+                  ci.size.replace(/\s+/g, "").toLowerCase() === s.label.replace(/\s+/g, "").toLowerCase();
+                return idMatches && sizeMatches;
+              });
+              if (matched) {
+                changed = true;
+                return {
+                  ...s,
+                  stock: Math.max(0, (Number(s.stock) || 0) - Number(matched.quantity || 1)),
+                };
+              }
+              return s;
+            });
+            return changed ? { ...product, sizes: nextSizes } : product;
+          });
+          writeLocalCatalog(updatedCatalog);
+        }
+      } catch {
+        // ignore
+      }
+
+      // 2. Broadcast change so every open window, tab, and storefront card re-fetches latest stock immediately
+      broadcastCatalogChange();
+
+      setPlacedOrder({
+        orderId: savedOrder.orderId || orderId,
+        items: [...cartItems],
+        subtotal,
+        shipping: shippingFee,
+        total: grandTotal,
+        savings: totalSavings,
+        customerName: fullName.trim(),
+        phone: phone.trim(),
+        address: `${address.trim()}, ${city.trim()}, ${stateName.trim()} - ${pincode.trim()}`,
+        paymentMethod:
+          paymentMethod === "cod"
+            ? "Cash on Delivery (COD)"
+            : paymentMethod === "upi"
+            ? "UPI / QR Payment"
+            : "Credit / Debit Card",
+      });
+
+      clear();
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch {
+      setFormError("Could not connect to database backend. Please check your connection.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -359,9 +421,9 @@ export default function CartCheckoutPage() {
                 {placedOrder.items.map((item) => (
                   <div key={item.id} className="flex items-center justify-between gap-4 p-4">
                     <div className="flex items-center gap-3.5">
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-[#FAF7F2]">
+                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-neutral-200 bg-[#FAF7F2]">
                         {item.image ? (
-                          <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                          <img src={item.image} alt={item.name} className="absolute inset-0 h-full w-full object-cover object-center" />
                         ) : (
                           <div className="flex h-full items-center justify-center">
                             <Package className="h-5 w-5 text-[#7A5A3C]" />
@@ -384,6 +446,13 @@ export default function CartCheckoutPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href={`/orders?id=${encodeURIComponent(placedOrder.orderId)}`}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1B5E3A] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#14472C]"
+              >
+                <Truck className="h-4 w-4" />
+                <span>Track &amp; View Order Status</span>
+              </Link>
               <Link
                 href="/"
                 className="inline-flex items-center justify-center rounded-full bg-[#7A5A3C] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#1F1A17]"
@@ -500,12 +569,12 @@ export default function CartCheckoutPage() {
                     >
                       <div className="flex items-start gap-4">
                         {/* Product Image */}
-                        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-[#E9DCC6] bg-[#FAF7F2] sm:h-24 sm:w-24">
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-[#E9DCC6] bg-[#FAF7F2] sm:h-24 sm:w-24">
                           {item.image ? (
                             <img
                               src={item.image}
                               alt={item.name}
-                              className="h-full w-full object-cover"
+                              className="absolute inset-0 h-full w-full object-cover object-center"
                             />
                           ) : (
                             <div className="flex h-full items-center justify-center">
@@ -719,13 +788,10 @@ export default function CartCheckoutPage() {
                   </div>
                 ) : (
                 <form onSubmit={handlePlaceOrder} className="mt-6 space-y-4 border-t pt-6" style={{ borderColor: SAND }}>
-                  <div className="flex items-center justify-between">
+                  <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-[#1F1A17]">
                       Delivery &amp; Payment Details
                     </h3>
-                    <span className="rounded-full bg-[#2E5A36]/10 px-2.5 py-0.5 text-[11px] font-semibold text-[#2E5A36]">
-                      Logged in as {authUser.name}
-                    </span>
                   </div>
 
                   {formError && (
@@ -897,10 +963,11 @@ export default function CartCheckoutPage() {
 
                   <button
                     type="submit"
-                    className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7A5A3C] px-6 py-4 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-sm transition-colors hover:bg-[#1F1A17]"
+                    disabled={isSubmitting}
+                    className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#7A5A3C] px-6 py-4 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-sm transition-colors hover:bg-[#1F1A17] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Lock className="h-4 w-4" />
-                    Place Order · {formatPrice(grandTotal)}
+                    {isSubmitting ? "Placing Order..." : `Place Order · ${formatPrice(grandTotal)}`}
                   </button>
 
                   <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-[#1F1A17]/60">

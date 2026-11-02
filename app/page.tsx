@@ -4,17 +4,26 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
-import { readLocalCatalog, type StoreProduct } from "../lib/productStore";
+import {
+  readDeletedIds,
+  readLocalCatalog,
+  subscribeCatalogChanges,
+  truncateWords,
+  type StoreProduct,
+} from "../lib/productStore";
 import { addToCart, setCartItemQuantity, useCart } from "../lib/cartStore";
 import { toggleWishlistItem, useWishlist } from "../lib/wishlistStore";
 import {
   BadgeCheck,
   BedDouble,
+  Check,
   Cherry,
   ChevronLeft,
   ChevronRight,
   Coffee,
+  Compass,
   Droplets,
+  Eye,
   Flower2,
   Heart,
   Leaf,
@@ -23,6 +32,7 @@ import {
   Plus,
   ShieldCheck,
   ShoppingBasket,
+  Store,
   Truck,
   type LucideIcon,
 } from "lucide-react";
@@ -100,7 +110,14 @@ type PhotoProps = {
 function Photo({ src, alt, className, eager }: PhotoProps) {
   const [failed, setFailed] = useState(false);
 
-  if (!src || failed) return null;
+  if (!src || failed) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-3 text-center bg-[#E9DCC6]">
+        <span className="line-clamp-2 text-xs font-semibold leading-tight text-[#1F1A17]">{alt}</span>
+        <span className="text-[9px] uppercase tracking-wider text-[#1F1A17]/60">Photo coming soon</span>
+      </div>
+    );
+  }
 
   return (
     <img
@@ -348,6 +365,7 @@ type Product = {
   name: string;
   size?: string;
   detail: string;
+  description?: string;
   price: number;
   oldPrice?: number;
   badge?: string;
@@ -390,7 +408,7 @@ type ProductCardProps = {
 function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const { isWished } = useWishlist();
   const wished = isWished(product.id);
-  const outOfStock = product.stock !== undefined && product.stock <= 0;
+  const outOfStock = product.stock !== undefined ? Number(product.stock) <= 0 : false;
 
   const discountPercent = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
@@ -401,12 +419,12 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
     (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : undefined);
 
   return (
-    <article className="w-[150px] shrink-0 snap-start rounded-xl border border-black/10 bg-white p-2 sm:w-[184px]">
-      <div className="relative aspect-square overflow-hidden rounded-lg" style={{ background: CREAM }}>
+    <article className="group w-[150px] shrink-0 snap-start rounded-xl border border-black/10 bg-white p-2 shadow-2xs transition hover:shadow-md sm:w-[184px]">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
         <Photo
           src={product.image}
           alt={product.name}
-          className={`h-full w-full object-cover ${outOfStock ? "opacity-40" : ""}`}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
         />
 
         {(displayBadge || discountPercent > 0) && !outOfStock && (
@@ -424,6 +442,7 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
             toggleWishlistItem({
               productId: product.id,
               name: product.name,
+              description: product.description,
               size: product.size,
               price: product.price,
               mrp: product.oldPrice,
@@ -441,14 +460,19 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
         </button>
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-neutral-700/85 px-2 py-0.5 text-[10px] font-semibold text-white">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-md">
             Out of Stock
           </span>
         )}
       </div>
 
       <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[13px] font-semibold leading-tight">{product.name}</h3>
-      <p className="mt-0.5 line-clamp-1 text-[11px] text-neutral-500">{product.detail}</p>
+      <p
+        className="mt-1 line-clamp-2 min-h-[2.2em] text-[11px] leading-tight text-neutral-500"
+        title={product.description || product.detail}
+      >
+        {truncateWords(product.description || product.detail, 12)}
+      </p>
 
       <div className="mt-2 flex items-end justify-between gap-1">
         <div>
@@ -462,9 +486,9 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <button
             type="button"
             disabled
-            className="h-8 min-w-[58px] rounded-lg border border-neutral-300 bg-neutral-100 px-3 text-xs font-bold text-neutral-400 opacity-60"
+            className="h-8 min-w-[76px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-2 text-[11px] font-bold uppercase tracking-wider text-neutral-400"
           >
-            Sold
+            Out of Stock
           </button>
         ) : (
           <button
@@ -545,7 +569,249 @@ function Rail({ title, href, items, onAddToCart }: RailProps) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. BULK BANNER + PROMISES
+// 5. ABOUT IMAAN'S ONLINE: VISION, MISSION, COMMITMENT, WHY US, BRAND FAMILY & PROMISE
+// ---------------------------------------------------------------------------
+function BrandStory() {
+  return (
+    <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6">
+      {/* Section Header */}
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="inline-block rounded-full bg-[#FAF3E8] px-4 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[#7A5A3C]">
+          About Imaan’s Online
+        </span>
+        <h2 className="mt-3 text-2xl font-bold tracking-tight text-[#1F1A17] sm:text-3xl md:text-4xl">
+          Integrity, Quality &amp; Purpose in Every Choice
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-[#1F1A17]/70 sm:text-base">
+          Connecting you with trusted domestic and international products across thoughtfully curated categories.
+        </p>
+      </div>
+
+      {/* Vision & Mission Cards */}
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
+        {/* Vision */}
+        <div className="flex flex-col justify-between rounded-2xl border border-[#E9DCC6] bg-[#FAF7F2] p-6 transition-shadow hover:shadow-xs sm:p-8">
+          <div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#7A5A3C] text-white">
+              <Eye className="h-6 w-6" strokeWidth={1.8} />
+            </div>
+            <span className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.18em] text-[#7A5A3C]">
+              Our Vision
+            </span>
+            <h3 className="mt-1.5 text-xl font-bold text-[#1F1A17]">
+              Recognised Multi-Category Brand
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[#1F1A17]/80">
+              To establish Imaan’s Online as a recognised multi-category e-commerce brand connecting customers with quality products from trusted domestic and international sources.
+            </p>
+          </div>
+        </div>
+
+        {/* Mission */}
+        <div className="flex flex-col justify-between rounded-2xl border border-[#E9DCC6] bg-[#FAF7F2] p-6 transition-shadow hover:shadow-xs sm:p-8">
+          <div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#1F1A17] text-white">
+              <Compass className="h-6 w-6" strokeWidth={1.8} />
+            </div>
+            <span className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.18em] text-[#7A5A3C]">
+              Our Mission
+            </span>
+            <h3 className="mt-1.5 text-xl font-bold text-[#1F1A17]">
+              Dependable &amp; Authentic Shopping
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[#1F1A17]/80">
+              To provide a convenient and dependable online shopping experience across multiple product categories while upholding quality, transparency, authenticity, responsible sourcing, and customer satisfaction.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Our Commitment Highlight Card */}
+      <div className="mt-6 rounded-2xl border border-[#E9DCC6] bg-white p-6 shadow-xs sm:p-8 md:p-10">
+        <div className="flex flex-col md:flex-row md:items-start md:gap-8">
+          <div className="mb-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1B5E3A]/10 text-[#1B5E3A] md:mb-0">
+            <ShieldCheck className="h-6 w-6" strokeWidth={1.8} />
+          </div>
+          <div className="flex-1">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-[#7A5A3C]">
+              Our Commitment
+            </span>
+            <h3 className="mt-1 text-xl font-bold text-[#1F1A17] sm:text-2xl">
+              Grounded in Responsibility &amp; Honest Communication
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[#1F1A17]/80 sm:text-base">
+              We are guided by quality-focused product selection, authentic and accurate product information, responsible sourcing, customer well-being, honest communication, and continuous improvement. We aim to work with dependable suppliers and provide clear descriptions so customers can make informed choices.
+            </p>
+            {/* Commitment Pillars */}
+            <div className="mt-5 flex flex-wrap gap-2 pt-2">
+              {[
+                "Quality-Focused Selection",
+                "Authentic Information",
+                "Responsible Sourcing",
+                "Customer Well-Being",
+                "Honest Communication",
+                "Continuous Improvement",
+              ].map((pillar) => (
+                <span
+                  key={pillar}
+                  className="rounded-full border border-[#E9DCC6] bg-[#FAF7F2] px-3.5 py-1 text-xs font-semibold text-[#1F1A17]/85"
+                >
+                  ✓ {pillar}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Why Imaan's Online & Our Brand Family */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-12">
+        {/* Why Imaan's Online? (6 cols) */}
+        <div className="flex flex-col justify-between rounded-2xl border border-[#E9DCC6] bg-[#FAF7F2] p-6 sm:p-8 lg:col-span-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#7A5A3C] text-white">
+                <Check className="h-3 w-3 stroke-[3]" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[#7A5A3C]">
+                Core Advantages
+              </span>
+            </div>
+            <h3 className="mt-2 text-xl font-bold text-[#1F1A17] sm:text-2xl">
+              Why Imaan’s Online?
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-[#1F1A17]/70 sm:text-sm">
+              We focus on building customer trust through curated collections, honest sourcing, and category expertise.
+            </p>
+
+            <ul className="mt-6 space-y-3.5">
+              {[
+                "A range of product categories under one platform",
+                "Selected products from domestic and international suppliers",
+                "Dedicated identities for specialised product categories",
+                "A customer-focused approach to product information and service",
+                "A commitment to responsible growth and continuous improvement",
+              ].map((reason, idx) => (
+                <li key={idx} className="flex items-start gap-3 text-sm text-[#1F1A17]/90">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B5E3A] text-[11px] font-bold text-white">
+                    ✓
+                  </span>
+                  <span className="leading-snug">{reason}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Our Brand Family (6 cols) */}
+        <div className="flex flex-col justify-between rounded-2xl border border-[#E9DCC6] bg-white p-6 sm:p-8 lg:col-span-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FAF3E8] text-[#7A5A3C]">
+                <Store className="h-3.5 w-3.5" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-[#7A5A3C]">
+                Specialised Identities
+              </span>
+            </div>
+            <h3 className="mt-2 text-xl font-bold text-[#1F1A17] sm:text-2xl">
+              Our Brand Family
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-[#1F1A17]/70 sm:text-sm">
+              Each dedicated brand identity within Imaan’s brings specialised craftsmanship, purity, and focus to its craft.
+            </p>
+
+            <div className="mt-5 divide-y divide-[#E9DCC6]/60">
+              {[
+                {
+                  brand: "Imaan’s Online",
+                  desc: "Your trusted online shopping destination.",
+                  href: "/",
+                  icon: Store,
+                },
+                {
+                  brand: "Imaan’s Luxury Bedding",
+                  desc: "Premium mattresses and sleep solutions.",
+                  href: "/importedbed",
+                  icon: BedDouble,
+                },
+                {
+                  brand: "Imaan’s Fragrance",
+                  desc: "Fragrances for every identity.",
+                  href: "/fragrances",
+                  icon: Flower2,
+                },
+                {
+                  brand: "iBrew by Imaan’s",
+                  desc: "Coffee, crafted for everyday enjoyment.",
+                  href: "/coffee",
+                  icon: Coffee,
+                },
+                {
+                  brand: "Imaan’s Natural Spices",
+                  desc: "Quality sourced closer to the origin.",
+                  href: "/spices",
+                  icon: Leaf,
+                },
+              ].map((b, idx) => {
+                const Icon = b.icon;
+                return (
+                  <Link
+                    key={idx}
+                    href={b.href}
+                    className="group flex items-center justify-between py-3 transition hover:text-[#7A5A3C]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FAF3E8] text-[#7A5A3C] transition group-hover:bg-[#7A5A3C] group-hover:text-white">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-[#1F1A17] transition group-hover:text-[#7A5A3C]">
+                          {b.brand}
+                        </h4>
+                        <p className="text-xs text-[#1F1A17]/70">{b.desc}</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-[#7A5A3C] opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100 sm:inline">
+                      Explore →
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Our Promise (Featured Seal Card) */}
+      <div
+        className="relative mt-6 overflow-hidden rounded-2xl p-6 text-white sm:p-8 md:p-10"
+        style={{ background: "linear-gradient(135deg, #1F1A17 0%, #2E2520 60%, #3D3028 100%)" }}
+      >
+        <div className="pointer-events-none absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-[#7A5A3C]/10 blur-2xl" />
+        <div className="relative z-10 max-w-3xl">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#7A5A3C] text-xs font-bold text-white">
+              ★
+            </span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#E9DCC6]">
+              Our Promise
+            </span>
+          </div>
+          <blockquote className="mt-4 text-base font-medium italic leading-relaxed text-white/95 sm:text-lg md:text-xl">
+            &ldquo;Every product represents a responsibility to the customer who chooses it. We aim to grow with integrity, improve our standards, and build a brand customers can choose with confidence—today and in the future.&rdquo;
+          </blockquote>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-[#E9DCC6]">
+            — Team Imaan’s Online
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 6. BULK BANNER + PROMISES
 // ---------------------------------------------------------------------------
 function BulkBanner() {
   return (
@@ -608,9 +874,15 @@ export default function HomePage() {
   const { items: cartItems } = useCart();
 
   useEffect(() => {
-    const mapToHomeProducts = (list: StoreProduct[]): Product[] =>
-      list
-        .filter((p) => p.featuredOnHome !== false)
+    const mapToHomeProducts = (list: StoreProduct[]): Product[] => {
+      const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
+      return list
+        .filter((p) => {
+          if (p.featuredOnHome === false) return false;
+          if (p.id && deleted.has(String(p.id).toLowerCase().trim())) return false;
+          if (p.slug && deleted.has(String(p.slug).toLowerCase().trim())) return false;
+          return true;
+        })
         .map((p) => {
           const sizes = p.sizes && p.sizes.length ? p.sizes : [{ label: "", price: 0, stock: 0 }];
           const firstAvailable = sizes.find((s) => s.stock > 0) ?? sizes[0];
@@ -620,6 +892,7 @@ export default function HomePage() {
             name: p.name,
             size: firstAvailable.label || undefined,
             detail: p.detail || p.description || "",
+            description: p.description || p.detail || "",
             price: firstAvailable.price,
             oldPrice: firstAvailable.mrp,
             badge: p.badge || undefined,
@@ -630,30 +903,42 @@ export default function HomePage() {
             isMostSelling: Boolean(p.isMostSelling),
           };
         });
+    };
+
+    // After hydration on client, apply local catalog immediately if available
+    const local = readLocalCatalog();
+    if (local.length > 0) {
+      const mappedLocal = mapToHomeProducts(local);
+      if (mappedLocal.length > 0) setCatalog(mappedLocal);
+    }
 
     const refresh = () => {
-      const local = readLocalCatalog();
-      if (local.length > 0) {
-        const mappedLocal = mapToHomeProducts(local);
-        if (mappedLocal.length > 0) setCatalog(mappedLocal);
-      }
-
-      fetch("/api/products", { cache: "no-store" })
+      fetch(`/api/products?_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+        },
+      })
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
-          if (!data?.products?.length) return;
+          if (!data || !Array.isArray(data.products)) return;
           const mapped = mapToHomeProducts(data.products);
-          if (mapped.length > 0) setCatalog(mapped);
+          setCatalog(mapped);
         })
-        .catch(() => { });
+        .catch(() => {
+          const local = readLocalCatalog();
+          if (local.length > 0) {
+            const mappedLocal = mapToHomeProducts(local);
+            setCatalog(mappedLocal);
+          }
+        });
     };
 
     refresh();
-    window.addEventListener("storage", refresh);
-    window.addEventListener("ibrew-products-updated", refresh);
+    const unsubscribe = subscribeCatalogChanges(refresh);
     return () => {
-      window.removeEventListener("storage", refresh);
-      window.removeEventListener("ibrew-products-updated", refresh);
+      unsubscribe();
     };
   }, []);
 
@@ -726,6 +1011,7 @@ export default function HomePage() {
         onAddToCart={handleAddToCart}
       />
 
+      <BrandStory />
       <BulkBanner />
       <Promises />
     </main>

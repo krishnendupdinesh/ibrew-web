@@ -1,8 +1,39 @@
 import { NextResponse } from "next/server";
 import { addServerOrder } from "../../../lib/serverOrderStore";
 import type { StoreOrder } from "../../../lib/orderStore";
+import { getBackendUrl } from "../../../lib/backendConfig";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const backendUrl = getBackendUrl();
+    const query = searchParams.toString();
+    const url = `${backendUrl}/api/orders/my-orders${query ? `?${query}` : ""}`;
+
+    const res = await fetch(url, {
+      headers: {
+        cookie: request.headers.get("cookie") || "",
+      },
+      cache: "no-store",
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: data.error || "Could not load orders." },
+        { status: res.status }
+      );
+    }
+
+    return NextResponse.json(data);
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "digest" in err && String((err as { digest?: string }).digest).startsWith("NEXT_")) {
+      throw err;
+    }
+    console.error("GET /api/orders error:", (err as Error)?.message || err);
+    return NextResponse.json({ error: "Could not connect to database backend." }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -75,33 +106,36 @@ export async function POST(request: Request) {
       deliveredAt: null,
     };
 
-    // 1. Try saving in Express + MySQL backend first (validates & deducts stock transactionally)
+    // 1. Save in Express + MySQL backend (validates & deducts stock transactionally)
+    const backendUrl = getBackendUrl();
     try {
-      const upstream = await fetch(`${BACKEND_URL}/api/orders`, {
+      const upstream = await fetch(`${backendUrl}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           cookie: request.headers.get("cookie") || "",
         },
         body: JSON.stringify(newOrder),
-        signal: AbortSignal.timeout(4000),
+        signal: AbortSignal.timeout(6000),
       });
 
       const upstreamData = await upstream.json().catch(() => ({}));
       if (!upstream.ok) {
         return NextResponse.json(
           { error: upstreamData.error || "Could not place order." },
-          { status: upstream.status }
+          { status: upstream.status || 400 }
         );
       }
 
       const savedOrder: StoreOrder = upstreamData.order || newOrder;
       addServerOrder(savedOrder);
       return NextResponse.json({ order: savedOrder }, { status: 201 });
-    } catch {
-      // Fallback if Express backend is offline: save in server memory
-      addServerOrder(newOrder);
-      return NextResponse.json({ order: newOrder }, { status: 201 });
+    } catch (err) {
+      console.error("Order backend proxy error:", err);
+      return NextResponse.json(
+        { error: "Could not connect to database backend to place order." },
+        { status: 503 }
+      );
     }
   } catch {
     return NextResponse.json({ error: "Could not place order." }, { status: 400 });

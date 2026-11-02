@@ -7,9 +7,11 @@ import {
   ArrowRight,
   ChevronRight,
   Heart,
+  Loader2,
   Lock,
   LogOut,
   Minus,
+  Package,
   Plus,
   Search,
   ShoppingBag,
@@ -41,6 +43,18 @@ const SECTION_LABELS: Record<string, string> = {
   dates: "Dates",
 };
 
+const CATEGORY_NAV = [
+  { label: "All Products", href: "/search" },
+  { label: "Coffee", href: "/coffee" },
+  { label: "Skincare", href: "/coffee-skin" },
+  { label: "Spices", href: "/spices" },
+  { label: "Fragrances", href: "/fragrances" },
+  { label: "Mattresses", href: "/importedbed" },
+  { label: "Groceries", href: "/groceries" },
+  { label: "Dates", href: "/dates" },
+  { label: "Bulk Order", href: "/bulk-order" },
+];
+
 interface LoggedUser {
   id: string;
   name: string;
@@ -60,9 +74,12 @@ export default function Navbar() {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [authUser, setAuthUser] = useState<LoggedUser | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const isFetchingAuthRef = useRef(false);
   const { products: allProducts } = useAllProducts();
 
   const {
@@ -78,6 +95,7 @@ export default function Navbar() {
   const { count: wishlistCount } = useWishlist();
 
   const syncAuthUser = useCallback(() => {
+    // 1. Synchronously read cached session for instantaneous rendering (<1ms)
     try {
       const cached =
         window.sessionStorage.getItem("ibrew_auth_user") ||
@@ -93,6 +111,10 @@ export default function Navbar() {
     } catch {
       // ignore storage errors
     }
+
+    // 2. Prevent redundant concurrent /api/auth/me requests
+    if (isFetchingAuthRef.current) return;
+    isFetchingAuthRef.current = true;
 
     fetch("/api/auth/me", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
@@ -115,12 +137,38 @@ export default function Navbar() {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        isFetchingAuthRef.current = false;
+      });
   }, []);
 
+  // Sync auth once on mount and on storage / custom auth events
   useEffect(() => {
-    syncAuthUser();
-  }, [pathname, syncAuthUser]);
+    queueMicrotask(() => {
+      setMounted(true);
+      syncAuthUser();
+    });
+  }, [syncAuthUser]);
+
+  // Fast synchronous cache read on pathname change (avoids repeated network calls)
+  useEffect(() => {
+    queueMicrotask(() => {
+      try {
+        const cached =
+          window.sessionStorage.getItem("ibrew_auth_user") ||
+          window.localStorage.getItem("ibrew_auth_user");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.email) {
+            setAuthUser(parsed);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    });
+  }, [pathname]);
 
   useEffect(() => {
     window.addEventListener("ibrew-auth-changed", syncAuthUser);
@@ -132,20 +180,39 @@ export default function Navbar() {
   }, [syncAuthUser]);
 
   const handleLogout = async () => {
-    setAuthUser(null);
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
+    // 1. Immediately wipe client credentials from storage
     try {
       window.sessionStorage.removeItem("ibrew_auth_user");
       window.localStorage.removeItem("ibrew_auth_user");
+    } catch {
+      // ignore
+    }
+
+    // 2. Call server logout endpoint to clear httpOnly cookie
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors during logout
+    }
+
+    // 3. Clear auth user state & notify other components after cookie is cleared
+    setAuthUser(null);
+    setIsLoggingOut(false);
+    try {
       window.dispatchEvent(new Event("ibrew-auth-changed"));
     } catch {
       // ignore
     }
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // ignore
+
+    // 4. Client-side navigation away from protected pages or smooth refresh
+    if (pathname.startsWith("/admin") || pathname.startsWith("/orders") || pathname.startsWith("/profile")) {
+      router.replace("/login");
+    } else {
+      router.refresh();
     }
-    router.refresh();
   };
 
   // Listen for custom open-cart-drawer events
@@ -245,18 +312,18 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white text-black">
-        {/* Main bar: logo | search | login/logout | cart
-            On mobile the search bar wraps onto its own row below. */}
-        <nav className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 md:flex-nowrap md:gap-8 lg:px-8">
-          {/* 1. Logo */}
-          <Link href="/" className="order-1 mr-auto shrink-0 transition-opacity hover:opacity-80 md:mr-0">
-            <img
-              src="/images/logo.png"
-              alt="Imaan's Store"
-              className="h-14 w-auto object-contain sm:h-16 md:h-[72px]"
-            />
-          </Link>
+      <header className="sticky top-0 z-50 border-b border-neutral-200/90 bg-white/95 text-black backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          {/* Main navigation row */}
+          <nav className="flex flex-wrap items-center justify-between gap-y-2 py-2 sm:gap-4 md:flex-nowrap md:py-3">
+            {/* 1. Logo */}
+            <Link href="/" className="order-1 shrink-0 transition-opacity hover:opacity-85">
+              <img
+                src="/images/logo.png"
+                alt="Imaan's Online"
+                className="h-9 w-auto object-contain sm:h-11 md:h-14"
+              />
+            </Link>
 
           {/* 2. Search bar with instant live dropdown */}
           <div ref={searchContainerRef} className="relative order-3 w-full md:order-2 md:flex-1">
@@ -312,12 +379,12 @@ export default function Navbar() {
                           className="flex w-full items-center gap-3 px-3.5 py-2 text-left transition hover:bg-[#FAF7F2]"
                         >
                           {/* Thumbnail */}
-                          <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-neutral-200 bg-neutral-50 flex items-center justify-center">
+                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-neutral-200 bg-neutral-50">
                             {item.image ? (
                               <img
                                 src={item.image}
                                 alt={item.name}
-                                className="h-full w-full object-contain p-0.5"
+                                className="absolute inset-0 h-full w-full object-cover object-center"
                                 onError={(e) => {
                                   (e.target as HTMLElement).style.display = "none";
                                 }}
@@ -385,63 +452,119 @@ export default function Navbar() {
           </div>
 
           {/* 3. Login / Logout + Cart buttons */}
-          <div className="order-2 flex shrink-0 items-center gap-2 sm:gap-4 md:order-3">
-            {authUser ? (
-              <div className="flex items-center gap-2">
-                {authUser.role === "admin" && (
+          <div className="order-2 flex shrink-0 items-center gap-1.5 sm:gap-2.5 md:order-3">
+            {mounted && (authUser || isLoggingOut) ? (
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {authUser?.role === "admin" ? (
                   <Link
                     href="/admin"
-                    className="hidden items-center gap-1.5 rounded-lg border border-[#7A5A3C] bg-[#FAF3E8] px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white sm:flex"
+                    className="flex h-9 items-center gap-1 rounded-lg border border-[#7A5A3C] bg-[#FAF3E8] px-2.5 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition hover:bg-[#7A5A3C] hover:text-white sm:h-10 sm:px-3.5"
                   >
-                    Dashboard
+                    Admin
+                  </Link>
+                ) : (
+                  <Link
+                    href="/orders"
+                    aria-label="My Orders"
+                    title="My Orders"
+                    className={`flex h-9 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition sm:h-10 sm:px-3 sm:text-sm ${
+                      pathname.startsWith("/orders")
+                        ? "border-[#7A5A3C] bg-[#FAF3E8] text-[#7A5A3C]"
+                        : "border-neutral-200 bg-white text-neutral-800 hover:border-[#7A5A3C] hover:bg-[#FAF3E8] hover:text-[#7A5A3C]"
+                    }`}
+                  >
+                    <Package size={16} strokeWidth={1.8} className="shrink-0 text-[#7A5A3C]" />
+                    <span>Orders</span>
                   </Link>
                 )}
                 <button
                   type="button"
                   onClick={handleLogout}
-                  title={`Signed in as ${authUser.name}`}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-[#1F1A17] hover:bg-[#1F1A17] hover:text-white sm:px-4"
+                  disabled={isLoggingOut}
+                  title={authUser ? `Signed in as ${authUser.name} — Logout` : "Logout"}
+                  aria-label="Logout"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-60 sm:h-10 sm:w-auto sm:px-3 sm:gap-1.5"
                 >
-                  <LogOut size={18} strokeWidth={1.8} />
-                  <span>Logout</span>
+                  {isLoggingOut ? (
+                    <Loader2 size={16} className="animate-spin text-[#7A5A3C]" />
+                  ) : (
+                    <LogOut size={16} strokeWidth={1.8} className="shrink-0" />
+                  )}
+                  <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Logout</span>
                 </button>
               </div>
             ) : (
               <Link
                 href={LOGIN_PAGE}
-                className="flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white sm:px-4"
+                className="flex h-9 items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 text-xs font-semibold text-neutral-800 transition hover:border-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white sm:h-10 sm:gap-2 sm:px-4 sm:text-sm"
               >
-                <User size={20} strokeWidth={1.8} />
+                <User size={16} strokeWidth={1.8} className="shrink-0" />
                 <span>Login</span>
               </Link>
             )}
 
             <Link
               href="/wishlist"
-              aria-label="Open wishlist"
-              className="flex items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white sm:px-3.5"
+              aria-label="Wishlist"
+              title="Wishlist"
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-700 transition hover:border-[#7A5A3C] hover:text-[#7A5A3C] sm:h-10 sm:w-auto sm:px-3 sm:gap-1.5"
             >
               <Heart
-                size={19}
+                size={17}
                 strokeWidth={1.8}
-                className={wishlistCount > 0 ? "text-[#B42318]" : ""}
+                className={`shrink-0 ${wishlistCount > 0 ? "text-[#B42318]" : ""}`}
                 fill={wishlistCount > 0 ? "#B42318" : "none"}
               />
-              <span className="hidden sm:inline">Wishlist</span>
+              <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Wishlist</span>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#B42318] px-1 text-[10px] font-bold text-white shadow-xs">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              aria-label="Open cart"
-              className="relative flex cursor-pointer items-center gap-2.5 rounded-lg bg-[#7A5A3C] px-3 py-2.5 text-white transition-colors hover:bg-[#35271F] sm:px-4"
+              aria-label="Shopping Cart"
+              title="Shopping Cart"
+              className="relative flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-[#7A5A3C] px-2.5 text-white transition hover:bg-[#35271F] sm:h-10 sm:px-3.5"
             >
-              <ShoppingCart size={22} strokeWidth={1.8} />
-              <span className="hidden text-sm font-semibold sm:inline">My Cart</span>
+              <ShoppingCart size={17} strokeWidth={1.8} className="shrink-0" />
+              <span className="hidden sm:inline text-xs font-semibold sm:text-sm">Cart</span>
+              {cartCount > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-bold text-[#7A5A3C]">
+                  {cartCount}
+                </span>
+              )}
             </button>
           </div>
         </nav>
-      </header>
+
+        {/* 4. Mobile Category Quick Bar */}
+        <nav
+          aria-label="Quick category navigation"
+          className="flex md:hidden items-center gap-1.5 overflow-x-auto pb-2 pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-t border-neutral-100"
+        >
+          {CATEGORY_NAV.map((cat) => {
+            const active = cat.href === "/search" ? pathname === "/search" : pathname.startsWith(cat.href);
+            return (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium transition ${
+                  active
+                    ? "bg-[#7A5A3C] text-white font-semibold"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                }`}
+              >
+                {cat.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    </header>
 
       {/* Cart drawer */}
       {cartOpen && (
@@ -505,9 +628,9 @@ export default function Navbar() {
                   {cartItems.map((item) => (
                     <article key={item.id} className="flex gap-4 border-b border-neutral-200 pb-5">
                       {/* Product image */}
-                      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-[#FAF7F2] sm:h-24 sm:w-24">
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-[#FAF7F2]">
                         {item.image ? (
-                          <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                          <img src={item.image} alt={item.name} className="absolute inset-0 h-full w-full object-cover object-center" />
                         ) : (
                           <div className="flex h-full items-center justify-center">
                             <ShoppingBag className="text-neutral-400" />

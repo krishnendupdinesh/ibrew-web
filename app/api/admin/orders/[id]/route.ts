@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { deleteServerOrder, patchServerOrder } from "../../../../../lib/serverOrderStore";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../../lib/backendConfig";
 
 export async function PATCH(
   request: Request,
@@ -10,11 +9,12 @@ export async function PATCH(
   try {
     const { id } = await context.params;
     const body = await request.json();
+    const backendUrl = getBackendUrl();
 
     const updatedLocal = patchServerOrder(id, body);
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(id)}`, {
+      const res = await fetch(`${backendUrl}/api/admin/orders/${encodeURIComponent(id)}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -56,8 +56,9 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+  const backendUrl = getBackendUrl();
   try {
-    const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(id)}`, {
+    const res = await fetch(`${backendUrl}/api/admin/orders/${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: { cookie: request.headers.get("cookie") || "" },
       signal: AbortSignal.timeout(2000),

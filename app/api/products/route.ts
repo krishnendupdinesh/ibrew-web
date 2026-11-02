@@ -5,17 +5,23 @@ import {
   writeServerCatalog,
 } from "../../../lib/serverProductCatalog";
 import type { StoreProduct } from "../../../lib/productStore";
+import { getBackendUrl } from "../../../lib/backendConfig";
 
-const BACKEND_BASE = process.env.BACKEND_URL || "http://localhost:5001";
+const NO_CACHE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 export async function GET(req: NextRequest) {
   const section = req.nextUrl.searchParams.get("section");
   const q = req.nextUrl.searchParams.get("q");
   const category = req.nextUrl.searchParams.get("category");
   const localCatalog = readServerCatalog();
+  const backendBase = getBackendUrl();
 
   try {
-    const backendUrl = new URL("/api/products", BACKEND_BASE);
+    const backendUrl = new URL("/api/products", backendBase);
     if (section) backendUrl.searchParams.set("section", section);
     if (q) backendUrl.searchParams.set("q", q);
     if (category) backendUrl.searchParams.set("category", category);
@@ -34,7 +40,7 @@ export async function GET(req: NextRequest) {
         if (!section && !q && !category) {
           writeServerCatalog(backendList);
         }
-        return NextResponse.json({ products: backendList });
+        return NextResponse.json({ products: backendList }, { headers: NO_CACHE_HEADERS });
       }
     }
   } catch {
@@ -57,8 +63,9 @@ export async function GET(req: NextRequest) {
     filtered = filtered.filter((p) => p.category === category);
   }
 
-  return NextResponse.json({
-    products: filtered,
-  });
+  return NextResponse.json(
+    { products: filtered },
+    { headers: NO_CACHE_HEADERS }
+  );
 }
 

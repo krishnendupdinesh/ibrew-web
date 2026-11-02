@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readServerCatalog, writeServerCatalog } from "../../../../../lib/serverProductCatalog";
 import type { ProductSize } from "../../../../../lib/productStore";
+import { getBackendUrl } from "../../../../../lib/backendConfig";
 
-const BACKEND_BASE = process.env.BACKEND_URL || "http://localhost:5001";
+const NO_CACHE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 function normalizeSizes(rawSizes: unknown): ProductSize[] {
   if (!Array.isArray(rawSizes) || rawSizes.length === 0) return [];
@@ -41,43 +46,11 @@ export async function PUT(
       );
     }
 
-    const catalog = readServerCatalog();
-    const idx = catalog.findIndex((p) => p.id === id || p.slug === id);
-    const existing = idx >= 0 ? catalog[idx] : null;
-
-    const cleanTags: string[] = Array.isArray(body.tags)
-      ? Array.from(new Set(body.tags.map((t: unknown) => String(t).trim()).filter(Boolean)))
-      : existing?.tags ?? [];
-
-    if (body.isBestSeller && !cleanTags.includes("Bestseller")) cleanTags.push("Bestseller");
-    if (body.isMostSelling && !cleanTags.includes("Most Selling")) cleanTags.push("Most Selling");
-
-    let updatedProduct = {
-      ...(existing ?? {}),
-      id: existing?.id ?? id,
-      slug: existing?.slug ?? id,
-      name: String(body.name ?? existing?.name ?? "").trim(),
-      section: body.section ?? existing?.section ?? "coffee",
-      category: String(body.category ?? existing?.category ?? "").trim(),
-      description: String(body.description ?? existing?.description ?? "").trim(),
-      detail:
-        String(body.detail ?? "").trim() ||
-        String(body.description ?? existing?.description ?? "")
-          .trim()
-          .slice(0, 60),
-      image: String(body.image ?? existing?.image ?? "").trim(),
-      badge: String(body.badge ?? "").trim(),
-      tags: cleanTags,
-      isBestSeller: Boolean(body.isBestSeller),
-      isMostSelling: Boolean(body.isMostSelling),
-      featuredOnHome: body.featuredOnHome !== undefined ? Boolean(body.featuredOnHome) : true,
-      rating: Math.min(5, Math.max(0, Number(body.rating) || 4.7)),
-      reviewCount: Math.max(0, Math.floor(Number(body.reviewCount) || 0)),
-      sizes,
-    };
+    const backendBase = getBackendUrl();
+    let updatedProduct;
 
     try {
-      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
+      const backendRes = await fetch(`${backendBase}/api/admin/products/${encodeURIComponent(id)}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -85,29 +58,33 @@ export async function PUT(
         },
         body: JSON.stringify(body),
       });
-      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400 || backendRes.status === 404) {
-        const errData = await backendRes.json().catch(() => ({}));
+
+      const backendData = await backendRes.json().catch(() => ({}));
+      if (!backendRes.ok) {
         return NextResponse.json(
-          { error: errData.error || "Could not update product." },
-          { status: backendRes.status }
+          { error: backendData.error || "Could not update product in database." },
+          { status: backendRes.status || 500 }
         );
       }
-      if (backendRes.ok) {
-        const backendData = await backendRes.json();
-        if (backendData?.product) updatedProduct = backendData.product;
+      if (backendData?.product) {
+        updatedProduct = backendData.product;
       }
-    } catch {
-      // fallback to local server catalog
+    } catch (err) {
+      console.error("Backend MySQL connection error in admin PUT:", err);
+      return NextResponse.json(
+        { error: "Could not connect to database backend." },
+        { status: 503 }
+      );
     }
 
-    if (idx >= 0) {
+    const catalog = readServerCatalog();
+    const idx = catalog.findIndex((p) => p.id === id || p.slug === id);
+    if (idx >= 0 && updatedProduct) {
       catalog[idx] = updatedProduct;
       writeServerCatalog(catalog);
-    } else {
-      writeServerCatalog([updatedProduct, ...catalog]);
     }
 
-    return NextResponse.json({ product: updatedProduct });
+    return NextResponse.json({ product: updatedProduct }, { headers: NO_CACHE_HEADERS });
   } catch {
     return NextResponse.json({ error: "Could not update product." }, { status: 500 });
   }
@@ -120,12 +97,11 @@ export async function PATCH(
   try {
     const { id } = await context.params;
     const body = await req.json();
-    const catalog = readServerCatalog();
-    const idx = catalog.findIndex((p) => p.id === id || p.slug === id);
+    const backendBase = getBackendUrl();
 
-    // 1. Try Express + MySQL backend first
+    let updatedProduct;
     try {
-      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
+      const backendRes = await fetch(`${backendBase}/api/admin/products/${encodeURIComponent(id)}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -133,81 +109,35 @@ export async function PATCH(
         },
         body: JSON.stringify(body),
       });
-      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400 || backendRes.status === 404) {
-        const errData = await backendRes.json().catch(() => ({}));
+
+      const backendData = await backendRes.json().catch(() => ({}));
+      if (!backendRes.ok) {
         return NextResponse.json(
-          { error: errData.error || "Could not update product." },
-          { status: backendRes.status }
+          { error: backendData.error || "Could not patch product in database." },
+          { status: backendRes.status || 500 }
         );
       }
-      if (backendRes.ok) {
-        const backendData = await backendRes.json();
-        if (backendData?.product) {
-          if (idx >= 0) {
-            catalog[idx] = backendData.product;
-            writeServerCatalog(catalog);
-          } else {
-            writeServerCatalog([backendData.product, ...catalog]);
-          }
-          return NextResponse.json({ product: backendData.product });
-        }
+      if (backendData?.product) {
+        updatedProduct = backendData.product;
       }
-    } catch {
-      // fallback to local server catalog below
+    } catch (err) {
+      console.error("Backend MySQL connection error in admin PATCH:", err);
+      return NextResponse.json(
+        { error: "Could not connect to database backend." },
+        { status: 503 }
+      );
     }
 
-    if (idx < 0) {
-      return NextResponse.json({ error: "Product not found." }, { status: 404 });
+    const catalog = readServerCatalog();
+    const idx = catalog.findIndex((p) => p.id === id || p.slug === id);
+    if (idx >= 0 && updatedProduct) {
+      catalog[idx] = updatedProduct;
+      writeServerCatalog(catalog);
     }
 
-    const existing = { ...catalog[idx], tags: [...(catalog[idx].tags ?? [])] };
-
-    if (body.isBestSeller !== undefined) {
-      existing.isBestSeller = Boolean(body.isBestSeller);
-      if (existing.isBestSeller && !existing.tags.includes("Bestseller")) {
-        existing.tags.push("Bestseller");
-      } else if (!existing.isBestSeller) {
-        existing.tags = existing.tags.filter((t) => t !== "Bestseller");
-      }
-      if (existing.isBestSeller && !existing.badge) {
-        existing.badge = "Bestseller";
-      } else if (!existing.isBestSeller && existing.badge === "Bestseller") {
-        existing.badge = existing.isMostSelling ? "Most Selling" : "";
-      }
-    }
-
-    if (body.isMostSelling !== undefined) {
-      existing.isMostSelling = Boolean(body.isMostSelling);
-      if (existing.isMostSelling && !existing.tags.includes("Most Selling")) {
-        existing.tags.push("Most Selling");
-      } else if (!existing.isMostSelling) {
-        existing.tags = existing.tags.filter((t) => t !== "Most Selling");
-      }
-      if (existing.isMostSelling && (!existing.badge || existing.badge === "Bestseller")) {
-        existing.badge = "Most Selling";
-      } else if (!existing.isMostSelling && existing.badge === "Most Selling") {
-        existing.badge = existing.isBestSeller ? "Bestseller" : "";
-      }
-    }
-
-    if (body.featuredOnHome !== undefined) {
-      existing.featuredOnHome = Boolean(body.featuredOnHome);
-    }
-
-    if (body.badge !== undefined) {
-      existing.badge = String(body.badge).trim();
-    }
-
-    if (body.sizes !== undefined) {
-      const sizes = normalizeSizes(body.sizes);
-      if (sizes.length > 0) existing.sizes = sizes;
-    }
-
-    catalog[idx] = existing;
-    writeServerCatalog(catalog);
-    return NextResponse.json({ product: existing });
+    return NextResponse.json({ product: updatedProduct }, { headers: NO_CACHE_HEADERS });
   } catch {
-    return NextResponse.json({ error: "Could not update product." }, { status: 500 });
+    return NextResponse.json({ error: "Could not patch product." }, { status: 500 });
   }
 }
 
@@ -217,28 +147,35 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
+    const backendBase = getBackendUrl();
+
     try {
-      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products/${id}`, {
+      const backendRes = await fetch(`${backendBase}/api/admin/products/${encodeURIComponent(id)}`, {
         method: "DELETE",
         headers: {
           cookie: req.headers.get("cookie") || "",
         },
       });
-      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 404) {
-        const errData = await backendRes.json().catch(() => ({}));
+
+      const backendData = await backendRes.json().catch(() => ({}));
+      if (!backendRes.ok) {
         return NextResponse.json(
-          { error: errData.error || "Could not delete product." },
-          { status: backendRes.status }
+          { error: backendData.error || "Could not delete product from database." },
+          { status: backendRes.status || 500 }
         );
       }
-    } catch {
-      // ignore backend error
+    } catch (err) {
+      console.error("Backend MySQL connection error in admin DELETE:", err);
+      return NextResponse.json(
+        { error: "Could not connect to database backend." },
+        { status: 503 }
+      );
     }
 
     const catalog = readServerCatalog().filter((p) => p.id !== id && p.slug !== id);
     writeServerCatalog(catalog);
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true }, { headers: NO_CACHE_HEADERS });
   } catch {
     return NextResponse.json({ error: "Could not delete product." }, { status: 500 });
   }

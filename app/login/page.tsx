@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Ubuntu } from "next/font/google";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // STYLE TOKENS (same as the other pages)
@@ -63,7 +63,7 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Wrong username/email or password.");
+        setError(data.error ?? "Invalid email or password.");
         setLoading(false);
         return;
       }
@@ -143,10 +143,19 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] active:scale-[0.98] disabled:opacity-60"
+        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#1F1A17] active:scale-[0.98] disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-75"
       >
-        <LogIn aria-hidden className="h-4 w-4" />
-        {loading ? "Logging in..." : "Log in"}
+        {loading ? (
+          <>
+            <Loader2 aria-hidden className="h-4 w-4 animate-spin text-white" />
+            <span>Logging in...</span>
+          </>
+        ) : (
+          <>
+            <LogIn aria-hidden className="h-4 w-4" />
+            <span>Log in</span>
+          </>
+        )}
       </button>
     </form>
   );

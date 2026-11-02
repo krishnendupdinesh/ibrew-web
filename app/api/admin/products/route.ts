@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readServerCatalog, writeServerCatalog } from "../../../../lib/serverProductCatalog";
 import type { ProductSection, ProductSize, StoreProduct } from "../../../../lib/productStore";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
-const BACKEND_BASE = process.env.BACKEND_URL || "http://localhost:5001";
+const NO_CACHE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+};
 
 const ALLOWED_SECTIONS: ProductSection[] = [
   "coffee",
@@ -37,10 +42,10 @@ function normalizeSizes(rawSizes: unknown): ProductSize[] {
 }
 
 export async function GET(req: NextRequest) {
-  const localCatalog = readServerCatalog();
+  const backendBase = getBackendUrl();
 
   try {
-    const res = await fetch(`${BACKEND_BASE}/api/admin/products`, {
+    const res = await fetch(`${backendBase}/api/admin/products`, {
       cache: "no-store",
       headers: {
         cookie: req.headers.get("cookie") || "",
@@ -52,7 +57,7 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(data?.products)) {
         const backendList: StoreProduct[] = data.products;
         writeServerCatalog(backendList);
-        return NextResponse.json({ products: backendList });
+        return NextResponse.json({ products: backendList }, { headers: NO_CACHE_HEADERS });
       }
     }
     if (res.status === 401 || res.status === 403) {
@@ -63,10 +68,11 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch {
-    // Fallback to local server file
+    // Fallback to local server file if backend is restarting
   }
 
-  return NextResponse.json({ products: localCatalog });
+  const localCatalog = readServerCatalog();
+  return NextResponse.json({ products: localCatalog }, { headers: NO_CACHE_HEADERS });
 }
 
 export async function POST(req: NextRequest) {
@@ -146,9 +152,10 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    // Try saving to Express + MySQL backend if running
+    // Forward product creation to Express + MySQL backend
+    const backendBase = getBackendUrl();
     try {
-      const backendRes = await fetch(`${BACKEND_BASE}/api/admin/products`, {
+      const backendRes = await fetch(`${backendBase}/api/admin/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,21 +163,24 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify(body),
       });
-      if (backendRes.status === 401 || backendRes.status === 403 || backendRes.status === 400) {
-        const errData = await backendRes.json().catch(() => ({}));
+
+      const backendData = await backendRes.json().catch(() => ({}));
+      if (!backendRes.ok) {
         return NextResponse.json(
-          { error: errData.error || "Unauthorized or invalid product data." },
-          { status: backendRes.status }
+          { error: backendData.error || "Could not save product to MySQL database." },
+          { status: backendRes.status || 500 }
         );
       }
-      if (backendRes.ok) {
-        const backendData = await backendRes.json();
-        if (backendData?.product) {
-          savedProduct = backendData.product;
-        }
+
+      if (backendData?.product) {
+        savedProduct = backendData.product;
       }
-    } catch {
-      // Save to local server catalog below
+    } catch (err) {
+      console.error("Backend MySQL connection error in admin POST:", err);
+      return NextResponse.json(
+        { error: "Could not connect to the database backend. Please verify your backend server is running." },
+        { status: 503 }
+      );
     }
 
     const catalog = readServerCatalog();

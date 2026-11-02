@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { verifyJwtHs256 } from "../../../../lib/serverAuth";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:5001";
+import { getBackendUrl } from "../../../../lib/backendConfig";
 
 export async function GET(request: Request) {
   try {
@@ -32,7 +31,7 @@ export async function GET(request: Request) {
     }
 
     // Fallback for legacy tokens that only stored { id }
-    const res = await fetch(`${BACKEND_URL}/api/auth/me`, {
+    const res = await fetch(`${getBackendUrl()}/api/auth/me`, {
       headers: { cookie: request.headers.get("cookie") || "" },
       signal: AbortSignal.timeout(2500),
     });

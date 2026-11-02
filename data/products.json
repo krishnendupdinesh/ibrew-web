@@ -1,6 +1,6 @@
 [
   {
-    "id": "28",
+    "id": "85",
     "slug": "full-cream-milk",
     "name": "Full Cream Milk",
     "section": "groceries",
@@ -30,8 +30,168 @@
         "stock": 45
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
+  },
+  {
+    "id": "71",
+    "slug": "turmeric-powder",
+    "name": "Turmeric Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
+    "detail": "High curcumin golden haldi",
+    "image": "/api/uploads/products/turmeric-powder-1793620581258-4ff4fcdb.jpg",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 69,
+        "mrp": 79,
+        "stock": 40
+      },
+      {
+        "label": "200g",
+        "price": 125,
+        "mrp": 149,
+        "stock": 22
+      },
+      {
+        "label": "500g",
+        "price": 289,
+        "mrp": 349,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T11:56:21.000Z"
+  },
+  {
+    "id": "68",
+    "slug": "coffee-soap",
+    "name": "Coffee Soap Bar",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
+    "detail": "Coffee-inspired skincare",
+    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
+    "badge": "Top seller",
+    "tags": [
+      "Top seller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "sizes": [
+      {
+        "label": "1 bar",
+        "price": 199,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 3",
+        "price": 549,
+        "mrp": 597,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
+  },
+  {
+    "id": "66",
+    "slug": "instant-coffee",
+    "name": "Pure Instant Coffee",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
+    "detail": "Pure, no chicory",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10",
+    "badge": "Most Selling",
+    "tags": [
+      "Most Selling",
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.5,
+    "reviewCount": 86,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 199,
+        "stock": 30
+      },
+      {
+        "label": "100g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 18
+      },
+      {
+        "label": "200g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:26.000Z",
+    "updatedAt": "2026-11-02T09:40:26.000Z"
+  },
+  {
+    "id": "65",
+    "slug": "filter-coffee",
+    "name": "Filter Coffee Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
+    "detail": "Medium roast, strong aroma",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 24
+      },
+      {
+        "label": "500g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1199,
+        "mrp": 1399,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:26.000Z",
+    "updatedAt": "2026-11-02T09:40:26.000Z"
   },
   {
     "id": "34",
@@ -57,13 +217,13 @@
         "label": "250g",
         "price": 399,
         "mrp": 449,
-        "stock": 24
+        "stock": 0
       },
       {
         "label": "500g",
         "price": 749,
         "mrp": 849,
-        "stock": 12
+        "stock": 0
       },
       {
         "label": "1kg",
@@ -210,133 +370,14 @@
     "updatedAt": "2026-10-30T16:54:19.000Z"
   },
   {
-    "id": "7",
-    "slug": "turmeric-powder",
-    "name": "Turmeric Powder",
-    "section": "spices",
-    "category": "Ground Spices",
-    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
-    "detail": "High curcumin golden haldi",
-    "image": "https://static.toiimg.com/photo/64699039.cms",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 69,
-        "mrp": 79,
-        "stock": 40
-      },
-      {
-        "label": "200g",
-        "price": 125,
-        "mrp": 149,
-        "stock": 22
-      },
-      {
-        "label": "500g",
-        "price": 289,
-        "mrp": 349,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "4",
-    "slug": "coffee-soap",
-    "name": "Coffee Soap Bar",
-    "section": "coffee-skin",
-    "category": "Soap",
-    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
-    "detail": "Coffee-inspired skincare",
-    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "1 bar",
-        "price": 199,
-        "stock": 40
-      },
-      {
-        "label": "Pack of 3",
-        "price": 549,
-        "mrp": 597,
-        "stock": 20
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "1",
-    "slug": "filter-coffee",
-    "name": "Filter Coffee Powder",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
-    "detail": "Medium roast, strong aroma",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 24
-      },
-      {
-        "label": "500g",
-        "price": 649,
-        "mrp": 749,
-        "stock": 12
-      },
-      {
-        "label": "1kg",
-        "price": 1199,
-        "mrp": 1399,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "10",
+    "id": "74",
     "slug": "black-pepper",
     "name": "Black Pepper Whole",
     "section": "spices",
     "category": "Whole Spices",
     "description": "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
     "detail": "Bold and aromatic",
-    "image": "",
+    "image": "/api/uploads/products/black-pepper-1793620666735-c4ba9de1.jpg",
     "badge": "Most Selling",
     "tags": [
       "Most Selling"
@@ -354,26 +395,27 @@
       },
       {
         "label": "100g",
-        "price": 299,
-        "mrp": 329,
+        "price": 219,
+        "mrp": 249,
         "stock": 20
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T11:57:46.000Z"
   },
   {
-    "id": "37",
+    "id": "91",
     "slug": "dry-dates",
     "name": "Dry Dates (Kharek)",
     "section": "dates",
     "category": "Dry Dates",
     "description": "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
     "detail": "Rich chewy dried dates",
-    "image": "",
+    "image": "/api/uploads/products/dry-dates-1793622107859-17a03257.jpg",
     "badge": "Top seller",
     "tags": [
-      "Top seller"
+      "Top seller",
+      "Bestseller"
     ],
     "isBestSeller": true,
     "isMostSelling": false,
@@ -399,11 +441,52 @@
         "stock": 10
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T12:21:47.000Z"
   },
   {
-    "id": "23",
+    "id": "89",
+    "slug": "ajwa-dates",
+    "name": "Ajwa Dates",
+    "section": "dates",
+    "category": "Premium Dates",
+    "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
+    "detail": "Authentic Madinah dates",
+    "image": "/api/uploads/products/ajwa-dates-1793622211700-0a403d70.jpg",
+    "badge": "Premium",
+    "tags": [
+      "Premium",
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.9,
+    "reviewCount": 96,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 599,
+        "stock": 30
+      },
+      {
+        "label": "500g",
+        "price": 1099,
+        "mrp": 1249,
+        "stock": 18
+      },
+      {
+        "label": "1kg",
+        "price": 2049,
+        "mrp": 2399,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T12:23:31.000Z"
+  },
+  {
+    "id": "80",
     "slug": "memory-foam-topper",
     "name": "Gel Memory Foam Topper",
     "section": "importedbed",
@@ -439,11 +522,11 @@
         "stock": 15
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "17",
+    "id": "77",
     "slug": "vanilla-mist",
     "name": "Vanilla Sugar Body Mist",
     "section": "fragrances",
@@ -473,49 +556,66 @@
         "stock": 20
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-31T04:14:04.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "35",
-    "slug": "ajwa-dates",
-    "name": "Ajwa Dates",
-    "section": "dates",
-    "category": "Premium Dates",
-    "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
-    "detail": "Authentic Madinah dates",
-    "image": "",
-    "badge": "Premium",
+    "id": "62",
+    "slug": "freshly-grounded-beans-arabica-coffee-powder-9967",
+    "name": "Freshly Grounded Beans Arabica Coffee Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "",
+    "detail": "",
+    "image": "/api/uploads/products/freshly-grounded-beans-arabica-coffee-powder-996-1793611807767-75dd6acc.jpg",
+    "badge": "Bestseller",
     "tags": [
-      "Premium",
       "Bestseller"
     ],
     "isBestSeller": true,
     "isMostSelling": false,
     "featuredOnHome": true,
-    "rating": 4.9,
-    "reviewCount": 96,
+    "rating": 4.7,
+    "reviewCount": 36,
     "sizes": [
       {
         "label": "250g",
-        "price": 599,
-        "stock": 30
-      },
-      {
-        "label": "500g",
-        "price": 1099,
-        "mrp": 1249,
-        "stock": 18
-      },
-      {
-        "label": "1kg",
-        "price": 2049,
-        "mrp": 2399,
-        "stock": 0
+        "price": 349,
+        "mrp": 399,
+        "stock": 25
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-02T09:30:07.000Z",
+    "updatedAt": "2026-11-02T09:30:07.000Z"
+  },
+  {
+    "id": "61",
+    "slug": "the-black-coffee-gold-arabica-coffee-powder-7724",
+    "name": "THE Black Coffee Gold Arabica Coffee Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "",
+    "detail": "",
+    "image": "/api/uploads/products/the-black-coffee-gold-arabica-coffee-powder-7724-1793611777990-be0e96f9.jpg",
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 36,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 25
+      }
+    ],
+    "createdAt": "2026-11-02T09:29:38.000Z",
+    "updatedAt": "2026-11-02T09:29:38.000Z"
   },
   {
     "id": "18",
@@ -559,10 +659,11 @@
     "category": "Spice Blends",
     "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
     "detail": "Fragrant roasted spice blend",
-    "image": "",
+    "image": "/api/uploads/products/garam-masala-1793620807400-9d0914a7.jpg",
     "badge": "Top seller",
     "tags": [
-      "Top seller"
+      "Top seller",
+      "Bestseller"
     ],
     "isBestSeller": true,
     "isMostSelling": false,
@@ -583,7 +684,7 @@
       }
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "updatedAt": "2026-11-02T12:00:07.000Z"
   },
   {
     "id": "11",
@@ -593,7 +694,7 @@
     "category": "Whole Spices",
     "description": "Plump, aromatic green pods sorted for freshness and aroma.",
     "detail": "Fragrant green pods",
-    "image": "",
+    "image": "/api/uploads/products/green-cardamom-1793620842779-a2fa28de.jpg",
     "badge": "Bestseller",
     "tags": [
       "Bestseller"
@@ -618,46 +719,17 @@
       }
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "updatedAt": "2026-11-02T12:00:42.000Z"
   },
   {
-    "id": "43",
-    "slug": "tomato-6940",
-    "name": "Tomato",
-    "section": "groceries",
-    "category": "Fruits & Vegetables",
-    "description": "",
-    "detail": "Farm fresh",
-    "image": "/api/uploads/products/tomato-6940-1793436609021-90ed1a91.jpg",
-    "badge": "",
-    "tags": [
-      "Fresh"
-    ],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 36,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 20,
-        "mrp": 25,
-        "stock": 10
-      }
-    ],
-    "createdAt": "2026-10-31T05:41:54.000Z",
-    "updatedAt": "2026-10-31T05:41:54.000Z"
-  },
-  {
-    "id": "39",
+    "id": "93",
     "slug": "date-paste",
     "name": "Seedless Date Paste",
     "section": "dates",
     "category": "Date Products",
     "description": "Smooth, seedless paste made from soft dates. Great for baking, smoothies and desserts.",
     "detail": "Smooth paste for baking",
-    "image": "",
+    "image": "/api/uploads/products/date-paste-1793622056289-4f97fa3e.jpg",
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -678,18 +750,18 @@
         "stock": 6
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T12:20:56.000Z"
   },
   {
-    "id": "38",
+    "id": "92",
     "slug": "date-syrup",
     "name": "Pure Date Syrup",
     "section": "dates",
     "category": "Date Products",
     "description": "100% natural syrup made from ripe dates. A healthy swap for sugar and honey.",
     "detail": "100% natural date sweetener",
-    "image": "",
+    "image": "/api/uploads/products/date-syrup-1793622086366-27645883.jpg",
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -710,18 +782,18 @@
         "stock": 9
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T12:21:26.000Z"
   },
   {
-    "id": "36",
+    "id": "90",
     "slug": "kimia-dates",
     "name": "Kimia Dates",
     "section": "dates",
     "category": "Premium Dates",
     "description": "Soft, juicy and moist dates with a mild honey-like sweetness. Great for the whole family.",
     "detail": "Soft, juicy & honey-sweet",
-    "image": "",
+    "image": "/api/uploads/products/kimia-dates-1793622185044-eca3f468.jpg",
     "badge": "New",
     "tags": [
       "New"
@@ -741,14 +813,14 @@
         "label": "500g",
         "price": 449,
         "mrp": 499,
-        "stock": 3
+        "stock": 0
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T12:23:05.000Z"
   },
   {
-    "id": "33",
+    "id": "88",
     "slug": "potato-chips",
     "name": "Classic Salted Chips",
     "section": "groceries",
@@ -776,11 +848,11 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "30",
+    "id": "87",
     "slug": "whole-wheat-bread",
     "name": "Whole Wheat Bread",
     "section": "groceries",
@@ -804,11 +876,11 @@
         "stock": 14
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "29",
+    "id": "86",
     "slug": "farm-eggs",
     "name": "Farm Fresh Eggs",
     "section": "groceries",
@@ -842,11 +914,11 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "27",
+    "id": "84",
     "slug": "robusta-bananas",
     "name": "Robusta Bananas",
     "section": "groceries",
@@ -874,11 +946,11 @@
         "stock": 3
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "26",
+    "id": "83",
     "slug": "fresh-tomatoes",
     "name": "Fresh Tomatoes",
     "section": "groceries",
@@ -909,11 +981,11 @@
         "stock": 25
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "25",
+    "id": "82",
     "slug": "mattress-protector",
     "name": "Waterproof Mattress Protector",
     "section": "importedbed",
@@ -947,11 +1019,11 @@
         "stock": 5
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "24",
+    "id": "81",
     "slug": "memory-foam-pillow",
     "name": "Memory Foam Pillow",
     "section": "importedbed",
@@ -979,11 +1051,11 @@
         "stock": 22
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "22",
+    "id": "79",
     "slug": "pocket-spring-mattress",
     "name": "Pocket Spring Mattress",
     "section": "importedbed",
@@ -1019,11 +1091,11 @@
         "stock": 3
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "19",
+    "id": "78",
     "slug": "jasmine-attar",
     "name": "Jasmine Attar",
     "section": "fragrances",
@@ -1051,11 +1123,11 @@
         "stock": 6
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "15",
+    "id": "76",
     "slug": "citrus-bloom",
     "name": "Citrus Bloom Eau de Toilette",
     "section": "fragrances",
@@ -1089,17 +1161,89 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "13",
-    "slug": "chaat-masala",
-    "name": "Chaat Masala",
+    "id": "73",
+    "slug": "cumin-seeds",
+    "name": "Cumin Seeds (Jeera)",
     "section": "spices",
-    "category": "Spice Blends",
-    "description": "Tangy, zesty blend with black salt and amchur. Sprinkle on fruit, snacks and chaats.",
-    "detail": "Tangy, zesty spice blend",
+    "category": "Whole Spices",
+    "description": "Hand-picked whole jeera with a warm, earthy aroma. Perfect for tempering and spice blends.",
+    "detail": "Hand-picked whole jeera",
+    "image": "/api/uploads/products/cumin-seeds-1793620709839-1bc26e4c.jpg",
+    "badge": "New",
+    "tags": [
+      "New"
+    ],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.8,
+    "reviewCount": 64,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 99,
+        "stock": 15
+      },
+      {
+        "label": "250g",
+        "price": 229,
+        "mrp": 249,
+        "stock": 3
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T11:58:29.000Z"
+  },
+  {
+    "id": "72",
+    "slug": "red-chilli-powder",
+    "name": "Red Chilli Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Sun-dried red chillies, finely ground. Vibrant colour with a clean, fiery heat.",
+    "detail": "Vibrant colour & fiery heat",
+    "image": "/api/uploads/products/red-chilli-powder-1793620752357-3354c75f.jpg",
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 86,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 89,
+        "stock": 30
+      },
+      {
+        "label": "200g",
+        "price": 165,
+        "mrp": 189,
+        "stock": 18
+      },
+      {
+        "label": "500g",
+        "price": 389,
+        "mrp": 449,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T11:59:12.000Z"
+  },
+  {
+    "id": "70",
+    "slug": "coffee-scrub",
+    "name": "Coffee Body Scrub",
+    "section": "coffee-skin",
+    "category": "Body Care",
+    "description": "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
+    "detail": "Invigorating coffee body scrub",
     "image": "",
     "badge": "",
     "tags": [],
@@ -1110,30 +1254,62 @@
     "reviewCount": 33,
     "sizes": [
       {
-        "label": "50g",
-        "price": 79,
-        "stock": 15
+        "label": "100g",
+        "price": 399,
+        "stock": 12
       },
       {
-        "label": "100g",
-        "price": 139,
-        "mrp": 159,
-        "stock": 8
+        "label": "200g",
+        "price": 699,
+        "mrp": 799,
+        "stock": 6
       }
     ],
-    "createdAt": "2026-10-30T17:16:23.000Z",
-    "updatedAt": "2026-10-30T17:16:23.000Z"
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
   },
   {
-    "id": "42",
-    "slug": "coffee-powder-9732",
-    "name": "coffee powder",
+    "id": "69",
+    "slug": "coffee-face-wash",
+    "name": "Coffee Face Wash",
+    "section": "coffee-skin",
+    "category": "Face Care",
+    "description": "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
+    "detail": "Daily cleansing care",
+    "image": "",
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.3,
+    "reviewCount": 41,
+    "sizes": [
+      {
+        "label": "50ml",
+        "price": 249,
+        "stock": 22
+      },
+      {
+        "label": "100ml",
+        "price": 349,
+        "mrp": 399,
+        "stock": 9
+      }
+    ],
+    "createdAt": "2026-11-02T09:40:27.000Z",
+    "updatedAt": "2026-11-02T09:40:27.000Z"
+  },
+  {
+    "id": "63",
+    "slug": "aero-press-100-arabica-a-aa-grade-premium-ground-coffee-coffee-roast-9673",
+    "name": "Aero Press 100% Arabica A/ AA Grade Premium Ground Coffee Coffee Roast",
     "section": "coffee",
     "category": "Coffee Powder",
     "description": "",
     "detail": "",
-    "image": "/api/uploads/products/coffee-powder-9732-1793436609003-85d45ee2.jpg",
-    "badge": "Bestseller",
+    "image": "/api/uploads/products/aero-press-100-arabica-a-aa-grade-premium-ground-1793611838354-b97e7083.jpg",
+    "badge": "",
     "tags": [],
     "isBestSeller": false,
     "isMostSelling": false,
@@ -1148,41 +1324,8 @@
         "stock": 25
       }
     ],
-    "createdAt": "2026-10-30T16:59:56.000Z",
-    "updatedAt": "2026-10-30T17:03:24.000Z"
-  },
-  {
-    "id": "41",
-    "slug": "cotton-sheet-set",
-    "name": "Cotton Bedsheet Set",
-    "section": "importedbed",
-    "category": "Accessories",
-    "description": "Breathable, high-thread-count cotton bedsheet set with matching pillow covers.",
-    "detail": "King size, soft cotton",
-    "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.5,
-    "reviewCount": 62,
-    "sizes": [
-      {
-        "label": "Queen Set",
-        "price": 2199,
-        "mrp": 2599,
-        "stock": 18
-      },
-      {
-        "label": "King Set",
-        "price": 2499,
-        "mrp": 2999,
-        "stock": 12
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-02T09:30:38.000Z",
+    "updatedAt": "2026-11-02T09:30:38.000Z"
   },
   {
     "id": "32",
@@ -1283,213 +1426,5 @@
     ],
     "createdAt": "2026-10-30T16:54:19.000Z",
     "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "9",
-    "slug": "cumin-seeds",
-    "name": "Cumin Seeds (Jeera)",
-    "section": "spices",
-    "category": "Whole Spices",
-    "description": "Hand-picked whole jeera with a warm, earthy aroma. Perfect for tempering and spice blends.",
-    "detail": "Hand-picked whole jeera",
-    "image": "",
-    "badge": "New",
-    "tags": [
-      "New"
-    ],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.8,
-    "reviewCount": 64,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 99,
-        "stock": 15
-      },
-      {
-        "label": "250g",
-        "price": 229,
-        "mrp": 249,
-        "stock": 3
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "8",
-    "slug": "red-chilli-powder",
-    "name": "Red Chilli Powder",
-    "section": "spices",
-    "category": "Ground Spices",
-    "description": "Sun-dried red chillies, finely ground. Vibrant colour with a clean, fiery heat.",
-    "detail": "Vibrant colour & fiery heat",
-    "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.5,
-    "reviewCount": 86,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 89,
-        "stock": 30
-      },
-      {
-        "label": "200g",
-        "price": 165,
-        "mrp": 189,
-        "stock": 18
-      },
-      {
-        "label": "500g",
-        "price": 389,
-        "mrp": 449,
-        "stock": 0
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "6",
-    "slug": "coffee-scrub",
-    "name": "Coffee Body Scrub",
-    "section": "coffee-skin",
-    "category": "Body Care",
-    "description": "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
-    "detail": "Exfoliating coffee scrub",
-    "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.6,
-    "reviewCount": 33,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 399,
-        "stock": 0
-      },
-      {
-        "label": "200g",
-        "price": 699,
-        "mrp": 799,
-        "stock": 0
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "5",
-    "slug": "coffee-face-wash",
-    "name": "Coffee Face Wash",
-    "section": "coffee-skin",
-    "category": "Face Care",
-    "description": "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
-    "detail": "Daily cleansing care",
-    "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.3,
-    "reviewCount": 41,
-    "sizes": [
-      {
-        "label": "50ml",
-        "price": 249,
-        "stock": 22
-      },
-      {
-        "label": "100ml",
-        "price": 349,
-        "mrp": 399,
-        "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "3",
-    "slug": "coffee-beans",
-    "name": "Arabica Coffee Beans",
-    "section": "coffee",
-    "category": "Coffee Beans",
-    "description": "Single-estate whole beans, slow roasted. Grind fresh for the fullest flavour.",
-    "detail": "Single-estate whole beans",
-    "image": "",
-    "badge": "New",
-    "tags": [
-      "New"
-    ],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.8,
-    "reviewCount": 64,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 499,
-        "stock": 15
-      },
-      {
-        "label": "500g",
-        "price": 929,
-        "mrp": 999,
-        "stock": 3
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "2",
-    "slug": "instant-coffee",
-    "name": "Pure Instant Coffee",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
-    "detail": "Pure, no chicory",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10",
-    "badge": "Hot Deal",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.5,
-    "reviewCount": 86,
-    "sizes": [
-      {
-        "label": "50g",
-        "price": 199,
-        "stock": 30
-      },
-      {
-        "label": "100g",
-        "price": 299,
-        "mrp": 349,
-        "stock": 18
-      },
-      {
-        "label": "200g",
-        "price": 649,
-        "mrp": 749,
-        "stock": 0
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:58:30.000Z"
   }
 ]

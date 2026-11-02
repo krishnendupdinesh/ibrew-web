@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 export interface WishlistItem {
   productId: string;
   name: string;
+  description?: string;
   size?: string;
   price: number;
   mrp?: number;
@@ -81,7 +82,7 @@ export function useWishlist() {
   }, []);
 
   useEffect(() => {
-    sync();
+    queueMicrotask(() => sync());
     window.addEventListener(WISHLIST_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {

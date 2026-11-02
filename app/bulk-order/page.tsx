@@ -431,7 +431,7 @@ function Thumb({ item }: { item: BulkItem }) {
           src={item.image}
           alt={item.name}
           onError={() => setFailed(true)}
-          className="absolute inset-0 h-full w-full object-contain p-1"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
       )}
     </div>
@@ -464,11 +464,11 @@ function ItemCard({ item, quantity, onSetQuantity }: ItemCardProps) {
 
   return (
     <article
-      className="flex min-w-0 flex-col rounded-xl border bg-white p-3"
+      className="group flex min-w-0 flex-col rounded-xl border bg-white p-3"
       style={{ borderColor: added ? BROWN : LINE }}
     >
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-white">
-        <ItemImage item={item} className="absolute inset-0 h-full w-full object-contain p-2" />
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
+        <ItemImage item={item} className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" />
         {added && (
           <span
             className="absolute left-0 top-0 flex items-center gap-1 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white"

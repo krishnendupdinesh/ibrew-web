@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
-import { useAllProducts, type StoreProduct } from "../../lib/productStore";
+import { truncateWords, useAllProducts, type StoreProduct } from "../../lib/productStore";
 import { addToCart } from "../../lib/cartStore";
 import { useWishlist } from "../../lib/wishlistStore";
 import {
@@ -95,7 +95,7 @@ function ProductImage({ src, name }: { src: string; name: string }) {
       alt={name}
       loading="lazy"
       onError={() => setFailed(true)}
-      className="absolute inset-0 h-full w-full object-contain p-2"
+      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
     />
   );
 }
@@ -170,7 +170,7 @@ function SizeDropdown({
               >
                 <span>{size.label}</span>
                 <span className="text-[11px]">
-                  {size.stock === 0 ? "Out of stock" : formatPrice(size.price)}
+                  {(Number(size.stock) || 0) <= 0 ? "Out of stock" : formatPrice(size.price)}
                 </span>
               </button>
             </li>
@@ -198,8 +198,8 @@ function SearchProductCard({
   const [sizeIndex, setSizeIndex] = useState(firstAvailable >= 0 ? firstAvailable : 0);
 
   const size = product.sizes[sizeIndex] ?? product.sizes[0] ?? { label: "Standard", price: 0, stock: 0 };
-  const outOfStock = size.stock === 0;
-  const lowStock = !outOfStock && size.stock <= 5;
+  const outOfStock = (Number(size.stock) || 0) <= 0;
+  const lowStock = !outOfStock && Number(size.stock) <= 5;
   const discount = size.mrp && size.mrp > size.price ? Math.round((1 - size.price / size.mrp) * 100) : 0;
 
   const sectionRoute = `/${product.section}`;
@@ -226,7 +226,7 @@ function SearchProductCard({
       style={{ borderColor: LINE }}
     >
       {/* Product Image & Badges */}
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-neutral-50">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
         <ProductImage src={product.image} name={product.name} />
 
         {(product.badge || product.isMostSelling || product.isBestSeller || discount > 0) && !outOfStock && (
@@ -239,7 +239,7 @@ function SearchProductCard({
         )}
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-neutral-800/80 px-2.5 py-1 text-[11px] font-semibold text-white">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
             Out of Stock
           </span>
         )}
@@ -278,8 +278,16 @@ function SearchProductCard({
         </Link>
       </h3>
 
+      {/* Description with word limit */}
+      <p
+        className="mt-1 line-clamp-2 min-h-[2.2em] text-xs leading-4 text-neutral-500"
+        title={product.description || product.detail}
+      >
+        {truncateWords(product.description || product.detail, 14)}
+      </p>
+
       {/* Size Selector */}
-      <div className="mt-1">
+      <div className="mt-2">
         <SizeDropdown sizes={product.sizes} selectedIndex={sizeIndex} onSelect={setSizeIndex} />
       </div>
 
@@ -308,7 +316,13 @@ function SearchProductCard({
             Add
           </button>
         ) : (
-          <span className="text-xs font-semibold text-neutral-400">Sold out</span>
+          <button
+            type="button"
+            disabled
+            className="h-8.5 min-w-[85px] cursor-not-allowed rounded-lg border border-neutral-300 bg-neutral-100 px-2.5 text-xs font-bold uppercase tracking-wider text-neutral-400"
+          >
+            Out of Stock
+          </button>
         )}
       </div>
     </article>
@@ -353,11 +367,13 @@ function SearchPageContent() {
 
   // Sync state if URL query changes
   useEffect(() => {
-    const q = searchParams.get("q") || "";
-    const sec = searchParams.get("section") || "all";
-    setInputQuery(q);
-    setActiveQuery(q);
-    setSelectedSection(sec);
+    queueMicrotask(() => {
+      const q = searchParams.get("q") || "";
+      const sec = searchParams.get("section") || "all";
+      setInputQuery(q);
+      setActiveQuery(q);
+      setSelectedSection(sec);
+    });
   }, [searchParams]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -520,11 +536,10 @@ function SearchPageContent() {
                 key={term}
                 type="button"
                 onClick={() => handleSelectQuickSearch(term)}
-                className={`rounded-full border px-2.5 py-0.5 text-xs transition ${
-                  activeQuery.toLowerCase() === term.toLowerCase()
-                    ? "border-[#7A5A3C] bg-[#7A5A3C] text-white"
-                    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
-                }`}
+                className={`rounded-full border px-2.5 py-0.5 text-xs transition ${activeQuery.toLowerCase() === term.toLowerCase()
+                  ? "border-[#7A5A3C] bg-[#7A5A3C] text-white"
+                  : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+                  }`}
               >
                 {term}
               </button>
@@ -546,11 +561,10 @@ function SearchPageContent() {
                   key={opt.value}
                   type="button"
                   onClick={() => setSelectedSection(opt.value)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#7A5A3C] text-white shadow-xs"
-                      : "bg-white border border-neutral-200 text-neutral-700 hover:border-neutral-300"
-                  }`}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${active
+                    ? "bg-[#7A5A3C] text-white shadow-xs"
+                    : "bg-white border border-neutral-200 text-neutral-700 hover:border-neutral-300"
+                    }`}
                 >
                   {opt.label}
                 </button>

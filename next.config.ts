@@ -2,9 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {
-    agentFeedback: true,
-  },
+  devIndicators: false,
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -18,10 +18,11 @@ const nextConfig: NextConfig = {
 
   // Sends every request that starts with /api to the Express backend (using 127.0.0.1 avoids Windows IPv6 localhost delay).
   async rewrites() {
+    const backend = (process.env.BACKEND_URL || "http://127.0.0.1:5001").replace(/\/+$/, "");
     return [
       {
         source: "/api/:path*",
-        destination: "http://127.0.0.1:5001/api/:path*",
+        destination: `${backend}/api/:path*`,
       },
     ];
   },
