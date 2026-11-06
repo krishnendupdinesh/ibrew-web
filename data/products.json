@@ -1,200 +1,6 @@
 [
   {
-    "id": "85",
-    "slug": "full-cream-milk",
-    "name": "Full Cream Milk",
-    "section": "groceries",
-    "category": "Dairy & Bakery",
-    "description": "Rich and creamy pasteurised milk. Delivered chilled and fresh every morning.",
-    "detail": "Rich pasteurised milk",
-    "image": "",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": false,
-    "rating": 4.7,
-    "reviewCount": 340,
-    "sizes": [
-      {
-        "label": "500ml",
-        "price": 33,
-        "stock": 60
-      },
-      {
-        "label": "1L",
-        "price": 66,
-        "stock": 45
-      }
-    ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
-  },
-  {
-    "id": "71",
-    "slug": "turmeric-powder",
-    "name": "Turmeric Powder",
-    "section": "spices",
-    "category": "Ground Spices",
-    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
-    "detail": "High curcumin golden haldi",
-    "image": "/api/uploads/products/turmeric-powder-1793620581258-4ff4fcdb.jpg",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "100g",
-        "price": 69,
-        "mrp": 79,
-        "stock": 40
-      },
-      {
-        "label": "200g",
-        "price": 125,
-        "mrp": 149,
-        "stock": 22
-      },
-      {
-        "label": "500g",
-        "price": 289,
-        "mrp": 349,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T11:56:21.000Z"
-  },
-  {
-    "id": "68",
-    "slug": "coffee-soap",
-    "name": "Coffee Soap Bar",
-    "section": "coffee-skin",
-    "category": "Soap",
-    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
-    "detail": "Coffee-inspired skincare",
-    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.4,
-    "reviewCount": 52,
-    "sizes": [
-      {
-        "label": "1 bar",
-        "price": 199,
-        "stock": 40
-      },
-      {
-        "label": "Pack of 3",
-        "price": 549,
-        "mrp": 597,
-        "stock": 20
-      }
-    ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
-  },
-  {
-    "id": "66",
-    "slug": "instant-coffee",
-    "name": "Pure Instant Coffee",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
-    "detail": "Pure, no chicory",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10",
-    "badge": "Most Selling",
-    "tags": [
-      "Most Selling",
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.5,
-    "reviewCount": 86,
-    "sizes": [
-      {
-        "label": "50g",
-        "price": 199,
-        "stock": 30
-      },
-      {
-        "label": "100g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 18
-      },
-      {
-        "label": "200g",
-        "price": 649,
-        "mrp": 749,
-        "stock": 0
-      }
-    ],
-    "createdAt": "2026-11-02T09:40:26.000Z",
-    "updatedAt": "2026-11-02T09:40:26.000Z"
-  },
-  {
-    "id": "65",
-    "slug": "filter-coffee",
-    "name": "Filter Coffee Powder",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
-    "detail": "Medium roast, strong aroma",
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller",
-      "Most Selling"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": true,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 128,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 24
-      },
-      {
-        "label": "500g",
-        "price": 649,
-        "mrp": 749,
-        "stock": 12
-      },
-      {
-        "label": "1kg",
-        "price": 1199,
-        "mrp": 1399,
-        "stock": 4
-      }
-    ],
-    "createdAt": "2026-11-02T09:40:26.000Z",
-    "updatedAt": "2026-11-02T09:40:26.000Z"
-  },
-  {
-    "id": "34",
+    "id": "73",
     "slug": "medjool-dates",
     "name": "Medjool Dates",
     "section": "dates",
@@ -202,6 +8,9 @@
     "description": "Large, soft and caramel-like dates. Naturally sweet and perfect for snacking.",
     "detail": "Large, soft & caramel-like",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiV5zULTMNb3gWuNP_KftdHmqVNK4pytWCe2JkTxV8IA&s=10",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiV5zULTMNb3gWuNP_KftdHmqVNK4pytWCe2JkTxV8IA&s=10"
+    ],
     "badge": "Bestseller",
     "tags": [
       "Bestseller",
@@ -212,18 +21,24 @@
     "featuredOnHome": true,
     "rating": 4.8,
     "reviewCount": 142,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250g",
         "price": 399,
         "mrp": 449,
-        "stock": 0
+        "stock": 24
       },
       {
         "label": "500g",
         "price": 749,
         "mrp": 849,
-        "stock": 0
+        "stock": 12
       },
       {
         "label": "1kg",
@@ -232,11 +47,11 @@
         "stock": 4
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "31",
+    "id": "70",
     "slug": "basmati-rice",
     "name": "Basmati Rice",
     "section": "groceries",
@@ -244,9 +59,12 @@
     "description": "Long-grain, aged basmati with a lovely aroma. Cooks up fluffy and non-sticky.",
     "detail": "Long-grain aged basmati",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBwRhXv0fY4RJJhu_zDBrOBiu7_CygkvYGwKlDd6A5eQ&s=10",
-    "badge": "Bestseller",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBwRhXv0fY4RJJhu_zDBrOBiu7_CygkvYGwKlDd6A5eQ&s=10"
+    ],
+    "badge": "Top seller",
     "tags": [
-      "Bestseller",
+      "Top seller",
       "Most Selling"
     ],
     "isBestSeller": true,
@@ -254,6 +72,12 @@
     "featuredOnHome": true,
     "rating": 4.8,
     "reviewCount": 285,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "1kg",
@@ -274,11 +98,52 @@
         "stock": 4
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "20",
+    "id": "67",
+    "slug": "full-cream-milk",
+    "name": "Full Cream Milk",
+    "section": "groceries",
+    "category": "Dairy & Bakery",
+    "description": "Rich and creamy pasteurised milk. Delivered chilled and fresh every morning.",
+    "detail": "Rich pasteurised milk",
+    "image": "",
+    "images": [],
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": false,
+    "rating": 4.7,
+    "reviewCount": 340,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "500ml",
+        "price": 33,
+        "stock": 60
+      },
+      {
+        "label": "1L",
+        "price": 66,
+        "stock": 45
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
+  },
+  {
+    "id": "59",
     "slug": "memory-foam-mattress",
     "name": "Memory Foam Mattress",
     "section": "importedbed",
@@ -286,6 +151,9 @@
     "description": "Contouring memory foam that relieves pressure points and keeps your spine aligned all night.",
     "detail": "Queen size, medium firm",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s"
+    ],
     "badge": "Bestseller",
     "tags": [
       "Bestseller",
@@ -297,6 +165,12 @@
     "featuredOnHome": true,
     "rating": 4.7,
     "reviewCount": 128,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "Single 72x36\"",
@@ -312,8 +186,8 @@
       },
       {
         "label": "Queen 78x60\"",
-        "price": 14999,
-        "mrp": 17999,
+        "price": 15999,
+        "mrp": 20999,
         "stock": 6
       },
       {
@@ -323,11 +197,11 @@
         "stock": 4
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "14",
+    "id": "53",
     "slug": "oud-noir",
     "name": "Oud Noir Eau de Parfum",
     "section": "fragrances",
@@ -335,6 +209,9 @@
     "description": "Deep, woody and smoky with warm amber. A bold scent that lasts all day.",
     "detail": "Warm, woody fragrance",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10"
+    ],
     "badge": "Bestseller",
     "tags": [
       "Bestseller",
@@ -346,6 +223,12 @@
     "featuredOnHome": true,
     "rating": 4.8,
     "reviewCount": 142,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "30ml",
@@ -355,29 +238,226 @@
       },
       {
         "label": "50ml",
-        "price": 1999,
-        "mrp": 2299,
+        "price": 1399,
+        "mrp": 1599,
         "stock": 12
       },
       {
         "label": "100ml",
-        "price": 2999,
-        "mrp": 3499,
+        "price": 2299,
+        "mrp": 2699,
         "stock": 4
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "74",
+    "id": "46",
+    "slug": "turmeric-powder",
+    "name": "Turmeric Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
+    "detail": "High curcumin golden haldi",
+    "image": "https://static.toiimg.com/photo/64699039.cms",
+    "images": [
+      "https://static.toiimg.com/photo/64699039.cms"
+    ],
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 69,
+        "mrp": 79,
+        "stock": 40
+      },
+      {
+        "label": "200g",
+        "price": 125,
+        "mrp": 149,
+        "stock": 22
+      },
+      {
+        "label": "500g",
+        "price": 289,
+        "mrp": 349,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
+  },
+  {
+    "id": "43",
+    "slug": "coffee-soap",
+    "name": "Coffee Soap Bar",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
+    "detail": "Coffee-inspired skincare",
+    "image": "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg",
+    "images": [
+      "https://images.pexels.com/photos/14856372/pexels-photo-14856372.jpeg"
+    ],
+    "badge": "Top seller",
+    "tags": [
+      "Top seller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.4,
+    "reviewCount": 52,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "1 bar",
+        "price": 199,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 3",
+        "price": 549,
+        "mrp": 597,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T02:10:01.000Z"
+  },
+  {
+    "id": "41",
+    "slug": "instant-coffee",
+    "name": "Pure Instant Coffee",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
+    "detail": "Pure, no chicory",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10"
+    ],
+    "badge": "Most Selling",
+    "tags": [
+      "Most Selling",
+      "Bestseller"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.5,
+    "reviewCount": 86,
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 199,
+        "stock": 30
+      },
+      {
+        "label": "100g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 18
+      },
+      {
+        "label": "200g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
+  },
+  {
+    "id": "40",
+    "slug": "filter-coffee",
+    "name": "Filter Coffee Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
+    "detail": "Medium roast, strong aroma",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
+    "images": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10"
+    ],
+    "badge": "Bestseller",
+    "tags": [
+      "Bestseller",
+      "Most Selling"
+    ],
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 128,
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 24
+      },
+      {
+        "label": "500g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1199,
+        "mrp": 1399,
+        "stock": 4
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
+  },
+  {
+    "id": "49",
     "slug": "black-pepper",
     "name": "Black Pepper Whole",
     "section": "spices",
     "category": "Whole Spices",
     "description": "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
     "detail": "Bold and aromatic",
-    "image": "/api/uploads/products/black-pepper-1793620666735-c4ba9de1.jpg",
+    "image": "",
+    "images": [],
     "badge": "Most Selling",
     "tags": [
       "Most Selling"
@@ -387,6 +467,12 @@
     "featuredOnHome": true,
     "rating": 4.4,
     "reviewCount": 52,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "50g",
@@ -400,28 +486,34 @@
         "stock": 20
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T11:57:46.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
   },
   {
-    "id": "91",
+    "id": "76",
     "slug": "dry-dates",
     "name": "Dry Dates (Kharek)",
     "section": "dates",
     "category": "Dry Dates",
     "description": "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
     "detail": "Rich chewy dried dates",
-    "image": "/api/uploads/products/dry-dates-1793622107859-17a03257.jpg",
+    "image": "",
+    "images": [],
     "badge": "Top seller",
     "tags": [
-      "Top seller",
-      "Bestseller"
+      "Top seller"
     ],
     "isBestSeller": true,
     "isMostSelling": false,
     "featuredOnHome": false,
     "rating": 4.4,
     "reviewCount": 52,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250g",
@@ -441,18 +533,19 @@
         "stock": 10
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T12:21:47.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "89",
+    "id": "74",
     "slug": "ajwa-dates",
     "name": "Ajwa Dates",
     "section": "dates",
     "category": "Premium Dates",
     "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
     "detail": "Authentic Madinah dates",
-    "image": "/api/uploads/products/ajwa-dates-1793622211700-0a403d70.jpg",
+    "image": "",
+    "images": [],
     "badge": "Premium",
     "tags": [
       "Premium",
@@ -463,6 +556,12 @@
     "featuredOnHome": true,
     "rating": 4.9,
     "reviewCount": 96,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250g",
@@ -482,11 +581,11 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T12:23:31.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "80",
+    "id": "62",
     "slug": "memory-foam-topper",
     "name": "Gel Memory Foam Topper",
     "section": "importedbed",
@@ -494,6 +593,7 @@
     "description": "Cooling gel-infused topper that adds a soft comfort layer to any mattress.",
     "detail": "Cooling gel comfort layer",
     "image": "",
+    "images": [],
     "badge": "Top seller",
     "tags": [
       "Top seller"
@@ -503,6 +603,12 @@
     "featuredOnHome": true,
     "rating": 4.4,
     "reviewCount": 52,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "Single 72x36\"",
@@ -522,11 +628,11 @@
         "stock": 15
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "77",
+    "id": "56",
     "slug": "vanilla-mist",
     "name": "Vanilla Sugar Body Mist",
     "section": "fragrances",
@@ -534,6 +640,7 @@
     "description": "Warm vanilla with a hint of caramel. Sweet, cosy and gently long lasting.",
     "detail": "Warm vanilla & caramel",
     "image": "",
+    "images": [],
     "badge": "Top seller",
     "tags": [
       "Top seller"
@@ -543,6 +650,12 @@
     "featuredOnHome": false,
     "rating": 4.4,
     "reviewCount": 58,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "100ml",
@@ -556,76 +669,19 @@
         "stock": 20
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "62",
-    "slug": "freshly-grounded-beans-arabica-coffee-powder-9967",
-    "name": "Freshly Grounded Beans Arabica Coffee Powder",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "",
-    "detail": "",
-    "image": "/api/uploads/products/freshly-grounded-beans-arabica-coffee-powder-996-1793611807767-75dd6acc.jpg",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 36,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 25
-      }
-    ],
-    "createdAt": "2026-11-02T09:30:07.000Z",
-    "updatedAt": "2026-11-02T09:30:07.000Z"
-  },
-  {
-    "id": "61",
-    "slug": "the-black-coffee-gold-arabica-coffee-powder-7724",
-    "name": "THE Black Coffee Gold Arabica Coffee Powder",
-    "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "",
-    "detail": "",
-    "image": "/api/uploads/products/the-black-coffee-gold-arabica-coffee-powder-7724-1793611777990-be0e96f9.jpg",
-    "badge": "Bestseller",
-    "tags": [
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 36,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 25
-      }
-    ],
-    "createdAt": "2026-11-02T09:29:38.000Z",
-    "updatedAt": "2026-11-02T09:29:38.000Z"
-  },
-  {
-    "id": "18",
-    "slug": "sandalwood-attar",
-    "name": "Sandalwood Attar",
-    "section": "fragrances",
-    "category": "Attar",
-    "description": "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
-    "detail": "Alcohol-free roll-on attar",
+    "id": "51",
+    "slug": "garam-masala",
+    "name": "Garam Masala",
+    "section": "spices",
+    "category": "Spice Blends",
+    "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
+    "detail": "Fragrant roasted spice blend",
     "image": "",
+    "images": [],
     "badge": "Top seller",
     "tags": [
       "Top seller"
@@ -633,43 +689,14 @@
     "isBestSeller": true,
     "isMostSelling": false,
     "featuredOnHome": false,
-    "rating": 4.7,
-    "reviewCount": 49,
-    "sizes": [
-      {
-        "label": "6ml",
-        "price": 349,
-        "stock": 22
-      },
-      {
-        "label": "12ml",
-        "price": 599,
-        "mrp": 699,
-        "stock": 9
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "12",
-    "slug": "garam-masala",
-    "name": "Garam Masala",
-    "section": "spices",
-    "category": "Spice Blends",
-    "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
-    "detail": "Fragrant roasted spice blend",
-    "image": "/api/uploads/products/garam-masala-1793620807400-9d0914a7.jpg",
-    "badge": "Top seller",
-    "tags": [
-      "Top seller",
-      "Bestseller"
-    ],
-    "isBestSeller": true,
-    "isMostSelling": false,
-    "featuredOnHome": false,
     "rating": 4.3,
     "reviewCount": 41,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "50g",
@@ -683,18 +710,19 @@
         "stock": 9
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-11-02T12:00:07.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
   },
   {
-    "id": "11",
+    "id": "50",
     "slug": "green-cardamom",
     "name": "Green Cardamom",
     "section": "spices",
     "category": "Whole Spices",
     "description": "Plump, aromatic green pods sorted for freshness and aroma.",
     "detail": "Fragrant green pods",
-    "image": "/api/uploads/products/green-cardamom-1793620842779-a2fa28de.jpg",
+    "image": "",
+    "images": [],
     "badge": "Bestseller",
     "tags": [
       "Bestseller"
@@ -704,6 +732,12 @@
     "featuredOnHome": true,
     "rating": 4.8,
     "reviewCount": 94,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "50g",
@@ -718,18 +752,1308 @@
         "stock": 10
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-11-02T12:00:42.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
+  },
+  {
+    "id": "112",
+    "slug": "almond-stuffed-dates",
+    "name": "Almond Stuffed Dates",
+    "section": "dates",
+    "category": "Date Products",
+    "description": "Soft dates hand-stuffed with roasted almonds — a perfect gift.",
+    "detail": "Hand-stuffed with almonds",
+    "image": "/api/uploads/products/almond-stuffed-dates-1793940327433-b9553718.jpg",
+    "images": [
+      "/api/uploads/products/almond-stuffed-dates-1793940327433-b9553718.jpg"
+    ],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 449,
+        "mrp": 549,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:45:27.000Z"
+  },
+  {
+    "id": "111",
+    "slug": "dried-kimia-dates",
+    "name": "Dried Kimia Dates",
+    "section": "dates",
+    "category": "Dry Dates",
+    "description": "Naturally dried Kimia dates — firm texture, perfect for travel snacking.",
+    "detail": "Naturally dried",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "500g",
+        "price": 299,
+        "mrp": 349,
+        "stock": 30
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "110",
+    "slug": "safawi-dates",
+    "name": "Safawi Dates",
+    "section": "dates",
+    "category": "Premium Dates",
+    "description": "Dark, chewy Safawi dates with a deep caramel sweetness.",
+    "detail": "Dark, chewy & sweet",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "500g",
+        "price": 549,
+        "mrp": 649,
+        "stock": 18
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "109",
+    "slug": "ajwa-dates-premium",
+    "name": "Ajwa Dates",
+    "section": "dates",
+    "category": "Premium Dates",
+    "description": "Premium Ajwa dates from Madinah, soft with a rich, mildly sweet taste.",
+    "detail": "Soft, rich Madinah dates",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 699,
+        "mrp": 799,
+        "stock": 20
+      },
+      {
+        "label": "500g",
+        "price": 1299,
+        "mrp": 1499,
+        "stock": 10
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "108",
+    "slug": "pure-desi-ghee",
+    "name": "Pure Desi Ghee",
+    "section": "groceries",
+    "category": "Dairy & Bakery",
+    "description": "Aromatic cow ghee made using the traditional bilona method.",
+    "detail": "Traditional bilona method",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "500ml",
+        "price": 549,
+        "mrp": 620,
+        "stock": 25
+      },
+      {
+        "label": "1L",
+        "price": 1049,
+        "mrp": 1199,
+        "stock": 12
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "107",
+    "slug": "assam-masala-chai",
+    "name": "Assam Masala Chai",
+    "section": "groceries",
+    "category": "Snacks & Beverages",
+    "description": "Bold Assam CTC tea blended with cardamom, ginger and cloves.",
+    "detail": "Strong CTC with spices",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 199,
+        "mrp": 240,
+        "stock": 40
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "106",
+    "slug": "roasted-cashew-nuts",
+    "name": "Roasted Cashew Nuts",
+    "section": "groceries",
+    "category": "Snacks & Beverages",
+    "description": "Crunchy lightly salted roasted cashews, perfect for snacking.",
+    "detail": "Lightly salted W320",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "200g",
+        "price": 249,
+        "mrp": 299,
+        "stock": 35
+      },
+      {
+        "label": "500g",
+        "price": 579,
+        "mrp": 699,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "105",
+    "slug": "whole-wheat-atta",
+    "name": "Whole Wheat Atta",
+    "section": "groceries",
+    "category": "Staples & Grains",
+    "description": "100% whole wheat flour, stone-ground for soft rotis.",
+    "detail": "Stone-ground chakki atta",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "5kg",
+        "price": 289,
+        "mrp": 330,
+        "stock": 30
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "104",
+    "slug": "basmati-rice-premium",
+    "name": "Premium Basmati Rice",
+    "section": "groceries",
+    "category": "Staples & Grains",
+    "description": "Aged basmati rice with long, fluffy grains and natural aroma.",
+    "detail": "Extra-long aged grains",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "1kg",
+        "price": 179,
+        "mrp": 210,
+        "stock": 50
+      },
+      {
+        "label": "5kg",
+        "price": 849,
+        "mrp": 999,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "103",
+    "slug": "waterproof-mattress-protector",
+    "name": "Waterproof Mattress Protector",
+    "section": "importedbed",
+    "category": "Accessories",
+    "description": "Breathable waterproof protector that keeps your mattress clean and fresh.",
+    "detail": "Breathable & washable",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Queen",
+        "price": 1299,
+        "mrp": 1599,
+        "stock": 15
+      },
+      {
+        "label": "King",
+        "price": 1499,
+        "mrp": 1899,
+        "stock": 10
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "102",
+    "slug": "memory-foam-contour-pillow",
+    "name": "Memory Foam Contour Pillow",
+    "section": "importedbed",
+    "category": "Accessories",
+    "description": "Ergonomic contour pillow that supports the neck for side and back sleepers.",
+    "detail": "Neck & shoulder support",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Standard",
+        "price": 1499,
+        "mrp": 1999,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "101",
+    "slug": "pocket-spring-luxury-mattress",
+    "name": "Pocket Spring Luxury Mattress",
+    "section": "importedbed",
+    "category": "Spring",
+    "description": "Pocket spring mattress with zero motion transfer and a plush pillow top.",
+    "detail": "Individually wrapped springs",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Queen",
+        "price": 24999,
+        "mrp": 29999,
+        "stock": 4
+      },
+      {
+        "label": "King",
+        "price": 28999,
+        "mrp": 34999,
+        "stock": 2
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "100",
+    "slug": "ortho-firm-support-mattress",
+    "name": "Ortho Firm Support Mattress",
+    "section": "importedbed",
+    "category": "Orthopedic",
+    "description": "High-density orthopedic mattress designed for spinal alignment and back care.",
+    "detail": "Firm back support",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Queen",
+        "price": 16999,
+        "mrp": 20999,
+        "stock": 5
+      },
+      {
+        "label": "King",
+        "price": 20999,
+        "mrp": 24999,
+        "stock": 3
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "99",
+    "slug": "cloud-comfort-memory-foam-mattress",
+    "name": "Cloud Comfort Memory Foam Mattress",
+    "section": "importedbed",
+    "category": "Memory Foam",
+    "description": "Multi-layer memory foam mattress that contours to your body for deep sleep.",
+    "detail": "Medium-soft, pressure relief",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Single",
+        "price": 12999,
+        "mrp": 15999,
+        "stock": 6
+      },
+      {
+        "label": "Queen",
+        "price": 18999,
+        "mrp": 22999,
+        "stock": 4
+      },
+      {
+        "label": "King",
+        "price": 22999,
+        "mrp": 27999,
+        "stock": 3
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "98",
+    "slug": "vanilla-bloom-body-mist",
+    "name": "Vanilla Bloom Body Mist",
+    "section": "fragrances",
+    "category": "Body Mist",
+    "description": "Refreshing body mist with soft vanilla and white floral notes.",
+    "detail": "Sweet vanilla & florals",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "150ml",
+        "price": 349,
+        "mrp": 399,
+        "stock": 25
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "97",
+    "slug": "citrus-fresh-perfume",
+    "name": "Citrus Fresh Eau de Toilette",
+    "section": "fragrances",
+    "category": "Perfume",
+    "description": "Light citrus and bergamot fragrance ideal for daily wear.",
+    "detail": "Bright, everyday scent",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50ml",
+        "price": 699,
+        "mrp": 849,
+        "stock": 18
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "96",
+    "slug": "amber-noir-perfume",
+    "name": "Amber Noir Eau de Parfum",
+    "section": "fragrances",
+    "category": "Perfume",
+    "description": "Evening fragrance with warm amber, vanilla and a hint of spice.",
+    "detail": "Warm amber & vanilla",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50ml",
+        "price": 899,
+        "mrp": 1099,
+        "stock": 15
+      },
+      {
+        "label": "100ml",
+        "price": 1499,
+        "mrp": 1799,
+        "stock": 8
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "95",
+    "slug": "rose-oudh-attar",
+    "name": "Rose Oudh Attar",
+    "section": "fragrances",
+    "category": "Attar",
+    "description": "Luxurious blend of Taif rose and smoky oudh in a concentrated oil.",
+    "detail": "Rich rose with smoky oudh",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "6ml",
+        "price": 449,
+        "mrp": 499,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "94",
+    "slug": "white-musk-attar",
+    "name": "White Musk Attar",
+    "section": "fragrances",
+    "category": "Attar",
+    "description": "Alcohol-free white musk attar with a soft, powdery and clean scent.",
+    "detail": "Soft, clean, long-lasting",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "6ml",
+        "price": 299,
+        "mrp": 349,
+        "stock": 30
+      },
+      {
+        "label": "12ml",
+        "price": 549,
+        "mrp": 649,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
   },
   {
     "id": "93",
+    "slug": "homestyle-garam-masala",
+    "name": "Homestyle Garam Masala",
+    "section": "spices",
+    "category": "Spice Blends",
+    "description": "Slow-roasted blend of 12 whole spices, ground in small batches.",
+    "detail": "Roasted 12-spice blend",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 149,
+        "mrp": 179,
+        "stock": 45
+      },
+      {
+        "label": "250g",
+        "price": 339,
+        "mrp": 399,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "92",
+    "slug": "cinnamon-sticks",
+    "name": "Cinnamon Sticks",
+    "section": "spices",
+    "category": "Whole Spices",
+    "description": "Fragrant cinnamon quills for biryanis, curries, and spiced tea.",
+    "detail": "True Ceylon-style quills",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 119,
+        "mrp": 139,
+        "stock": 35
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "91",
+    "slug": "whole-cloves",
+    "name": "Whole Cloves",
+    "section": "spices",
+    "category": "Whole Spices",
+    "description": "Hand-sorted whole cloves from Kerala with strong, warm flavour.",
+    "detail": "Hand-sorted, intense aroma",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 129,
+        "mrp": 149,
+        "stock": 40
+      },
+      {
+        "label": "100g",
+        "price": 239,
+        "mrp": 279,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "90",
+    "slug": "coriander-powder",
+    "name": "Coriander Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Stone-ground coriander seeds with a fresh citrusy aroma.",
+    "detail": "Freshly ground, aromatic",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 69,
+        "mrp": 85,
+        "stock": 60
+      },
+      {
+        "label": "250g",
+        "price": 159,
+        "mrp": 190,
+        "stock": 30
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "89",
+    "slug": "kashmiri-red-chilli-powder",
+    "name": "Kashmiri Red Chilli Powder",
+    "section": "spices",
+    "category": "Ground Spices",
+    "description": "Vibrant Kashmiri chilli powder that adds rich red colour with gentle heat.",
+    "detail": "Bright colour, mild heat",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 99,
+        "mrp": 120,
+        "stock": 50
+      },
+      {
+        "label": "250g",
+        "price": 229,
+        "mrp": 270,
+        "stock": 25
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "88",
+    "slug": "coffee-body-butter",
+    "name": "Coffee Body Butter",
+    "section": "coffee-skin",
+    "category": "Body Care",
+    "description": "Whipped body butter with shea and coffee oil for long-lasting moisture.",
+    "detail": "Rich shea & coffee butter",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 399,
+        "mrp": 449,
+        "stock": 18
+      },
+      {
+        "label": "200g",
+        "price": 699,
+        "mrp": 799,
+        "stock": 9
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "87",
+    "slug": "coffee-under-eye-cream",
+    "name": "Coffee Under Eye Cream",
+    "section": "coffee-skin",
+    "category": "Face Care",
+    "description": "Caffeine-infused cream that helps reduce puffiness and dark circles.",
+    "detail": "Reduces puffiness",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "20ml",
+        "price": 349,
+        "mrp": 399,
+        "stock": 20
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "86",
+    "slug": "coffee-face-scrub",
+    "name": "Coffee Face Scrub",
+    "section": "coffee-skin",
+    "category": "Face Care",
+    "description": "Gentle coffee and walnut scrub that removes dead skin and brightens dullness.",
+    "detail": "Brightening exfoliator",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 249,
+        "mrp": 299,
+        "stock": 25
+      },
+      {
+        "label": "100g",
+        "price": 449,
+        "mrp": 549,
+        "stock": 12
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "85",
+    "slug": "coffee-honey-soap-bar",
+    "name": "Coffee & Honey Soap Bar",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "Mild coffee soap enriched with honey for soft, hydrated skin.",
+    "detail": "Gentle, moisturising",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 159,
+        "mrp": 189,
+        "stock": 35
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "84",
+    "slug": "coffee-charcoal-soap-bar",
+    "name": "Coffee Charcoal Soap Bar",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "Handmade soap with coffee grounds and activated charcoal to deep-clean pores.",
+    "detail": "Deep cleansing detox bar",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 149,
+        "mrp": 179,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 3",
+        "price": 399,
+        "mrp": 537,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "83",
+    "slug": "french-press-coarse-grind",
+    "name": "French Press Coarse Grind",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Coarsely ground medium roast made for French press and cold brew.",
+    "detail": "Coarse grind, smooth cup",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 379,
+        "mrp": 429,
+        "stock": 21
+      },
+      {
+        "label": "500g",
+        "price": 699,
+        "stock": 8
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "82",
+    "slug": "espresso-roast-ground-coffee",
+    "name": "Espresso Roast Ground Coffee",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Finely ground espresso roast with rich crema and an intense body.",
+    "detail": "Fine grind for espresso",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 429,
+        "mrp": 479,
+        "stock": 18
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "81",
+    "slug": "classic-chicory-blend-powder",
+    "name": "Classic Chicory Blend Powder",
+    "section": "coffee",
+    "category": "Coffee Powder",
+    "description": "Traditional South Indian blend of coffee and chicory for a thick, strong decoction.",
+    "detail": "80:20 coffee-chicory blend",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 299,
+        "mrp": 349,
+        "stock": 30
+      },
+      {
+        "label": "500g",
+        "price": 549,
+        "mrp": 649,
+        "stock": 15
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "80",
+    "slug": "chikmagalur-dark-roast-beans",
+    "name": "Chikmagalur Dark Roast Beans",
+    "section": "coffee",
+    "category": "Coffee Beans",
+    "description": "Dark roasted beans from Chikmagalur with deep cocoa and caramel notes.",
+    "detail": "Bold, chocolatey dark roast",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 399,
+        "mrp": 449,
+        "stock": 25
+      },
+      {
+        "label": "500g",
+        "price": 749,
+        "mrp": 849,
+        "stock": 12
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "79",
+    "slug": "coorg-estate-arabica-beans",
+    "name": "Coorg Estate Arabica Beans",
+    "section": "coffee",
+    "category": "Coffee Beans",
+    "description": "Shade-grown Arabica beans from Coorg with fruity notes and a clean finish.",
+    "detail": "Single estate, light roast",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 0,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 449,
+        "mrp": 499,
+        "stock": 20
+      },
+      {
+        "label": "500g",
+        "price": 849,
+        "mrp": 949,
+        "stock": 10
+      }
+    ],
+    "createdAt": "2026-11-06T04:27:12.000Z",
+    "updatedAt": "2026-11-06T04:27:12.000Z"
+  },
+  {
+    "id": "78",
     "slug": "date-paste",
     "name": "Seedless Date Paste",
     "section": "dates",
     "category": "Date Products",
     "description": "Smooth, seedless paste made from soft dates. Great for baking, smoothies and desserts.",
     "detail": "Smooth paste for baking",
-    "image": "/api/uploads/products/date-paste-1793622056289-4f97fa3e.jpg",
+    "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -737,6 +2061,12 @@
     "featuredOnHome": false,
     "rating": 4.6,
     "reviewCount": 33,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250g",
@@ -750,18 +2080,19 @@
         "stock": 6
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T12:20:56.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "92",
+    "id": "77",
     "slug": "date-syrup",
     "name": "Pure Date Syrup",
     "section": "dates",
     "category": "Date Products",
     "description": "100% natural syrup made from ripe dates. A healthy swap for sugar and honey.",
     "detail": "100% natural date sweetener",
-    "image": "/api/uploads/products/date-syrup-1793622086366-27645883.jpg",
+    "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -769,6 +2100,12 @@
     "featuredOnHome": false,
     "rating": 4.3,
     "reviewCount": 41,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250ml",
@@ -782,18 +2119,19 @@
         "stock": 9
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T12:21:26.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "90",
+    "id": "75",
     "slug": "kimia-dates",
     "name": "Kimia Dates",
     "section": "dates",
     "category": "Premium Dates",
     "description": "Soft, juicy and moist dates with a mild honey-like sweetness. Great for the whole family.",
     "detail": "Soft, juicy & honey-sweet",
-    "image": "/api/uploads/products/kimia-dates-1793622185044-eca3f468.jpg",
+    "image": "",
+    "images": [],
     "badge": "New",
     "tags": [
       "New"
@@ -803,6 +2141,12 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 64,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "250g",
@@ -813,14 +2157,14 @@
         "label": "500g",
         "price": 449,
         "mrp": 499,
-        "stock": 0
+        "stock": 3
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T12:23:05.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "88",
+    "id": "72",
     "slug": "potato-chips",
     "name": "Classic Salted Chips",
     "section": "groceries",
@@ -828,6 +2172,7 @@
     "description": "Thin, crispy potato chips lightly salted. The perfect crunchy snack.",
     "detail": "Thin, crispy salted chips",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -835,6 +2180,12 @@
     "featuredOnHome": false,
     "rating": 4.2,
     "reviewCount": 63,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "52g",
@@ -848,11 +2199,50 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "87",
+    "id": "71",
+    "slug": "toor-dal",
+    "name": "Toor Dal",
+    "section": "groceries",
+    "category": "Staples & Grains",
+    "description": "Unpolished, protein-rich toor dal. Cleaned and sorted for everyday cooking.",
+    "detail": "Unpolished, protein-rich",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.5,
+    "reviewCount": 119,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "500g",
+        "price": 89,
+        "stock": 22
+      },
+      {
+        "label": "1kg",
+        "price": 169,
+        "mrp": 189,
+        "stock": 3
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
+  },
+  {
+    "id": "69",
     "slug": "whole-wheat-bread",
     "name": "Whole Wheat Bread",
     "section": "groceries",
@@ -860,6 +2250,7 @@
     "description": "Soft, freshly baked sandwich bread made with whole wheat flour. No maida.",
     "detail": "100% whole wheat, no maida",
     "image": "",
+    "images": [],
     "badge": "New",
     "tags": [
       "New"
@@ -869,6 +2260,12 @@
     "featuredOnHome": false,
     "rating": 4.3,
     "reviewCount": 74,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "400g",
@@ -876,11 +2273,11 @@
         "stock": 14
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "86",
+    "id": "68",
     "slug": "farm-eggs",
     "name": "Farm Fresh Eggs",
     "section": "groceries",
@@ -888,6 +2285,7 @@
     "description": "Protein-rich white eggs from healthy, free-roaming hens. Great for breakfast and baking.",
     "detail": "Protein-rich white eggs",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -895,6 +2293,12 @@
     "featuredOnHome": false,
     "rating": 4.6,
     "reviewCount": 158,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "6 pcs",
@@ -914,11 +2318,11 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "84",
+    "id": "66",
     "slug": "robusta-bananas",
     "name": "Robusta Bananas",
     "section": "groceries",
@@ -926,6 +2330,7 @@
     "description": "Naturally ripened, sweet and creamy bananas. A healthy snack any time of the day.",
     "detail": "Naturally ripened bananas",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -933,6 +2338,12 @@
     "featuredOnHome": false,
     "rating": 4.4,
     "reviewCount": 96,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "6 pcs",
@@ -946,11 +2357,11 @@
         "stock": 3
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "83",
+    "id": "65",
     "slug": "fresh-tomatoes",
     "name": "Fresh Tomatoes",
     "section": "groceries",
@@ -958,6 +2369,7 @@
     "description": "Juicy, ripe tomatoes picked fresh from the farm. Perfect for curries, salads and chutneys.",
     "detail": "Farm-picked ripe tomatoes",
     "image": "",
+    "images": [],
     "badge": "Fresh",
     "tags": [
       "Fresh"
@@ -967,6 +2379,12 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 212,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "500g",
@@ -981,11 +2399,11 @@
         "stock": 25
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "82",
+    "id": "64",
     "slug": "mattress-protector",
     "name": "Waterproof Mattress Protector",
     "section": "importedbed",
@@ -993,6 +2411,7 @@
     "description": "Soft, breathable and fully waterproof. Protects against spills, dust and allergens.",
     "detail": "Breathable waterproof cover",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1000,6 +2419,12 @@
     "featuredOnHome": false,
     "rating": 4.6,
     "reviewCount": 33,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "Single 72x36\"",
@@ -1019,11 +2444,11 @@
         "stock": 5
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "81",
+    "id": "63",
     "slug": "memory-foam-pillow",
     "name": "Memory Foam Pillow",
     "section": "importedbed",
@@ -1031,6 +2456,7 @@
     "description": "Ergonomic contour pillow that supports your neck and keeps its shape night after night.",
     "detail": "Ergonomic neck support",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1038,6 +2464,12 @@
     "featuredOnHome": false,
     "rating": 4.3,
     "reviewCount": 41,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "1 pillow",
@@ -1051,11 +2483,11 @@
         "stock": 22
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "79",
+    "id": "61",
     "slug": "pocket-spring-mattress",
     "name": "Pocket Spring Mattress",
     "section": "importedbed",
@@ -1063,6 +2495,7 @@
     "description": "Individually wrapped springs with a soft quilted top. Bouncy, breathable and motion isolating.",
     "detail": "Individually wrapped springs",
     "image": "",
+    "images": [],
     "badge": "New",
     "tags": [
       "New"
@@ -1072,6 +2505,12 @@
     "featuredOnHome": false,
     "rating": 4.8,
     "reviewCount": 64,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "Double 75x48\"",
@@ -1091,11 +2530,63 @@
         "stock": 3
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "78",
+    "id": "60",
+    "slug": "orthopedic-mattress",
+    "name": "Orthopedic Mattress",
+    "section": "importedbed",
+    "category": "Orthopedic",
+    "description": "Firm, high-density support designed to ease back and joint pain. Doctor-recommended comfort.",
+    "detail": "High-density back support",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.6,
+    "reviewCount": 96,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "Single 72x36\"",
+        "price": 7499,
+        "mrp": 9999,
+        "stock": 18
+      },
+      {
+        "label": "Double 75x48\"",
+        "price": 10999,
+        "mrp": 14499,
+        "stock": 12
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 13499,
+        "mrp": 17999,
+        "stock": 8
+      },
+      {
+        "label": "King 78x72\"",
+        "price": 15999,
+        "mrp": 20999,
+        "stock": 0
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
+  },
+  {
+    "id": "58",
     "slug": "jasmine-attar",
     "name": "Jasmine Attar",
     "section": "fragrances",
@@ -1103,6 +2594,7 @@
     "description": "Pure jasmine in a rich, alcohol-free oil. Sweet floral notes that stay close to the skin.",
     "detail": "Pure floral roll-on oil",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1110,6 +2602,12 @@
     "featuredOnHome": false,
     "rating": 4.6,
     "reviewCount": 37,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "6ml",
@@ -1123,11 +2621,91 @@
         "stock": 6
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "76",
+    "id": "57",
+    "slug": "sandalwood-attar",
+    "name": "Sandalwood Attar",
+    "section": "fragrances",
+    "category": "Attar",
+    "description": "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
+    "detail": "Alcohol-free roll-on attar",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.7,
+    "reviewCount": 49,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "6ml",
+        "price": 349,
+        "stock": 22
+      },
+      {
+        "label": "12ml",
+        "price": 599,
+        "mrp": 699,
+        "stock": 9
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
+  },
+  {
+    "id": "55",
+    "slug": "rose-musk-mist",
+    "name": "Rose Musk Body Mist",
+    "section": "fragrances",
+    "category": "Body Mist",
+    "description": "Soft rose petals and white musk in a light mist. Perfect for a quick refresh through the day.",
+    "detail": "Light and floral",
+    "image": "",
+    "images": [],
+    "badge": "New",
+    "tags": [
+      "New"
+    ],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.6,
+    "reviewCount": 74,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "100ml",
+        "price": 399,
+        "stock": 15
+      },
+      {
+        "label": "200ml",
+        "price": 699,
+        "mrp": 799,
+        "stock": 3
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
+  },
+  {
+    "id": "54",
     "slug": "citrus-bloom",
     "name": "Citrus Bloom Eau de Toilette",
     "section": "fragrances",
@@ -1135,6 +2713,7 @@
     "description": "Fresh bergamot and orange blossom with a light musky finish. Bright and easy to wear.",
     "detail": "Fresh bergamot & orange blossom",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1142,6 +2721,12 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 96,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "30ml",
@@ -1161,18 +2746,58 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T02:10:02.000Z"
   },
   {
-    "id": "73",
+    "id": "52",
+    "slug": "chaat-masala",
+    "name": "Chaat Masala",
+    "section": "spices",
+    "category": "Spice Blends",
+    "description": "Tangy, zesty blend with black salt and amchur. Sprinkle on fruit, snacks and chaats.",
+    "detail": "Tangy, zesty spice blend",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": false,
+    "rating": 4.6,
+    "reviewCount": 33,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 79,
+        "stock": 15
+      },
+      {
+        "label": "100g",
+        "price": 139,
+        "mrp": 159,
+        "stock": 8
+      }
+    ],
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
+  },
+  {
+    "id": "48",
     "slug": "cumin-seeds",
     "name": "Cumin Seeds (Jeera)",
     "section": "spices",
     "category": "Whole Spices",
     "description": "Hand-picked whole jeera with a warm, earthy aroma. Perfect for tempering and spice blends.",
     "detail": "Hand-picked whole jeera",
-    "image": "/api/uploads/products/cumin-seeds-1793620709839-1bc26e4c.jpg",
+    "image": "",
+    "images": [],
     "badge": "New",
     "tags": [
       "New"
@@ -1182,6 +2807,12 @@
     "featuredOnHome": false,
     "rating": 4.8,
     "reviewCount": 64,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "100g",
@@ -1195,18 +2826,19 @@
         "stock": 3
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T11:58:29.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
   },
   {
-    "id": "72",
+    "id": "47",
     "slug": "red-chilli-powder",
     "name": "Red Chilli Powder",
     "section": "spices",
     "category": "Ground Spices",
     "description": "Sun-dried red chillies, finely ground. Vibrant colour with a clean, fiery heat.",
     "detail": "Vibrant colour & fiery heat",
-    "image": "/api/uploads/products/red-chilli-powder-1793620752357-3354c75f.jpg",
+    "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1214,6 +2846,12 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 86,
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "100g",
@@ -1233,11 +2871,11 @@
         "stock": 0
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T11:59:12.000Z"
+    "createdAt": "2026-11-06T02:10:02.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
   },
   {
-    "id": "70",
+    "id": "45",
     "slug": "coffee-scrub",
     "name": "Coffee Body Scrub",
     "section": "coffee-skin",
@@ -1245,6 +2883,7 @@
     "description": "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
     "detail": "Invigorating coffee body scrub",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1252,6 +2891,12 @@
     "featuredOnHome": false,
     "rating": 4.6,
     "reviewCount": 33,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "100g",
@@ -1265,11 +2910,11 @@
         "stock": 6
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T02:10:01.000Z"
   },
   {
-    "id": "69",
+    "id": "44",
     "slug": "coffee-face-wash",
     "name": "Coffee Face Wash",
     "section": "coffee-skin",
@@ -1277,6 +2922,7 @@
     "description": "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
     "detail": "Daily cleansing care",
     "image": "",
+    "images": [],
     "badge": "",
     "tags": [],
     "isBestSeller": false,
@@ -1284,6 +2930,12 @@
     "featuredOnHome": true,
     "rating": 4.3,
     "reviewCount": 41,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
         "label": "50ml",
@@ -1297,110 +2949,19 @@
         "stock": 9
       }
     ],
-    "createdAt": "2026-11-02T09:40:27.000Z",
-    "updatedAt": "2026-11-02T09:40:27.000Z"
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T02:10:01.000Z"
   },
   {
-    "id": "63",
-    "slug": "aero-press-100-arabica-a-aa-grade-premium-ground-coffee-coffee-roast-9673",
-    "name": "Aero Press 100% Arabica A/ AA Grade Premium Ground Coffee Coffee Roast",
+    "id": "42",
+    "slug": "coffee-beans",
+    "name": "Arabica Coffee Beans",
     "section": "coffee",
-    "category": "Coffee Powder",
-    "description": "",
-    "detail": "",
-    "image": "/api/uploads/products/aero-press-100-arabica-a-aa-grade-premium-ground-1793611838354-b97e7083.jpg",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": true,
-    "rating": 4.7,
-    "reviewCount": 36,
-    "sizes": [
-      {
-        "label": "250g",
-        "price": 349,
-        "mrp": 399,
-        "stock": 25
-      }
-    ],
-    "createdAt": "2026-11-02T09:30:38.000Z",
-    "updatedAt": "2026-11-02T09:30:38.000Z"
-  },
-  {
-    "id": "32",
-    "slug": "toor-dal",
-    "name": "Toor Dal",
-    "section": "groceries",
-    "category": "Staples & Grains",
-    "description": "Unpolished, protein-rich toor dal. Cleaned and sorted for everyday cooking.",
-    "detail": "Unpolished, protein-rich",
+    "category": "Coffee Beans",
+    "description": "Single-estate whole beans, slow roasted. Grind fresh for the fullest flavour.",
+    "detail": "Single-estate whole beans",
     "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.5,
-    "reviewCount": 119,
-    "sizes": [
-      {
-        "label": "500g",
-        "price": 89,
-        "stock": 22
-      },
-      {
-        "label": "1kg",
-        "price": 169,
-        "mrp": 189,
-        "stock": 3
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "21",
-    "slug": "orthopedic-mattress",
-    "name": "Orthopedic Mattress",
-    "section": "importedbed",
-    "category": "Orthopedic",
-    "description": "Firm, high-density support designed to ease back and joint pain. Doctor-recommended comfort.",
-    "detail": "High-density back support",
-    "image": "",
-    "badge": "",
-    "tags": [],
-    "isBestSeller": false,
-    "isMostSelling": false,
-    "featuredOnHome": false,
-    "rating": 4.6,
-    "reviewCount": 96,
-    "sizes": [
-      {
-        "label": "Single 72x36\"",
-        "price": 7499,
-        "mrp": 9999,
-        "stock": 18
-      },
-      {
-        "label": "Queen 78x60\"",
-        "price": 13499,
-        "mrp": 17999,
-        "stock": 8
-      }
-    ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
-  },
-  {
-    "id": "16",
-    "slug": "rose-musk-mist",
-    "name": "Rose Musk Body Mist",
-    "section": "fragrances",
-    "category": "Body Mist",
-    "description": "Soft rose petals and white musk in a light mist. Perfect for a quick refresh through the day.",
-    "detail": "Light and floral",
-    "image": "",
+    "images": [],
     "badge": "New",
     "tags": [
       "New"
@@ -1408,23 +2969,28 @@
     "isBestSeller": false,
     "isMostSelling": false,
     "featuredOnHome": true,
-    "rating": 4.6,
-    "reviewCount": 74,
+    "rating": 4.8,
+    "reviewCount": 64,
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
+    "specifications": {},
+    "lowStockThreshold": 5,
     "sizes": [
       {
-        "label": "50ml",
-        "price": 1799,
-        "mrp": 2199,
+        "label": "250g",
+        "price": 499,
         "stock": 15
       },
       {
-        "label": "100ml",
-        "price": 2499,
-        "mrp": 2899,
-        "stock": 6
+        "label": "500g",
+        "price": 929,
+        "mrp": 999,
+        "stock": 3
       }
     ],
-    "createdAt": "2026-10-30T16:54:19.000Z",
-    "updatedAt": "2026-10-30T16:54:19.000Z"
+    "createdAt": "2026-11-06T02:10:01.000Z",
+    "updatedAt": "2026-11-06T04:15:02.000Z"
   }
 ]
