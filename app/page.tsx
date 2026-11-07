@@ -145,8 +145,29 @@ const slides = [
 
 function HeroCarousel() {
   const [index, setIndex] = useState(0);
+  const [dynamicSlides, setDynamicSlides] = useState(slides);
   const touchStartX = useRef<number | null>(null);
-  const slideCount = slides.length;
+
+  useEffect(() => {
+    fetch("/api/banners?type=hero_slide")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.banners && Array.isArray(data.banners) && data.banners.length > 0) {
+          const mapped = data.banners.map((b: { title: string; subtitle?: string; ctaText?: string; ctaLink?: string; imageUrl?: string; colorScheme?: string }) => ({
+            title: b.title,
+            text: b.subtitle || "",
+            cta: b.ctaText || "Shop now",
+            href: b.ctaLink || "/coffee",
+            color: b.colorScheme || "#5A3420",
+            image: b.imageUrl || IMAGES.heroCoffee,
+          }));
+          setDynamicSlides(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const slideCount = dynamicSlides.length;
 
   // Go to a slide, wrapping around at both ends
   const goTo = useCallback(
@@ -189,9 +210,9 @@ function HeroCarousel() {
         className="flex transition-transform duration-700 ease-out motion-reduce:transition-none"
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
-        {slides.map((slide, i) => (
+        {dynamicSlides.map((slide, i) => (
           <div
-            key={slide.title}
+            key={slide.title + i}
             aria-hidden={i !== index}
             className="relative h-[48svh] min-h-[280px] max-h-[430px] w-full shrink-0 sm:h-[56svh] sm:min-h-[340px] lg:h-[calc(100svh-270px)] lg:min-h-[420px] lg:max-h-[720px]"
             style={{ background: slide.color }}
@@ -234,9 +255,9 @@ function HeroCarousel() {
 
       {/* Dots */}
       <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5">
-        {slides.map((slide, i) => (
+        {dynamicSlides.map((slide, i) => (
           <button
-            key={slide.title}
+            key={slide.title + i}
             type="button"
             onClick={() => goTo(i)}
             aria-label={`Go to slide ${i + 1}`}

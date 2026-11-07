@@ -2,14 +2,19 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { Ubuntu } from "next/font/google";
 import {
   ArrowLeft,
+  Bookmark,
   CheckCircle2,
+  Clock,
   CreditCard,
+  Home,
   Lock,
   LogIn,
+  MapPin,
   Minus,
   Package,
   Plus,
@@ -78,6 +83,31 @@ export default function CartCheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi" | "card">("cod");
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Saved Addresses State
+  interface SavedAddress {
+    id: number;
+    label: string;
+    fullName: string;
+    phone: string;
+    addressLine: string;
+    city: string;
+    state: string;
+    pincode: string;
+    isDefault?: boolean;
+  }
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [saveThisAddress, setSaveThisAddress] = useState(false);
+  const [addressLabel, setAddressLabel] = useState("Home");
+
+  // Pincode Delivery Estimator
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeEstimate, setPincodeEstimate] = useState<{
+    serviceable: boolean;
+    estimatedDeliveryDate?: string;
+    city?: string;
+    state?: string;
+  } | null>(null);
 
   // Promo Coupon State
   const [couponInput, setCouponInput] = useState("");
@@ -164,6 +194,26 @@ export default function CartCheckoutPage() {
           setFullName((prev) => prev || data.user.name || "");
           setEmail((prev) => prev || data.user.email || "");
           setPhone((prev) => prev || data.user.phone || "");
+
+          // Fetch saved customer addresses
+          fetch("/api/user/addresses")
+            .then((res) => (res.ok ? res.json() : null))
+            .then((addrData) => {
+              if (addrData && Array.isArray(addrData.addresses) && addrData.addresses.length > 0) {
+                setSavedAddresses(addrData.addresses);
+                const defaultAddr =
+                  addrData.addresses.find((a: SavedAddress) => a.isDefault) || addrData.addresses[0];
+                if (defaultAddr) {
+                  setFullName((prev) => prev || defaultAddr.fullName);
+                  setPhone((prev) => prev || defaultAddr.phone);
+                  setAddress((prev) => prev || defaultAddr.addressLine);
+                  setCity((prev) => prev || defaultAddr.city);
+                  setStateName((prev) => prev || defaultAddr.state || "Karnataka");
+                  setPincode((prev) => prev || defaultAddr.pincode);
+                }
+              }
+            })
+            .catch(() => {});
         } else {
           setAuthUser(null);
         }
@@ -173,6 +223,43 @@ export default function CartCheckoutPage() {
         setAuthChecked(true);
       });
   }, []);
+
+  const selectAddress = (addr: SavedAddress) => {
+    setFullName(addr.fullName);
+    setPhone(addr.phone);
+    setAddress(addr.addressLine);
+    setCity(addr.city);
+    setStateName(addr.state || "Karnataka");
+    setPincode(addr.pincode);
+  };
+
+  // Check PIN code serviceability
+  useEffect(() => {
+    const cleanPin = pincode.trim().replace(/\D/g, "");
+    if (cleanPin.length === 6) {
+      setPincodeLoading(true);
+      fetch(`/api/shipping/estimate?pincode=${cleanPin}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d?.serviceable) {
+            setPincodeEstimate({
+              serviceable: true,
+              estimatedDeliveryDate: d.estimatedDeliveryDate,
+              city: d.city,
+              state: d.state,
+            });
+            if (d.city && !city) setCity(d.city);
+            if (d.state && (!stateName || stateName === "Karnataka")) setStateName(d.state);
+          } else {
+            setPincodeEstimate({ serviceable: false });
+          }
+        })
+        .catch(() => setPincodeEstimate(null))
+        .finally(() => setPincodeLoading(false));
+    } else {
+      setPincodeEstimate(null);
+    }
+  }, [pincode]);
 
   useEffect(() => {
     queueMicrotask(() => syncAuth());
@@ -274,6 +361,90 @@ export default function CartCheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      // If saving address
+      if (saveThisAddress && authUser) {
+        fetch("/api/user/addresses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            label: addressLabel,
+            fullName: fullName.trim(),
+            phone: phone.trim(),
+            addressLine: address.trim(),
+            city: city.trim(),
+            state: stateName.trim() || "Karnataka",
+            pincode: pincode.trim(),
+            isDefault: savedAddresses.length === 0,
+          }),
+        }).catch(() => {});
+      }
+
+      // If Razorpay payment (UPI or Card)
+      let razorpayPaymentId = "";
+      if (paymentMethod === "upi" || paymentMethod === "card") {
+        try {
+          const rzpRes = await fetch("/api/orders/razorpay/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: grandTotal,
+              receipt: `rcpt_${datePart}`,
+            }),
+          });
+          const rzpData = await rzpRes.json();
+          if (rzpRes.ok && rzpData.orderId) {
+            orderPayload.razorpayOrderId = rzpData.orderId;
+            if (rzpData.isDemo) {
+              // Simulated instant verified checkout for test keys
+              orderPayload.razorpayPaymentId = `pay_demo_${Date.now()}`;
+              orderPayload.paymentStatus = "paid";
+            } else if (typeof window !== "undefined" && (window as unknown as { Razorpay: unknown }).Razorpay) {
+              const RazorpayConstructor = (window as unknown as {
+                Razorpay: new (opts: Record<string, unknown>) => { open: () => void };
+              }).Razorpay;
+              const paymentSuccess = await new Promise<{ paymentId: string; signature: string } | null>((resolve) => {
+                const rzp = new RazorpayConstructor({
+                  key: rzpData.key,
+                  amount: rzpData.amount,
+                  currency: "INR",
+                  name: "Imaan's Store",
+                  description: `Order #${orderId}`,
+                  order_id: rzpData.orderId,
+                  prefill: {
+                    name: fullName.trim(),
+                    email: email.trim(),
+                    contact: phone.trim(),
+                  },
+                  theme: { color: "#7A5A3C" },
+                  handler: (response: { razorpay_payment_id: string; razorpay_signature: string }) => {
+                    resolve({
+                      paymentId: response.razorpay_payment_id,
+                      signature: response.razorpay_signature,
+                    });
+                  },
+                  modal: {
+                    ondismiss: () => resolve(null),
+                  },
+                });
+                rzp.open();
+              });
+
+              if (!paymentSuccess) {
+                setFormError("Payment cancelled. You can change payment method or retry.");
+                setIsSubmitting(false);
+                return;
+              }
+
+              orderPayload.razorpayPaymentId = paymentSuccess.paymentId;
+              orderPayload.razorpaySignature = paymentSuccess.signature;
+              orderPayload.paymentStatus = "paid";
+            }
+          }
+        } catch {
+          // Fall back gracefully to direct order submission
+        }
+      }
+
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -949,6 +1120,40 @@ export default function CartCheckoutPage() {
                     </h3>
                   </div>
 
+                  {/* Saved Address Selector */}
+                  {savedAddresses.length > 0 && (
+                    <div className="rounded-xl border border-[#E9DCC6] bg-[#FAF7F2] p-3.5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Bookmark size={14} className="text-[#7A5A3C]" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">
+                          Use Saved Address
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {savedAddresses.map((addr) => (
+                          <button
+                            key={addr.id}
+                            type="button"
+                            onClick={() => selectAddress(addr)}
+                            className="cursor-pointer text-left rounded-lg border border-[#E9DCC6] bg-white p-2.5 transition hover:border-[#7A5A3C] hover:shadow-xs"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="rounded bg-[#FAF3E8] px-2 py-0.5 text-[10px] font-bold text-[#7A5A3C]">
+                                {addr.label || "Home"}
+                              </span>
+                              {addr.isDefault && (
+                                <span className="text-[9px] font-semibold text-neutral-500">Default</span>
+                              )}
+                            </div>
+                            <p className="mt-1 text-xs font-bold text-[#1F1A17] line-clamp-1">{addr.fullName}</p>
+                            <p className="text-[11px] text-neutral-600 line-clamp-1">{addr.addressLine}, {addr.city}</p>
+                            <p className="text-[10px] text-neutral-500">PIN: {addr.pincode}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {formError && (
                     <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-xs font-medium text-red-700">
                       {formError}
@@ -1045,12 +1250,79 @@ export default function CartCheckoutPage() {
                       <input
                         type="text"
                         required
+                        maxLength={6}
                         value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                         placeholder="560001"
                         className="mt-1 w-full rounded-lg border border-[#E9DCC6] bg-[#FAF7F2] px-3 py-2 text-sm text-[#1F1A17] outline-none focus:border-[#7A5A3C] focus:bg-white"
                       />
                     </div>
+                  </div>
+
+                  {/* Delivery Serviceability & Date Estimate */}
+                  {pincodeLoading && (
+                    <p className="text-xs text-neutral-500">Checking delivery date for PIN {pincode}...</p>
+                  )}
+                  {pincodeEstimate && (
+                    <div
+                      className={`flex items-center gap-2 rounded-lg p-2.5 text-xs ${
+                        pincodeEstimate.serviceable
+                          ? "border border-[#A7F3D0] bg-[#ECFDF5] text-[#065F46]"
+                          : "border border-amber-300 bg-amber-50 text-amber-800"
+                      }`}
+                    >
+                      {pincodeEstimate.serviceable ? (
+                        <>
+                          <Clock size={14} className="shrink-0 text-emerald-600" />
+                          <span>
+                            Delivery available! Estimated delivery by{" "}
+                            <strong>
+                              {new Date(pincodeEstimate.estimatedDeliveryDate || "").toLocaleDateString("en-IN", {
+                                weekday: "short",
+                                day: "numeric",
+                                month: "short",
+                              })}
+                            </strong>
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <MapPin size={14} className="shrink-0 text-amber-600" />
+                          <span>Standard delivery (4–7 business days) via India Post / Surface courier</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Save address checkbox */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#E9DCC6] bg-[#FAF7F2] p-2.5">
+                    <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-[#1F1A17]">
+                      <input
+                        type="checkbox"
+                        checked={saveThisAddress}
+                        onChange={(e) => setSaveThisAddress(e.target.checked)}
+                        className="accent-[#7A5A3C]"
+                      />
+                      <span>Save this address for fast 1-click checkout</span>
+                    </label>
+                    {saveThisAddress && (
+                      <div className="flex items-center gap-1">
+                        {(["Home", "Work", "Other"] as const).map((lbl) => (
+                          <button
+                            key={lbl}
+                            type="button"
+                            onClick={() => setAddressLabel(lbl)}
+                            className={`cursor-pointer rounded px-2 py-0.5 text-[10px] font-bold ${
+                              addressLabel === lbl
+                                ? "bg-[#7A5A3C] text-white"
+                                : "bg-white text-[#7A5A3C] border border-[#E9DCC6]"
+                            }`}
+                          >
+                            {lbl}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -1136,6 +1408,7 @@ export default function CartCheckoutPage() {
           </div>
         )}
       </main>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
     </div>
   );
 }

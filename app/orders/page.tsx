@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Ubuntu } from "next/font/google";
 import {
   ArrowRight,
@@ -19,10 +19,12 @@ import {
   Printer,
   RotateCcw,
   Search,
+  ShoppingCart,
   Truck,
   XCircle,
 } from "lucide-react";
 import type { StoreOrder } from "../../lib/orderStore";
+import { addToCart } from "../../lib/cartStore";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -77,6 +79,7 @@ function getCourierTrackingUrl(courierName: string, trackingNumber: string): str
 }
 
 function OrderContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialOrderId = searchParams.get("id") || searchParams.get("orderId") || "";
 
@@ -87,10 +90,56 @@ function OrderContent() {
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [tabFilter, setTabFilter] = useState<"all" | "active" | "delivered" | "cancelled">("all");
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   const showNotice = (msg: string) => {
     setNotice(msg);
     setTimeout(() => setNotice(null), 4000);
+  };
+
+  const handleBuyAgain = async (orderId: string) => {
+    setReorderingId(orderId);
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/reorder`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.items || data.items.length === 0) {
+        showNotice(data.error || "Could not reorder items. Please try again.");
+        return;
+      }
+
+      data.items.forEach((it: {
+        productId: string;
+        name: string;
+        size?: string;
+        price: number;
+        mrp?: number;
+        quantity: number;
+        image?: string;
+        category?: string;
+      }) => {
+        addToCart(
+          {
+            productId: it.productId,
+            name: it.name,
+            size: it.size,
+            price: it.price,
+            mrp: it.mrp,
+            image: it.image,
+            category: it.category,
+          },
+          it.quantity || 1
+        );
+      });
+
+      showNotice(`Added ${data.items.length} items to your cart!`);
+      setTimeout(() => {
+        router.push("/cart");
+      }, 500);
+    } catch {
+      showNotice("Failed to reorder. Please check your connection.");
+    } finally {
+      setReorderingId(null);
+    }
   };
 
   const handleDownloadInvoice = async (orderId: string) => {
@@ -871,6 +920,25 @@ function OrderContent() {
                             </div>
 
                             <div className="border-t border-neutral-100 pt-3 flex flex-col gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleBuyAgain(order.orderId)}
+                                disabled={reorderingId === order.orderId}
+                                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#7A5A3C] py-2 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition hover:bg-[#1F1A17] disabled:opacity-60"
+                              >
+                                {reorderingId === order.orderId ? (
+                                  <>
+                                    <Loader2 size={14} className="animate-spin" />
+                                    <span>Adding to Cart...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <RotateCcw size={14} />
+                                    <span>Buy Again</span>
+                                  </>
+                                )}
+                              </button>
+
                               <button
                                 type="button"
                                 onClick={() => handleDownloadInvoice(order.orderId)}

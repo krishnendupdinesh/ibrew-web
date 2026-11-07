@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
@@ -48,13 +49,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <HideOnAdmin>
-          <Navbar />
-        </HideOnAdmin>
+        <Suspense fallback={null}>
+          <HideOnAdmin>
+            <Navbar />
+          </HideOnAdmin>
+        </Suspense>
         {children}
-        <HideOnAdmin>
-          <Footer />
-        </HideOnAdmin>
+        <Suspense fallback={null}>
+          <HideOnAdmin>
+            <Footer />
+          </HideOnAdmin>
+        </Suspense>
       </body>
     </html>
   );

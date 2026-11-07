@@ -6,10 +6,13 @@ import { useRouter } from "next/navigation";
 import { Ubuntu } from "next/font/google";
 import {
   Award,
+  BarChart3,
+  Bell,
   Check,
   CheckCircle2,
   ChevronDown,
   Copy,
+  Download,
   Edit3,
   ExternalLink,
   Eye,
@@ -31,7 +34,9 @@ import {
   Search,
   ShoppingBag,
   Sparkles,
+  Star,
   Tag,
+  Ticket,
   Trash2,
   Truck,
   Upload,
@@ -1381,7 +1386,173 @@ export default function AdminPage() {
     null
   );
 
-  const [tab, setTab] = useState<"orders" | "products" | "quotes" | "customers">("orders");
+  const [tab, setTab] = useState<
+    "orders" | "products" | "analytics" | "inventory" | "banners" | "coupons" | "reviews" | "quotes" | "customers"
+  >("orders");
+
+  // Analytics & Inventory State
+  interface AnalyticsData {
+    summary?: {
+      totalRevenue: number;
+      totalOrders: number;
+      pendingOrders: number;
+      totalCustomers: number;
+      totalProducts: number;
+      totalReviews: number;
+    };
+    recentOrders?: StoreOrder[];
+    topProducts?: Array<{ id: string; name: string; section: string; totalQuantity: number; totalSales: number; image?: string }>;
+    revenueByDay?: Array<{ day: string; revenue: number; orderCount: number }>;
+  }
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+
+  // Low stock inventory items
+  interface LowStockItem {
+    sizeId: number;
+    productId: string;
+    productName: string;
+    section: string;
+    sizeLabel: string;
+    stock: number;
+    price: number;
+    lowStockThreshold: number;
+    image?: string;
+  }
+  const [lowStockItems, setLowStockItems] = useState<LowStockItem[]>([]);
+  const [lowStockLoading, setLowStockLoading] = useState(false);
+  const [restockQty, setRestockQty] = useState<Record<number, string>>({});
+
+  // Banners & Promos
+  interface AdminBanner {
+    id: number;
+    bannerType: string;
+    title: string;
+    subtitle?: string;
+    badgeText?: string;
+    ctaText?: string;
+    ctaLink?: string;
+    imageUrl?: string;
+    colorScheme?: string;
+    displayOrder: number;
+    isActive: boolean;
+  }
+  const [banners, setBanners] = useState<AdminBanner[]>([]);
+  const [newBanner, setNewBanner] = useState({
+    bannerType: "hero_slide",
+    title: "",
+    subtitle: "",
+    ctaText: "Shop Now",
+    ctaLink: "/coffee",
+    imageUrl: "",
+    colorScheme: "#5A3420",
+    displayOrder: 1,
+    isActive: true,
+  });
+
+  // Coupons
+  interface AdminCoupon {
+    id: number;
+    code: string;
+    discountType: "percentage" | "flat";
+    discountValue: number;
+    minOrderValue: number;
+    maxDiscountAmount?: number;
+    isActive: boolean;
+    usageLimit?: number;
+    timesUsed: number;
+    description?: string;
+  }
+  const [coupons, setCoupons] = useState<AdminCoupon[]>([]);
+  const [newCoupon, setNewCoupon] = useState({
+    code: "",
+    discountType: "percentage" as "percentage" | "flat",
+    discountValue: 10,
+    minOrderValue: 499,
+    maxDiscountAmount: 200,
+    description: "",
+    isActive: true,
+  });
+
+  // Reviews
+  interface AdminReview {
+    id: number;
+    productId: string;
+    productName: string;
+    rating: number;
+    title?: string;
+    reviewText: string;
+    userName: string;
+    userEmail: string;
+    isVerifiedBuyer: boolean;
+    isApproved: boolean;
+    createdAt: string;
+  }
+  const [adminReviews, setAdminReviews] = useState<AdminReview[]>([]);
+
+  const loadAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true);
+    try {
+      const res = await fetch("/api/admin/analytics");
+      if (res.ok) {
+        const d = await res.json();
+        setAnalytics(d);
+      }
+    } catch {} finally {
+      setAnalyticsLoading(false);
+    }
+  }, []);
+
+  const loadLowStock = useCallback(async () => {
+    setLowStockLoading(true);
+    try {
+      const res = await fetch("/api/admin/inventory/low-stock");
+      if (res.ok) {
+        const d = await res.json();
+        setLowStockItems(d.alerts || []);
+      }
+    } catch {} finally {
+      setLowStockLoading(false);
+    }
+  }, []);
+
+  const loadBanners = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/banners");
+      if (res.ok) {
+        const d = await res.json();
+        setBanners(d.banners || []);
+      }
+    } catch {}
+  }, []);
+
+  const loadCoupons = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/coupons");
+      if (res.ok) {
+        const d = await res.json();
+        setCoupons(d.coupons || []);
+      }
+    } catch {}
+  }, []);
+
+  const loadReviews = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/reviews");
+      if (res.ok) {
+        const d = await res.json();
+        setAdminReviews(d.reviews || []);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (tab === "analytics") loadAnalytics();
+    if (tab === "inventory") loadLowStock();
+    if (tab === "banners") loadBanners();
+    if (tab === "coupons") loadCoupons();
+    if (tab === "reviews") loadReviews();
+  }, [tab, loadAnalytics, loadLowStock, loadBanners, loadCoupons, loadReviews]);
 
   // Product filters & modal state
   const [sectionFilter, setSectionFilter] = useState<ProductSection | "all">("all");
@@ -1840,6 +2011,14 @@ export default function AdminPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <a
+              href="/api/admin/export/orders"
+              download="imaans_orders.csv"
+              className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#1B5E3A] bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[#1B5E3A] transition-colors hover:bg-[#1B5E3A] hover:text-white"
+            >
+              <Download aria-hidden className="h-3.5 w-3.5" /> Export Orders CSV
+            </a>
+
             <button
               type="button"
               onClick={() => {
@@ -1955,9 +2134,14 @@ export default function AdminPage() {
                   label: `Orders (${orders.length})${stats.pendingOrders > 0 ? ` · ${stats.pendingOrders} New` : ""}`,
                   Icon: ShoppingBag,
                 },
-                { id: "products", label: `Products & Stock (${products.length})`, Icon: Package },
-                { id: "quotes", label: `Quotation requests (${quotes.length})`, Icon: FileText },
-                { id: "customers", label: `Customers (${customers.length})`, Icon: Users },
+                { id: "products", label: `Products (${products.length})`, Icon: Package },
+                { id: "analytics", label: "Analytics & Trends", Icon: BarChart3 },
+                { id: "inventory", label: "Low Stock Alerts", Icon: Bell },
+                { id: "banners", label: "Hero Banners", Icon: ImageIcon },
+                { id: "coupons", label: "Promo Coupons", Icon: Ticket },
+                { id: "reviews", label: "Customer Reviews", Icon: Star },
+                { id: "quotes", label: `Quotes (${quotes.length})`, Icon: FileText },
+                { id: "customers", label: `Users (${customers.length})`, Icon: Users },
               ] as const
             ).map(({ id, label, Icon }) => {
               const on = tab === id;
@@ -1968,13 +2152,13 @@ export default function AdminPage() {
                   role="tab"
                   aria-selected={on}
                   onClick={() => setTab(id)}
-                  className={`flex cursor-pointer items-center gap-2 rounded-full border border-[#7A5A3C] px-4 py-2 text-xs uppercase tracking-wider transition-colors ${
+                  className={`flex cursor-pointer items-center gap-2 rounded-full border border-[#7A5A3C] px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${
                     on
-                      ? "bg-[#7A5A3C] text-white"
-                      : "bg-transparent text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
+                      ? "bg-[#7A5A3C] text-white shadow-xs"
+                      : "bg-white text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
                   }`}
                 >
-                  <Icon aria-hidden className="h-4 w-4" /> {label}
+                  <Icon aria-hidden className="h-3.5 w-3.5" /> {label}
                 </button>
               );
             })}
@@ -3192,6 +3376,573 @@ export default function AdminPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ---------- ANALYTICS TAB ---------- */}
+        {tab === "analytics" && (
+          <section className="mt-5 space-y-6" role="tabpanel">
+            {analyticsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-[#7A5A3C]" />
+              </div>
+            ) : analytics ? (
+              <>
+                {/* Analytics Key Metrics */}
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                  <div className="rounded-xl border bg-white p-5 shadow-xs" style={{ borderColor: LINE }}>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">Total Revenue</span>
+                    <p className="mt-2 text-2xl font-black text-[#1F1A17] sm:text-3xl">
+                      {formatPrice(analytics.summary?.totalRevenue || 0)}
+                    </p>
+                    <p className="mt-1 text-xs text-neutral-500">From verified fulfilled orders</p>
+                  </div>
+                  <div className="rounded-xl border bg-white p-5 shadow-xs" style={{ borderColor: LINE }}>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">Total Orders</span>
+                    <p className="mt-2 text-2xl font-black text-[#1F1A17] sm:text-3xl">
+                      {analytics.summary?.totalOrders || 0}
+                    </p>
+                    <p className="mt-1 text-xs text-neutral-500">{analytics.summary?.pendingOrders || 0} pending action</p>
+                  </div>
+                  <div className="rounded-xl border bg-white p-5 shadow-xs" style={{ borderColor: LINE }}>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">Active Customers</span>
+                    <p className="mt-2 text-2xl font-black text-[#1F1A17] sm:text-3xl">
+                      {analytics.summary?.totalCustomers || 0}
+                    </p>
+                    <p className="mt-1 text-xs text-neutral-500">Registered shopper accounts</p>
+                  </div>
+                  <div className="rounded-xl border bg-white p-5 shadow-xs" style={{ borderColor: LINE }}>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">Reviews &amp; Ratings</span>
+                    <p className="mt-2 text-2xl font-black text-[#1F1A17] sm:text-3xl">
+                      {analytics.summary?.totalReviews || 0}
+                    </p>
+                    <p className="mt-1 text-xs text-neutral-500">Customer feedback submissions</p>
+                  </div>
+                </div>
+
+                {/* Best Selling Products */}
+                <div className="rounded-2xl border bg-white p-6 shadow-xs" style={{ borderColor: LINE }}>
+                  <div className="flex items-center justify-between border-b pb-4 mb-4" style={{ borderColor: LINE }}>
+                    <div>
+                      <h3 className="text-base font-bold text-[#1F1A17]">Best-Selling Products</h3>
+                      <p className="text-xs text-neutral-500">Ranked by total quantity sold &amp; generated revenue</p>
+                    </div>
+                  </div>
+
+                  {analytics.topProducts && analytics.topProducts.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs sm:text-sm">
+                        <thead className="bg-[#FAF7F2] uppercase text-[11px] font-bold text-[#7A5A3C]">
+                          <tr>
+                            <th className="px-4 py-3">Product</th>
+                            <th className="px-4 py-3">Category</th>
+                            <th className="px-4 py-3 text-right">Units Sold</th>
+                            <th className="px-4 py-3 text-right">Gross Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-neutral-100">
+                          {analytics.topProducts.map((p, idx) => (
+                            <tr key={p.id + idx} className="hover:bg-neutral-50">
+                              <td className="px-4 py-3 font-semibold text-[#1F1A17]">{p.name}</td>
+                              <td className="px-4 py-3 uppercase text-[11px] text-neutral-500">{p.section}</td>
+                              <td className="px-4 py-3 text-right font-bold text-[#1F1A17]">{p.totalQuantity}</td>
+                              <td className="px-4 py-3 text-right font-bold text-[#1B5E3A]">{formatPrice(p.totalSales)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-neutral-500 py-4">No sales recorded yet.</p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-neutral-500 py-10 text-center">Unable to load analytics data.</p>
+            )}
+          </section>
+        )}
+
+        {/* ---------- LOW STOCK INVENTORY ALERTS TAB ---------- */}
+        {tab === "inventory" && (
+          <section className="mt-5 space-y-4" role="tabpanel">
+            <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: LINE }}>
+              <div>
+                <h3 className="text-base font-bold text-[#1F1A17]">Inventory &amp; Low-Stock Monitor</h3>
+                <p className="text-xs text-neutral-500">Products with stock levels at or below their reorder threshold</p>
+              </div>
+              <button
+                type="button"
+                onClick={loadLowStock}
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#7A5A3C] bg-white px-3 py-1.5 text-xs font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
+              >
+                <RefreshCw size={12} className={lowStockLoading ? "animate-spin" : ""} /> Refresh
+              </button>
+            </div>
+
+            {lowStockLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-[#7A5A3C]" />
+              </div>
+            ) : lowStockItems.length === 0 ? (
+              <div className="rounded-xl border bg-white p-8 text-center" style={{ borderColor: LINE }}>
+                <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" />
+                <h4 className="mt-3 text-base font-bold text-[#1F1A17]">All stock levels are healthy!</h4>
+                <p className="mt-1 text-xs text-neutral-500">No items are currently below the low stock threshold.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border bg-white shadow-xs" style={{ borderColor: LINE }}>
+                <table className="w-full text-left text-xs sm:text-sm">
+                  <thead className="bg-[#FAF7F2] text-[11px] font-bold uppercase text-[#7A5A3C]">
+                    <tr>
+                      <th className="px-4 py-3">Product Name</th>
+                      <th className="px-4 py-3">Variant</th>
+                      <th className="px-4 py-3 text-right">Current Stock</th>
+                      <th className="px-4 py-3 text-right">Threshold</th>
+                      <th className="px-4 py-3 text-right">Quick Restock</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {lowStockItems.map((item) => (
+                      <tr key={item.sizeId} className="hover:bg-neutral-50">
+                        <td className="px-4 py-3 font-semibold text-[#1F1A17]">{item.productName}</td>
+                        <td className="px-4 py-3 text-xs text-neutral-600">{item.sizeLabel}</td>
+                        <td className="px-4 py-3 text-right font-black text-red-600">
+                          {item.stock === 0 ? "Out of Stock (0)" : `${item.stock} left`}
+                        </td>
+                        <td className="px-4 py-3 text-right text-xs text-neutral-500">{item.lowStockThreshold}</td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <input
+                              type="number"
+                              min={1}
+                              placeholder="+Qty"
+                              value={restockQty[item.sizeId] || ""}
+                              onChange={(e) =>
+                                setRestockQty((prev) => ({ ...prev, [item.sizeId]: e.target.value }))
+                              }
+                              className="w-16 rounded border border-neutral-300 px-2 py-1 text-xs outline-none focus:border-[#7A5A3C]"
+                            />
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const add = Number(restockQty[item.sizeId] || 10);
+                                const res = await fetch("/api/admin/inventory/restock", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ sizeId: item.sizeId, additionalStock: add }),
+                                });
+                                if (res.ok) {
+                                  showNotice(`Restocked ${item.productName} (+${add})!`);
+                                  loadLowStock();
+                                  setRestockQty((prev) => ({ ...prev, [item.sizeId]: "" }));
+                                }
+                              }}
+                              className="cursor-pointer rounded bg-[#1B5E3A] px-3 py-1 text-xs font-bold text-white transition hover:bg-[#14472C]"
+                            >
+                              Restock
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ---------- HOMEPAGE BANNERS TAB ---------- */}
+        {tab === "banners" && (
+          <section className="mt-5 space-y-6" role="tabpanel">
+            <div className="rounded-2xl border bg-white p-6 shadow-xs" style={{ borderColor: LINE }}>
+              <h3 className="text-base font-bold text-[#1F1A17]">Create New Hero Banner / Promo Slide</h3>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const res = await fetch("/api/admin/banners", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newBanner),
+                  });
+                  if (res.ok) {
+                    showNotice("Banner created successfully!");
+                    loadBanners();
+                    setNewBanner({
+                      bannerType: "hero_slide",
+                      title: "",
+                      subtitle: "",
+                      ctaText: "Shop Now",
+                      ctaLink: "/coffee",
+                      imageUrl: "",
+                      colorScheme: "#5A3420",
+                      displayOrder: 1,
+                      isActive: true,
+                    });
+                  }
+                }}
+                className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
+              >
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Headline Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newBanner.title}
+                    onChange={(e) => setNewBanner({ ...newBanner, title: e.target.value })}
+                    placeholder="e.g. Estate Fresh Filter Coffee"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Subtitle / Tagline</label>
+                  <input
+                    type="text"
+                    value={newBanner.subtitle}
+                    onChange={(e) => setNewBanner({ ...newBanner, subtitle: e.target.value })}
+                    placeholder="e.g. Freshly roasted in Coorg & shipped daily"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Image URL</label>
+                  <input
+                    type="url"
+                    value={newBanner.imageUrl}
+                    onChange={(e) => setNewBanner({ ...newBanner, imageUrl: e.target.value })}
+                    placeholder="https://..."
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">CTA Button Text</label>
+                  <input
+                    type="text"
+                    value={newBanner.ctaText}
+                    onChange={(e) => setNewBanner({ ...newBanner, ctaText: e.target.value })}
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">CTA Link</label>
+                  <input
+                    type="text"
+                    value={newBanner.ctaLink}
+                    onChange={(e) => setNewBanner({ ...newBanner, ctaLink: e.target.value })}
+                    placeholder="/coffee"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Theme Color Hex</label>
+                  <input
+                    type="text"
+                    value={newBanner.colorScheme}
+                    onChange={(e) => setNewBanner({ ...newBanner, colorScheme: e.target.value })}
+                    placeholder="#5A3420"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div className="sm:col-span-3 flex justify-end">
+                  <button
+                    type="submit"
+                    className="cursor-pointer rounded-lg bg-[#7A5A3C] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#1F1A17]"
+                  >
+                    Add Banner Slide
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Existing Banners */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[#7A5A3C]">Active Banner Slides</h3>
+              {banners.map((b) => (
+                <div
+                  key={b.id}
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-white p-4 shadow-xs"
+                  style={{ borderColor: LINE }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="h-12 w-16 rounded-md bg-cover bg-center shrink-0 border"
+                      style={{
+                        backgroundImage: `url(${b.imageUrl || "https://images.unsplash.com/photo-1544816155-12df9643f363?w=200"})`,
+                        backgroundColor: b.colorScheme || "#7A5A3C",
+                      }}
+                    />
+                    <div>
+                      <p className="text-sm font-bold text-[#1F1A17]">{b.title}</p>
+                      <p className="text-xs text-neutral-500">{b.subtitle || b.ctaLink}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await fetch(`/api/admin/banners/${b.id}`, {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ ...b, isActive: !b.isActive }),
+                        });
+                        loadBanners();
+                      }}
+                      className={`cursor-pointer rounded-full px-3 py-1 text-xs font-bold ${
+                        b.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
+                      }`}
+                    >
+                      {b.isActive ? "Active" : "Inactive"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (confirm("Delete this banner?")) {
+                          await fetch(`/api/admin/banners/${b.id}`, { method: "DELETE" });
+                          loadBanners();
+                        }
+                      }}
+                      className="cursor-pointer rounded p-1 text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ---------- PROMO COUPONS TAB ---------- */}
+        {tab === "coupons" && (
+          <section className="mt-5 space-y-6" role="tabpanel">
+            <div className="rounded-2xl border bg-white p-6 shadow-xs" style={{ borderColor: LINE }}>
+              <h3 className="text-base font-bold text-[#1F1A17]">Create Promo Coupon Code</h3>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const res = await fetch("/api/admin/coupons", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newCoupon),
+                  });
+                  if (res.ok) {
+                    showNotice(`Coupon ${newCoupon.code} created!`);
+                    loadCoupons();
+                    setNewCoupon({
+                      code: "",
+                      discountType: "percentage",
+                      discountValue: 10,
+                      minOrderValue: 499,
+                      maxDiscountAmount: 200,
+                      description: "",
+                      isActive: true,
+                    });
+                  }
+                }}
+                className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4"
+              >
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Coupon Code *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCoupon.code}
+                    onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
+                    placeholder="e.g. SAVE20"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs font-bold uppercase outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Discount Type</label>
+                  <select
+                    value={newCoupon.discountType}
+                    onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as "percentage" | "flat" })}
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  >
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="flat">Flat Amount (₹)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Discount Value</label>
+                  <input
+                    type="number"
+                    required
+                    value={newCoupon.discountValue}
+                    onChange={(e) => setNewCoupon({ ...newCoupon, discountValue: Number(e.target.value) })}
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-neutral-700">Min Cart Total (₹)</label>
+                  <input
+                    type="number"
+                    value={newCoupon.minOrderValue}
+                    onChange={(e) => setNewCoupon({ ...newCoupon, minOrderValue: Number(e.target.value) })}
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div className="sm:col-span-3">
+                  <label className="block text-xs font-bold text-neutral-700">Description</label>
+                  <input
+                    type="text"
+                    value={newCoupon.description}
+                    onChange={(e) => setNewCoupon({ ...newCoupon, description: e.target.value })}
+                    placeholder="e.g. 10% off on all coffees above ₹499"
+                    className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button
+                    type="submit"
+                    className="w-full cursor-pointer rounded-lg bg-[#7A5A3C] p-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#1F1A17]"
+                  >
+                    Create Coupon
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Coupons List */}
+            <div className="overflow-x-auto rounded-xl border bg-white shadow-xs" style={{ borderColor: LINE }}>
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-[#FAF7F2] text-[11px] font-bold uppercase text-[#7A5A3C]">
+                  <tr>
+                    <th className="px-4 py-3">Code</th>
+                    <th className="px-4 py-3">Benefit</th>
+                    <th className="px-4 py-3">Min Order</th>
+                    <th className="px-4 py-3">Times Used</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100">
+                  {coupons.map((c) => (
+                    <tr key={c.id} className="hover:bg-neutral-50">
+                      <td className="px-4 py-3 font-mono font-bold text-[#1F1A17]">{c.code}</td>
+                      <td className="px-4 py-3 text-neutral-700">
+                        {c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT OFF`}
+                      </td>
+                      <td className="px-4 py-3 text-neutral-600">₹{c.minOrderValue}</td>
+                      <td className="px-4 py-3 font-bold text-neutral-700">{c.timesUsed || 0}</td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`rounded px-2 py-0.5 text-[11px] font-bold ${
+                            c.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
+                          }`}
+                        >
+                          {c.isActive ? "Active" : "Disabled"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (confirm(`Delete coupon "${c.code}"?`)) {
+                              await fetch(`/api/admin/coupons/${c.id}`, { method: "DELETE" });
+                              loadCoupons();
+                            }
+                          }}
+                          className="cursor-pointer text-red-600 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ---------- CUSTOMER REVIEWS TAB ---------- */}
+        {tab === "reviews" && (
+          <section className="mt-5 space-y-4" role="tabpanel">
+            <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: LINE }}>
+              <div>
+                <h3 className="text-base font-bold text-[#1F1A17]">Product Reviews &amp; Moderation</h3>
+                <p className="text-xs text-neutral-500">Approve or hide customer star ratings and photo reviews</p>
+              </div>
+              <button
+                type="button"
+                onClick={loadReviews}
+                className="cursor-pointer rounded-lg border border-[#7A5A3C] bg-white px-3 py-1.5 text-xs font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {adminReviews.length === 0 ? (
+              <p className="text-sm text-neutral-500 py-10 text-center">No reviews submitted yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {adminReviews.map((rev) => (
+                  <div
+                    key={rev.id}
+                    className="flex flex-wrap items-start justify-between gap-4 rounded-xl border bg-white p-4 shadow-xs"
+                    style={{ borderColor: LINE }}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-amber-500">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              size={13}
+                              className={i < rev.rating ? "fill-amber-400 text-amber-400" : "text-neutral-300"}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs font-bold text-[#1F1A17]">{rev.productName}</span>
+                        {rev.isVerifiedBuyer && (
+                          <span className="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700">
+                            Verified Buyer
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs font-semibold text-[#1F1A17]">{rev.title}</p>
+                      <p className="text-xs text-neutral-600 leading-relaxed">{rev.reviewText}</p>
+                      <p className="text-[11px] text-neutral-400">
+                        By {rev.userName} ({rev.userEmail}) · {new Date(rev.createdAt).toLocaleDateString("en-IN")}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch(`/api/admin/reviews/${rev.id}/approval`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ isApproved: !rev.isApproved }),
+                          });
+                          loadReviews();
+                        }}
+                        className={`cursor-pointer rounded-full px-3 py-1 text-xs font-bold ${
+                          rev.isApproved ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                        }`}
+                      >
+                        {rev.isApproved ? "Approved / Public" : "Pending Approval"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (confirm("Delete this review permanently?")) {
+                            await fetch(`/api/admin/reviews/${rev.id}/approval`, { method: "DELETE" });
+                            loadReviews();
+                          }
+                        }}
+                        className="cursor-pointer text-neutral-400 hover:text-red-600"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </section>

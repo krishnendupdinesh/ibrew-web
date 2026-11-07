@@ -1486,8 +1486,8 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
     "roastLevel": "",
     "brewingGuide": "",
     "specifications": {},
@@ -1507,7 +1507,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "92",
@@ -1526,8 +1526,8 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
     "roastLevel": "",
     "brewingGuide": "",
     "specifications": {},
@@ -1541,7 +1541,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "91",
@@ -1560,8 +1560,8 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
     "roastLevel": "",
     "brewingGuide": "",
     "specifications": {},
@@ -1581,7 +1581,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "90",
@@ -1600,8 +1600,8 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
     "roastLevel": "",
     "brewingGuide": "",
     "specifications": {},
@@ -1621,7 +1621,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "89",
@@ -1640,8 +1640,8 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
+    "ingredients": "100% Pure Natural Spice, No Additives",
+    "origin": "Idukki & Wayanad, Kerala",
     "roastLevel": "",
     "brewingGuide": "",
     "specifications": {},
@@ -1661,7 +1661,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "88",
@@ -1677,7 +1677,7 @@
     "tags": [],
     "isBestSeller": false,
     "isMostSelling": false,
-    "featuredOnHome": false,
+    "featuredOnHome": true,
     "rating": 4.5,
     "reviewCount": 0,
     "ingredients": "",
@@ -1701,7 +1701,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-07T11:54:23.000Z"
   },
   {
     "id": "87",
@@ -1868,10 +1868,10 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
-    "roastLevel": "",
-    "brewingGuide": "",
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
     "specifications": {},
     "lowStockThreshold": 5,
     "sizes": [
@@ -1888,7 +1888,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "82",
@@ -1907,10 +1907,10 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
-    "roastLevel": "",
-    "brewingGuide": "",
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
     "specifications": {},
     "lowStockThreshold": 5,
     "sizes": [
@@ -1922,7 +1922,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "81",
@@ -1941,10 +1941,10 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
-    "roastLevel": "",
-    "brewingGuide": "",
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
     "specifications": {},
     "lowStockThreshold": 5,
     "sizes": [
@@ -1962,7 +1962,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "80",
@@ -1981,10 +1981,10 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
-    "roastLevel": "",
-    "brewingGuide": "",
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
     "specifications": {},
     "lowStockThreshold": 5,
     "sizes": [
@@ -2002,7 +2002,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "79",
@@ -2021,10 +2021,10 @@
     "featuredOnHome": false,
     "rating": 4.5,
     "reviewCount": 0,
-    "ingredients": "",
-    "origin": "",
-    "roastLevel": "",
-    "brewingGuide": "",
+    "ingredients": "100% Specialty Arabica / Robusta Beans",
+    "origin": "Chikmagalur & Coorg, Karnataka",
+    "roastLevel": "Medium-Dark Roast",
+    "brewingGuide": "1. Add 15g ground coffee to your French press or South Indian filter.\n2. Pour 100ml boiling water (92-95°C).\n3. Let brew for 4-5 minutes.\n4. Press down plunger slowly and pour.",
     "specifications": {},
     "lowStockThreshold": 5,
     "sizes": [
@@ -2042,7 +2042,7 @@
       }
     ],
     "createdAt": "2026-11-06T04:27:12.000Z",
-    "updatedAt": "2026-11-06T04:27:12.000Z"
+    "updatedAt": "2026-11-06T05:17:13.000Z"
   },
   {
     "id": "78",

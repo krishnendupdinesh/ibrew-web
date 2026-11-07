@@ -63,6 +63,7 @@ type ProductSize = {
 
 type Product = {
   id: string;
+  slug?: string;
   name: string;
   category: string;
   description: string;
@@ -307,11 +308,13 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
     <article className="group flex min-w-0 flex-col rounded-xl border bg-white p-3 shadow-2xs transition hover:shadow-md" style={{ borderColor: LINE }}>
       {/* Image, badge, wishlist heart, out-of-stock label */}
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
-        <ProductImage
-          src={product.image}
-          name={product.name}
-          className={`transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
-        />
+        <Link href={`/product/${product.slug || product.id}`} className="block h-full w-full">
+          <ProductImage
+            src={product.image}
+            name={product.name}
+            className={`transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
+          />
+        </Link>
 
         {(product.badge || product.isMostSelling || product.isBestSeller || discount > 0) && !outOfStock && (
           <span
@@ -341,7 +344,9 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
       </div>
 
       {/* Name */}
-      <h3 className="mt-2.5 line-clamp-2 min-h-[2.5em] text-sm font-semibold leading-5 text-[#1F1A17]">{product.name}</h3>
+      <Link href={`/product/${product.slug || product.id}`} className="hover:text-[#7A5A3C] transition-colors">
+        <h3 className="mt-2.5 line-clamp-2 min-h-[2.5em] text-sm font-semibold leading-5 text-[#1F1A17]">{product.name}</h3>
+      </Link>
 
       {/* Description with word limit */}
       <p

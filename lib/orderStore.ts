@@ -50,6 +50,9 @@ export interface StoreOrder {
   trackingNumber?: string;
   courierName?: string;
   adminNotes?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
   createdAt: string;
   confirmedAt?: string | null;
   shippedAt?: string | null;
