@@ -65,7 +65,9 @@ export async function POST(request: Request) {
         : items.reduce((s: number, i: { price?: number; quantity?: number }) => s + Number(i.price || 0) * Number(i.quantity || 1), 0);
     const shipping = typeof body.shipping === "number" ? body.shipping : subtotal >= 999 ? 0 : 60;
     const savings = typeof body.savings === "number" ? body.savings : 0;
-    const total = typeof body.total === "number" ? body.total : subtotal + shipping;
+    const couponDiscount = typeof body.couponDiscount === "number" ? body.couponDiscount : 0;
+    const couponCode = body.couponCode ? String(body.couponCode).trim().toUpperCase() : undefined;
+    const total = typeof body.total === "number" ? body.total : Math.max(0, subtotal - couponDiscount + shipping);
 
     const newOrder: StoreOrder = {
       id: orderId,
@@ -93,6 +95,8 @@ export async function POST(request: Request) {
       subtotal,
       shipping,
       savings,
+      couponCode,
+      couponDiscount,
       total,
       paymentMethod: ["cod", "upi", "card"].includes(body.paymentMethod) ? body.paymentMethod : "cod",
       paymentStatus: body.paymentStatus === "paid" ? "paid" : "unpaid",

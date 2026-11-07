@@ -79,6 +79,63 @@ export default function CartCheckoutPage() {
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Promo Coupon State
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountAmount: number;
+    description?: string;
+  } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponMsg, setCouponMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const applyCouponCode = async (codeToApply?: string) => {
+    const code = (codeToApply ?? couponInput).trim();
+    if (!code) {
+      setCouponMsg({ type: "error", text: "Please enter a coupon code." });
+      return;
+    }
+    setCouponLoading(true);
+    setCouponMsg(null);
+    try {
+      const res = await fetch("/api/coupons/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          subtotal,
+          email: email.trim(),
+          phone: phone.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.valid) {
+        setCouponMsg({ type: "error", text: data.error || "Invalid coupon code." });
+        setAppliedCoupon(null);
+      } else {
+        setAppliedCoupon({
+          code: data.coupon.code,
+          discountAmount: Number(data.coupon.discountAmount || 0),
+          description: data.coupon.description,
+        });
+        setCouponMsg({
+          type: "success",
+          text: data.message || `Coupon "${data.coupon.code}" applied!`,
+        });
+        setCouponInput("");
+      }
+    } catch {
+      setCouponMsg({ type: "error", text: "Could not validate coupon. Check connection." });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponMsg(null);
+  };
+
   const syncAuth = useCallback(() => {
     try {
       const cached =
@@ -147,7 +204,8 @@ export default function CartCheckoutPage() {
       : subtotal >= FREE_SHIPPING_THRESHOLD
       ? 0
       : STANDARD_SHIPPING_FEE;
-  const grandTotal = subtotal + shippingFee;
+  const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+  const grandTotal = Math.max(0, subtotal - couponDiscount + shippingFee);
   const amountForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -197,7 +255,9 @@ export default function CartCheckoutPage() {
       })),
       subtotal,
       shipping: shippingFee,
-      savings: totalSavings,
+      savings: totalSavings + couponDiscount,
+      couponCode: appliedCoupon ? appliedCoupon.code : undefined,
+      couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
       total: grandTotal,
       paymentMethod,
       paymentStatus: paymentMethod === "cod" ? "unpaid" : "paid",
@@ -731,6 +791,16 @@ export default function CartCheckoutPage() {
                     </div>
                   )}
 
+                  {appliedCoupon && (
+                    <div className="flex items-center justify-between text-[#2E5A36]">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Sparkles size={13} />
+                        Coupon ({appliedCoupon.code})
+                      </span>
+                      <span className="font-semibold">−{formatPrice(appliedCoupon.discountAmount)}</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between text-[#1F1A17]/80">
                     <span>Delivery Charges</span>
                     {shippingFee === 0 ? (
@@ -752,6 +822,91 @@ export default function CartCheckoutPage() {
                       {formatPrice(grandTotal)}
                     </span>
                   </div>
+                </div>
+
+                {/* Promo Coupon Card */}
+                <div
+                  className="mt-5 rounded-xl border p-4"
+                  style={{ borderColor: SAND, background: "#FAF7F2" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-[#7A5A3C]" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#1F1A17]">
+                      Have a Promo Coupon?
+                    </span>
+                  </div>
+
+                  {appliedCoupon ? (
+                    <div className="mt-3 flex items-center justify-between rounded-lg border border-[#A7F3D0] bg-[#ECFDF5] p-2.5">
+                      <div>
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#065F46]">
+                          <CheckCircle2 size={14} />
+                          <span>Code &ldquo;{appliedCoupon.code}&rdquo; Applied</span>
+                        </div>
+                        <p className="text-[11px] text-[#065F46]/80">
+                          Saving {formatPrice(appliedCoupon.discountAmount)} on this order
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeCoupon}
+                        className="cursor-pointer text-xs font-bold text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              applyCouponCode();
+                            }
+                          }}
+                          placeholder="e.g. WELCOME10, FLAT100"
+                          className="flex-1 rounded-lg border border-[#E9DCC6] bg-white px-3 py-2 text-xs font-bold uppercase tracking-wider text-[#1F1A17] outline-none focus:border-[#7A5A3C]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => applyCouponCode()}
+                          disabled={couponLoading || !couponInput.trim()}
+                          className="cursor-pointer rounded-lg bg-[#7A5A3C] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#1F1A17] disabled:opacity-50"
+                        >
+                          {couponLoading ? "Checking..." : "Apply"}
+                        </button>
+                      </div>
+
+                      {/* Coupon suggestions pill */}
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+                        <span className="text-neutral-500">Popular:</span>
+                        {["WELCOME10", "FLAT100", "FREESHIP"].map((code) => (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => applyCouponCode(code)}
+                            className="cursor-pointer rounded border border-dashed border-[#7A5A3C] bg-white px-1.5 py-0.5 text-[10px] font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
+                          >
+                            {code}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {couponMsg && (
+                    <p
+                      className={`mt-2 text-xs font-medium ${
+                        couponMsg.type === "success" ? "text-emerald-700" : "text-red-600"
+                      }`}
+                    >
+                      {couponMsg.text}
+                    </p>
+                  )}
                 </div>
 
                 {/* Shipping & Checkout Form (Requires Login) */}

@@ -10,11 +10,14 @@ import {
   Clock,
   Copy,
   ExternalLink,
+  FileText,
   HelpCircle,
   Loader2,
   Lock,
   MessageCircle,
   Package,
+  Printer,
+  RotateCcw,
   Search,
   Truck,
   XCircle,
@@ -88,6 +91,127 @@ function OrderContent() {
   const showNotice = (msg: string) => {
     setNotice(msg);
     setTimeout(() => setNotice(null), 4000);
+  };
+
+  const handleDownloadInvoice = async (orderId: string) => {
+    try {
+      showNotice("Generating GST invoice...");
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/invoice`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.invoice) {
+        showNotice(data.error || "Invoice not available yet.");
+        return;
+      }
+      const inv = data.invoice;
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        showNotice("Popup blocked. Please allow popups to view the invoice.");
+        return;
+      }
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Tax Invoice - ${inv.invoiceNumber}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 32px; color: #1F1A17; max-width: 800px; margin: auto; }
+              .header { display: flex; justify-content: space-between; border-bottom: 2px solid #7A5A3C; padding-bottom: 16px; margin-bottom: 24px; }
+              .h1 { font-size: 24px; font-weight: bold; color: #7A5A3C; margin: 0; }
+              .biz-info, .cust-info { font-size: 13px; line-height: 1.5; }
+              .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+              table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 13px; }
+              th { background: #FAF7F2; border: 1px solid #E9DCC6; padding: 10px; text-align: left; }
+              td { border: 1px solid #E9DCC6; padding: 10px; }
+              .right { text-align: right; }
+              .total-box { margin-left: auto; width: 280px; font-size: 13px; }
+              .total-row { display: flex; justify-content: space-between; padding: 4px 0; }
+              .grand { font-size: 16px; font-weight: bold; border-top: 2px solid #7A5A3C; padding-top: 8px; margin-top: 8px; }
+              .footer { margin-top: 40px; border-top: 1px solid #E9DCC6; padding-top: 16px; font-size: 11px; text-align: center; color: #666; }
+              @media print { body { padding: 0; } .no-print { display: none; } }
+            </style>
+          </head>
+          <body>
+            <div class="no-print" style="margin-bottom: 16px; text-align: right;">
+              <button onclick="window.print()" style="background:#7A5A3C;color:#fff;border:none;padding:8px 16px;font-weight:bold;cursor:pointer;border-radius:6px;">Print Invoice</button>
+            </div>
+            <div class="header">
+              <div>
+                <h1 class="h1">Imaan&apos;s Store</h1>
+                <p style="margin:4px 0 0;font-size:12px;color:#666;">Artisanal Coffee, Spices & Premium Essentials</p>
+                <p style="margin:2px 0 0;font-size:11px;color:#888;">GSTIN: ${inv.businessDetails?.gstin || "N/A"}</p>
+              </div>
+              <div class="right">
+                <h2 style="margin:0;font-size:18px;color:#7A5A3C;">TAX INVOICE</h2>
+                <p style="margin:4px 0 0;font-size:12px;"><b>Invoice No:</b> ${inv.invoiceNumber}</p>
+                <p style="margin:2px 0 0;font-size:12px;"><b>Date:</b> ${new Date(inv.invoiceDate || inv.orderDate).toLocaleDateString("en-IN")}</p>
+                <p style="margin:2px 0 0;font-size:12px;"><b>Order ID:</b> ${inv.orderId}</p>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="biz-info">
+                <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:11px;color:#7A5A3C;">Sold By</p>
+                <p style="margin:0;"><b>${inv.businessDetails?.companyName || "Imaan's Store"}</b></p>
+                <p style="margin:0;">${inv.businessDetails?.addressLine1 || ""}</p>
+                <p style="margin:0;">${inv.businessDetails?.city || ""}, ${inv.businessDetails?.state || ""} - ${inv.businessDetails?.pincode || ""}</p>
+                <p style="margin:0;">Email: ${inv.businessDetails?.email || "support@imaans.com"}</p>
+              </div>
+              <div class="cust-info">
+                <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:11px;color:#7A5A3C;">Billed To / Delivered To</p>
+                <p style="margin:0;"><b>${inv.customerDetails?.name || "Customer"}</b></p>
+                <p style="margin:0;">${inv.customerDetails?.address || ""}</p>
+                <p style="margin:0;">${inv.customerDetails?.city || ""}, ${inv.customerDetails?.state || ""} - ${inv.customerDetails?.pincode || ""}</p>
+                <p style="margin:0;">Phone: ${inv.customerDetails?.phone || ""}</p>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item Description</th>
+                  <th>Variant / Size</th>
+                  <th class="right">Qty</th>
+                  <th class="right">Unit Price</th>
+                  <th class="right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(inv.items || [])
+                  .map(
+                    (it: { name: string; size?: string; quantity: number; price: number }, idx: number) => `
+                  <tr>
+                    <td>${idx + 1}</td>
+                    <td><b>${it.name}</b></td>
+                    <td>${it.size || "Standard"}</td>
+                    <td class="right">${it.quantity}</td>
+                    <td class="right">₹${Number(it.price).toFixed(2)}</td>
+                    <td class="right">₹${(Number(it.price) * Number(it.quantity)).toFixed(2)}</td>
+                  </tr>`
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+
+            <div class="total-box">
+              <div class="total-row"><span>Items Subtotal:</span><span>₹${Number(inv.pricing?.subtotal || 0).toFixed(2)}</span></div>
+              ${inv.pricing?.discount ? `<div class="total-row" style="color:#1B5E3A;"><span>Discount:</span><span>-₹${Number(inv.pricing.discount).toFixed(2)}</span></div>` : ""}
+              <div class="total-row"><span>Shipping Charges:</span><span>${inv.pricing?.shipping === 0 ? "FREE" : `₹${Number(inv.pricing?.shipping || 0).toFixed(2)}`}</span></div>
+              <div class="total-row"><span>GST Included (${inv.pricing?.gstRate || "5%"}):</span><span>₹${(Number(inv.pricing?.cgst || 0) + Number(inv.pricing?.sgst || 0) + Number(inv.pricing?.igst || 0)).toFixed(2)}</span></div>
+              <div class="total-row grand"><span>Grand Total:</span><span style="color:#7A5A3C;">₹${Number(inv.pricing?.grandTotal || 0).toFixed(2)}</span></div>
+            </div>
+
+            <div class="footer">
+              <p>This is a computer-generated tax invoice. No signature is required.</p>
+              <p>Thank you for choosing Imaan's Store — Crafting artisanal quality for every lifestyle.</p>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    } catch {
+      showNotice("Could not generate invoice. Please try again.");
+    }
   };
 
   // Sync logged in customer
@@ -746,7 +870,16 @@ function OrderContent() {
                               </span>
                             </div>
 
-                            <div className="border-t border-neutral-100 pt-3">
+                            <div className="border-t border-neutral-100 pt-3 flex flex-col gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleDownloadInvoice(order.orderId)}
+                                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FAF7F2] border border-[#E9DCC6] py-2 text-xs font-bold text-[#1F1A17] transition hover:bg-[#E9DCC6]"
+                              >
+                                <FileText size={14} className="text-[#7A5A3C]" />
+                                <span>Download Tax Invoice</span>
+                              </button>
+
                               <a
                                 href={`https://wa.me/919876543210?text=${encodeURIComponent(
                                   `Hi Imaan's Store, I have a question regarding my order ${order.orderId}`

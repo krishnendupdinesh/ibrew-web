@@ -41,6 +41,8 @@ export interface StoreOrder {
   subtotal: number;
   shipping: number;
   savings: number;
+  couponCode?: string;
+  couponDiscount?: number;
   total: number;
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;

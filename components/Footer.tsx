@@ -5,22 +5,25 @@ import { useState, type FormEvent } from "react";
 import { Mail, Smartphone, ArrowRight } from "lucide-react";
 
 const shopLinks = [
-  { label: "Coffee Powder", href: "/shop/coffee-powder" },
-  { label: "Spices", href: "/shop/spices" },
-  { label: "Imported Perfumes", href: "/shop/imported-perfumes" },
-  { label: "Imported Beds", href: "/shop/imported-beds" },
+  { label: "Coffee", href: "/coffee" },
+  { label: "Skincare", href: "/coffee-skin" },
+  { label: "Spices", href: "/spices" },
+  { label: "Fragrances", href: "/fragrances" },
+  { label: "Imported Beds", href: "/importedbed" },
+  { label: "Groceries", href: "/groceries" },
+  { label: "Dates", href: "/dates" },
 ];
 
 const informationLinks = [
-  { label: "About Our Store", href: "/about" },
-  { label: "Contact Us", href: "/contact" },
-  { label: "FAQs", href: "/faqs" },
+  { label: "All Products", href: "/search" },
+  { label: "Bulk / Wholesale", href: "/bulk-order" },
+  { label: "Track My Orders", href: "/orders" },
+  { label: "My Wishlist", href: "/wishlist" },
 ];
 
 const policyLinks = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms & Conditions", href: "/terms-and-conditions" },
-  { label: "Shipping & Returns", href: "/shipping-returns" },
+  { label: "Shipping & Returns", href: "/orders" },
+  { label: "Customer Support", href: "https://wa.me/919876543210" },
 ];
 
 const socialLinks = [
@@ -188,7 +191,7 @@ export default function Footer() {
               </p>
 
               <a
-                href="/shop"
+                href="/search"
                 className="mt-5 inline-flex items-center gap-2 border border-[#e7d5c2]/80 px-5 py-3 text-sm font-semibold transition-colors hover:bg-white/10"
               >
                 EXPLORE OUR STORE
@@ -212,7 +215,7 @@ export default function Footer() {
                 </h3>
 
                 <a
-                  href="/contact"
+                  href="https://wa.me/919876543210"
                   className="text-sm text-[#fff8ef]/90 transition-colors hover:text-white hover:underline sm:text-base"
                 >
                   Get in Touch
@@ -238,7 +241,7 @@ export default function Footer() {
           {/* Copyright */}
           <div className="mt-6 flex flex-col gap-3 border-t border-white/20 pt-5 text-xs text-[#fff8ef]/75 sm:flex-row sm:items-center sm:justify-between">
             <p>
-© 2026 Imaan&apos;s Store. All rights reserved.              reserved.
+              © 2026 Imaan&apos;s Store. All rights reserved.
             </p>
 
             <a
