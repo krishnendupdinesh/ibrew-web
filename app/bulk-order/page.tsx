@@ -46,8 +46,8 @@ const hideScrollbar = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 // ---------------------------------------------------------------------------
 // CONTACT DETAILS - used by the "send another way" buttons if the form fails
 // ---------------------------------------------------------------------------
-const CONTACT_EMAIL = "sales@yourwebsite.com"; // TODO: your sales email
-const WHATSAPP_NUMBER = "919999999999"; // TODO: country code + number, no "+" or spaces
+const CONTACT_EMAIL = "support@imaans.com";
+const WHATSAPP_NUMBER = "919876543210";
 
 // ---------------------------------------------------------------------------
 // IMAGE URLS - paste your own image links here
@@ -55,34 +55,34 @@ const WHATSAPP_NUMBER = "919999999999"; // TODO: country code + number, no "+" o
 const IMAGES = {
   banner: "https://images.unsplash.com/photo-1700165644892-3dd6b67b25bc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
 
-  arabicaCoffee: "https://your-image-url.com/arabica-coffee-powder.jpg",
-  instantCoffee: "https://your-image-url.com/instant-coffee.jpg",
-  chicoryCoffee: "https://your-image-url.com/chicory-coffee.jpg",
+  arabicaCoffee: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=600&auto=format&fit=crop&q=60",
+  instantCoffee: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=60",
+  chicoryCoffee: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop&q=60",
 
-  faceScrub: "https://your-image-url.com/coffee-face-scrub.jpg",
-  bodyScrub: "https://your-image-url.com/coffee-body-scrub.jpg",
-  eyeCream: "https://your-image-url.com/coffee-eye-cream.jpg",
+  faceScrub: "https://images.unsplash.com/photo-1608248597359-0e6d526a6c18?w=600&auto=format&fit=crop&q=60",
+  bodyScrub: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=60",
+  eyeCream: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&auto=format&fit=crop&q=60",
 
-  oudAttar: "https://your-image-url.com/oud-attar.jpg",
-  perfume: "https://your-image-url.com/eau-de-parfum.jpg",
-  bakhoor: "https://your-image-url.com/bakhoor.jpg",
+  oudAttar: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&auto=format&fit=crop&q=60",
+  perfume: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=600&auto=format&fit=crop&q=60",
+  bakhoor: "https://images.unsplash.com/photo-1602928321679-560bb453f190?w=600&auto=format&fit=crop&q=60",
 
-  queenBed: "https://your-image-url.com/queen-mattress.jpg",
-  kingBed: "https://your-image-url.com/king-mattress.jpg",
-  storageBed: "https://your-image-url.com/ortho-mattress.jpg",
+  queenBed: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&auto=format&fit=crop&q=60",
+  kingBed: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&auto=format&fit=crop&q=60",
+  storageBed: "https://images.unsplash.com/photo-1540518614846-7ede433c4576?w=600&auto=format&fit=crop&q=60",
 
-  medjool: "https://your-image-url.com/medjool-dates.jpg",
-  ajwa: "https://your-image-url.com/ajwa-dates.jpg",
-  sukkari: "https://your-image-url.com/sukkari-dates.jpg",
+  medjool: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&auto=format&fit=crop&q=60",
+  ajwa: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=600&auto=format&fit=crop&q=60",
+  sukkari: "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=600&auto=format&fit=crop&q=60",
 
-  basmati: "https://your-image-url.com/basmati-rice.jpg",
-  toorDal: "https://your-image-url.com/toor-dal.jpg",
-  sugar: "https://your-image-url.com/sugar.jpg",
-  tea: "https://your-image-url.com/tea-leaves.jpg",
+  basmati: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=60",
+  toorDal: "https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=600&auto=format&fit=crop&q=60",
+  sugar: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=600&auto=format&fit=crop&q=60",
+  tea: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&auto=format&fit=crop&q=60",
 
-  turmeric: "https://your-image-url.com/turmeric-powder.jpg",
-  blackPepper: "https://your-image-url.com/black-pepper.jpg",
-  cardamom: "https://your-image-url.com/cardamom.jpg",
+  turmeric: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=600&auto=format&fit=crop&q=60",
+  blackPepper: "https://images.unsplash.com/photo-1599909533681-74dc7d5c2b93?w=600&auto=format&fit=crop&q=60",
+  cardamom: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=600&auto=format&fit=crop&q=60",
 };
 
 // ---------------------------------------------------------------------------

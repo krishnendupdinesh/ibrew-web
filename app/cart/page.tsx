@@ -23,9 +23,10 @@ import {
   Sparkles,
   Trash2,
   Truck,
+  XCircle,
 } from "lucide-react";
 import { useCart, type CartItem } from "../../lib/cartStore";
-import { prependLocalOrder, type StoreOrder } from "../../lib/orderStore";
+import { prependLocalOrder, updateLocalOrder, type StoreOrder } from "../../lib/orderStore";
 import {
   broadcastCatalogChange,
   readLocalCatalog,
@@ -304,7 +305,39 @@ export default function CartCheckoutPage() {
     phone: string;
     address: string;
     paymentMethod: string;
+    cancelled?: boolean;
   } | null>(null);
+  const [isCancellingPlaced, setIsCancellingPlaced] = useState(false);
+
+  const handleCancelPlacedOrder = async () => {
+    if (!placedOrder || isCancellingPlaced || placedOrder.cancelled) return;
+    if (!window.confirm(`Are you sure you want to cancel Order #${placedOrder.orderId}?`)) {
+      return;
+    }
+    setIsCancellingPlaced(true);
+    try {
+      const res = await fetch(
+        `/api/orders/${encodeURIComponent(placedOrder.orderId)}/cancel`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reason: "Cancelled immediately from order confirmation screen" }),
+        }
+      );
+      if (res.ok) {
+        updateLocalOrder(placedOrder.orderId, { status: "cancelled" });
+        broadcastCatalogChange();
+        setPlacedOrder((prev) => (prev ? { ...prev, cancelled: true } : null));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        window.alert(data.error || "Could not cancel order.");
+      }
+    } catch {
+      window.alert("Could not connect to server to cancel order.");
+    } finally {
+      setIsCancellingPlaced(false);
+    }
+  };
 
   // If there are items in the cart (e.g. added from Wishlist or any product page),
   // automatically clear any previously held order confirmation state so the user sees the active checkout session.
@@ -621,18 +654,37 @@ export default function CartCheckoutPage() {
             style={{ borderColor: SAND }}
           >
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2E5A36]/10 text-[#2E5A36]">
-                <CheckCircle2 className="h-10 w-10" />
+              <div
+                className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                  placedOrder.cancelled
+                    ? "bg-[#FEF2F2] text-[#991B1B]"
+                    : "bg-[#2E5A36]/10 text-[#2E5A36]"
+                }`}
+              >
+                {placedOrder.cancelled ? (
+                  <XCircle className="h-10 w-10" />
+                ) : (
+                  <CheckCircle2 className="h-10 w-10" />
+                )}
               </div>
               <span className="mt-4 rounded-full bg-[#FAF3E8] px-3.5 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#7A5A3C]">
                 Order #{placedOrder.orderId}
               </span>
               <h2 className="mt-3 text-2xl font-bold text-[#1F1A17] sm:text-3xl">
-                Thank you, {placedOrder.customerName}!
+                {placedOrder.cancelled
+                  ? "Order Cancelled"
+                  : `Thank you, ${placedOrder.customerName}!`}
               </h2>
               <p className="mt-2 max-w-lg text-sm leading-relaxed text-[#1F1A17]/70">
-                Your order has been received and is being freshly packed at our Coorg estate warehouse.
-                We will send dispatch updates to <span className="font-semibold text-[#1F1A17]">{placedOrder.phone}</span>.
+                {placedOrder.cancelled ? (
+                  "Your order has been cancelled and reserved inventory has been restored."
+                ) : (
+                  <>
+                    Your order has been received and is being freshly packed at our Coorg estate warehouse.
+                    We will send dispatch updates to{" "}
+                    <span className="font-semibold text-[#1F1A17]">{placedOrder.phone}</span>.
+                  </>
+                )}
               </p>
             </div>
 
@@ -714,6 +766,17 @@ export default function CartCheckoutPage() {
                 <Truck className="h-4 w-4" />
                 <span>Track &amp; View Order Status</span>
               </Link>
+              {!placedOrder.cancelled && (
+                <button
+                  type="button"
+                  onClick={handleCancelPlacedOrder}
+                  disabled={isCancellingPlaced}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-[#FECACA] bg-[#FEF2F2] px-6 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#991B1B] transition-colors hover:bg-[#FEE2E2] disabled:opacity-60"
+                >
+                  <XCircle className="h-4 w-4" />
+                  <span>{isCancellingPlaced ? "Cancelling..." : "Cancel Order"}</span>
+                </button>
+              )}
               <Link
                 href="/"
                 onClick={() => setPlacedOrder(null)}

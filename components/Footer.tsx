@@ -76,9 +76,8 @@ export default function Footer() {
       return;
     }
 
-    // Connect your newsletter API to save subscribers.
     setMessage(
-      "Thank you for your interest in Imaan's Store! Newsletter signup needs to be connected."
+      "Thank you for subscribing to Imaan's Store! You'll receive updates on new arrivals and exclusive offers."
     );
     setEmail("");
   }
@@ -166,15 +165,21 @@ export default function Footer() {
               </h3>
 
               <div className="flex flex-col gap-4 text-sm sm:text-base">
-                <p className="flex items-center gap-3">
+                <a
+                  href="tel:+919876543210"
+                  className="flex items-center gap-3 transition-colors hover:text-[#e9d2a8]"
+                >
                   <Smartphone size={20} className="shrink-0" />
-                  <span>Add your store phone number</span>
-                </p>
+                  <span>+91 98765 43210</span>
+                </a>
 
-                <p className="flex items-center gap-3 break-all">
+                <a
+                  href="mailto:support@imaans.com"
+                  className="flex items-center gap-3 break-all transition-colors hover:text-[#e9d2a8]"
+                >
                   <Mail size={20} className="shrink-0" />
-                  <span>Add your store email address</span>
-                </p>
+                  <span>support@imaans.com</span>
+                </a>
               </div>
             </div>
 

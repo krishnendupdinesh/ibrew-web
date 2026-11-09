@@ -23,8 +23,12 @@ import {
   Truck,
   XCircle,
 } from "lucide-react";
-import type { StoreOrder } from "../../lib/orderStore";
+import {
+  updateLocalOrder,
+  type StoreOrder,
+} from "../../lib/orderStore";
 import { addToCart } from "../../lib/cartStore";
+import { broadcastCatalogChange } from "../../lib/productStore";
 
 const ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -91,10 +95,64 @@ function OrderContent() {
   const [notice, setNotice] = useState<string | null>(null);
   const [tabFilter, setTabFilter] = useState<"all" | "active" | "delivered" | "cancelled">("all");
   const [reorderingId, setReorderingId] = useState<string | null>(null);
+  const [cancellingOrder, setCancellingOrder] = useState<StoreOrder | null>(null);
+  const [cancelReason, setCancelReason] = useState("Ordered by mistake");
+  const [cancelCustomNote, setCancelCustomNote] = useState("");
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const showNotice = (msg: string) => {
     setNotice(msg);
     setTimeout(() => setNotice(null), 4000);
+  };
+
+  const handleConfirmCancelOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cancellingOrder || isCancelling) return;
+    setIsCancelling(true);
+    try {
+      const fullReason =
+        cancelReason === "Other"
+          ? cancelCustomNote.trim() || "Cancelled by customer"
+          : cancelCustomNote.trim()
+          ? `${cancelReason} - ${cancelCustomNote.trim()}`
+          : cancelReason;
+
+      const res = await fetch(
+        `/api/orders/${encodeURIComponent(cancellingOrder.orderId)}/cancel`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reason: fullReason }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showNotice(data.error || "Could not cancel order.");
+        return;
+      }
+
+      const updated: StoreOrder = data.order || {
+        ...cancellingOrder,
+        status: "cancelled",
+      };
+
+      setOrders((prev) =>
+        prev.map((o) => (o.orderId === cancellingOrder.orderId ? updated : o))
+      );
+      updateLocalOrder(cancellingOrder.orderId, {
+        status: "cancelled",
+        paymentStatus: updated.paymentStatus,
+      });
+      broadcastCatalogChange();
+
+      showNotice(`Order ${cancellingOrder.orderId} has been cancelled.`);
+      setCancellingOrder(null);
+      setCancelCustomNote("");
+    } catch {
+      showNotice("Failed to cancel order. Please check your connection.");
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   const handleBuyAgain = async (orderId: string) => {
@@ -364,6 +422,113 @@ function OrderContent() {
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl border border-[#7A5A3C] bg-[#1F1A17] px-4 py-3 text-xs font-semibold text-white shadow-2xl">
           <CheckCircle2 className="h-4 w-4 text-[#A7F3D0]" />
           <span>{notice}</span>
+        </div>
+      )}
+
+      {/* Cancel Order Confirmation Modal */}
+      {cancellingOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-2xl border border-[#E9DCC6] bg-white p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF2F2] text-[#991B1B]">
+                  <XCircle size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1F1A17]">
+                    Cancel Order #{cancellingOrder.orderId}
+                  </h3>
+                  <p className="text-xs text-neutral-500">
+                    Total: {formatPrice(cancellingOrder.total)} · {cancellingOrder.items.length}{" "}
+                    {cancellingOrder.items.length === 1 ? "item" : "items"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCancellingOrder(null)}
+                disabled={isCancelling}
+                className="cursor-pointer rounded-lg p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleConfirmCancelOrder} className="mt-5 space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#7A5A3C]">
+                  Reason for Cancellation
+                </label>
+                <select
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="mt-1.5 w-full rounded-xl border border-[#E9DCC6] bg-[#FAF7F2] px-3.5 py-2.5 text-xs font-semibold text-[#1F1A17] outline-none focus:border-[#7A5A3C]"
+                >
+                  <option value="Ordered by mistake">Ordered by mistake</option>
+                  <option value="Want to change items or quantity">
+                    Want to change items or quantity
+                  </option>
+                  <option value="Need to change delivery address">
+                    Need to change delivery address
+                  </option>
+                  <option value="Found a better price or coupon">
+                    Found a better price or coupon
+                  </option>
+                  <option value="Delivery time is too long">Delivery time is too long</option>
+                  <option value="Other">Other reason</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-600">
+                  Additional Note (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={cancelCustomNote}
+                  onChange={(e) => setCancelCustomNote(e.target.value)}
+                  placeholder="Tell us if you need any help..."
+                  className="mt-1.5 w-full rounded-xl border border-[#E9DCC6] bg-white px-3.5 py-2 text-xs text-[#1F1A17] outline-none focus:border-[#7A5A3C]"
+                />
+              </div>
+
+              {cancellingOrder.paymentStatus === "paid" && (
+                <div className="rounded-xl border border-[#A7F3D0] bg-[#ECFDF5] p-3 text-xs text-[#065F46]">
+                  <strong>Refund Notice:</strong> Since this order was prepaid, your payment status
+                  will be marked as <strong>Refunded</strong> and processed back to your original
+                  payment method within 5–7 business days.
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCancellingOrder(null)}
+                  disabled={isCancelling}
+                  className="cursor-pointer rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-xs font-bold text-[#1F1A17] transition hover:bg-neutral-100 disabled:opacity-50"
+                >
+                  Keep Order
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCancelling}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#991B1B] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#7F1D1D] disabled:opacity-60"
+                >
+                  {isCancelling ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Cancelling...</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle size={14} />
+                      <span>Confirm Cancel</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -673,67 +838,86 @@ function OrderContent() {
                   </div>
 
                   {/* Visual Stepper / Progress Bar */}
-                  <div className="px-4 py-5 sm:px-6">
-                    <div className="grid grid-cols-5 gap-1 sm:gap-2">
-                      {stages.map((stage, idx) => {
-                        const isCurrent =
-                          (order.status === "pending" && stage.id === "placed") ||
-                          (order.status === "confirmed" && stage.id === "confirmed") ||
-                          (order.status === "packed" && stage.id === "packed") ||
-                          (order.status === "shipped" && stage.id === "shipped") ||
-                          (order.status === "delivered" && stage.id === "delivered");
-
-                        return (
-                          <div key={stage.id} className="flex flex-col items-center text-center">
-                            <div className="relative mb-2 flex w-full items-center justify-center">
-                              {/* Horizontal connector line */}
-                              {idx > 0 && (
-                                <div
-                                  className={`absolute left-0 right-1/2 top-1/2 h-1 -translate-y-1/2 ${
-                                    stage.done ? "bg-[#1B5E3A]" : "bg-neutral-200"
-                                  }`}
-                                />
-                              )}
-                              {idx < stages.length - 1 && (
-                                <div
-                                  className={`absolute left-1/2 right-0 top-1/2 h-1 -translate-y-1/2 ${
-                                    stages[idx + 1].done ? "bg-[#1B5E3A]" : "bg-neutral-200"
-                                  }`}
-                                />
-                              )}
-                              {/* Milestone Circle */}
-                              <div
-                                className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all sm:h-8 sm:w-8 ${
-                                  stage.done
-                                    ? "bg-[#1B5E3A] text-white shadow-xs"
-                                    : "border-2 border-neutral-300 bg-white text-neutral-400"
-                                } ${isCurrent ? "ring-4 ring-[#1B5E3A]/20" : ""}`}
-                              >
-                                {stage.done ? "✓" : idx + 1}
-                              </div>
-                            </div>
-                            <span
-                              className={`text-[10px] font-bold tracking-tight sm:text-xs ${
-                                stage.done ? "text-[#1F1A17]" : "text-neutral-400"
-                              }`}
-                            >
-                              {stage.label}
-                            </span>
-                            {stage.date && (
-                              <span className="hidden text-[9px] text-neutral-500 sm:block">
-                                {new Date(stage.date).toLocaleDateString("en-IN", {
-                                  day: "numeric",
-                                  month: "short",
-                                })}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
+                  {order.status === "cancelled" ? (
+                    <div className="mx-4 my-4 rounded-xl border border-[#FECACA] bg-[#FEF2F2] p-4 sm:mx-6">
+                      <div className="flex items-start gap-3">
+                        <XCircle size={20} className="mt-0.5 shrink-0 text-[#991B1B]" />
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-[#991B1B]">
+                            Order Cancelled
+                          </p>
+                          <p className="mt-0.5 text-xs text-[#991B1B]/90">
+                            This order has been cancelled and reserved inventory has been returned.
+                            {order.paymentStatus === "refunded" &&
+                              " Any online payment made for this order has been marked for refund."}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="px-4 py-5 sm:px-6">
+                      <div className="grid grid-cols-5 gap-1 sm:gap-2">
+                        {stages.map((stage, idx) => {
+                          const isCurrent =
+                            (order.status === "pending" && stage.id === "placed") ||
+                            (order.status === "confirmed" && stage.id === "confirmed") ||
+                            (order.status === "packed" && stage.id === "packed") ||
+                            (order.status === "shipped" && stage.id === "shipped") ||
+                            (order.status === "delivered" && stage.id === "delivered");
+
+                          return (
+                            <div key={stage.id} className="flex flex-col items-center text-center">
+                              <div className="relative mb-2 flex w-full items-center justify-center">
+                                {/* Horizontal connector line */}
+                                {idx > 0 && (
+                                  <div
+                                    className={`absolute left-0 right-1/2 top-1/2 h-1 -translate-y-1/2 ${
+                                      stage.done ? "bg-[#1B5E3A]" : "bg-neutral-200"
+                                    }`}
+                                  />
+                                )}
+                                {idx < stages.length - 1 && (
+                                  <div
+                                    className={`absolute left-1/2 right-0 top-1/2 h-1 -translate-y-1/2 ${
+                                      stages[idx + 1].done ? "bg-[#1B5E3A]" : "bg-neutral-200"
+                                    }`}
+                                  />
+                                )}
+                                {/* Milestone Circle */}
+                                <div
+                                  className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-all sm:h-8 sm:w-8 ${
+                                    stage.done
+                                      ? "bg-[#1B5E3A] text-white shadow-xs"
+                                      : "border-2 border-neutral-300 bg-white text-neutral-400"
+                                  } ${isCurrent ? "ring-4 ring-[#1B5E3A]/20" : ""}`}
+                                >
+                                  {stage.done ? "✓" : idx + 1}
+                                </div>
+                              </div>
+                              <span
+                                className={`text-[10px] font-bold tracking-tight sm:text-xs ${
+                                  stage.done ? "text-[#1F1A17]" : "text-neutral-400"
+                                }`}
+                              >
+                                {stage.label}
+                              </span>
+                              {stage.date && (
+                                <span className="hidden text-[9px] text-neutral-500 sm:block">
+                                  {new Date(stage.date).toLocaleDateString("en-IN", {
+                                    day: "numeric",
+                                    month: "short",
+                                  })}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Dispatch & Courier Tracking Banner */}
+                  {order.status !== "cancelled" && (
                   <div className="mx-4 mb-4 rounded-xl border bg-[#F8FAFC] p-4 sm:mx-6 sm:p-5" style={{ borderColor: "#CBD5E1" }}>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-start gap-3">
@@ -799,6 +983,7 @@ function OrderContent() {
                       )}
                     </div>
                   </div>
+                  )}
 
                   {/* Order Details */}
                     <div className="border-t border-neutral-200 bg-[#FAF7F2]/40 p-4 sm:p-6">
@@ -920,6 +1105,21 @@ function OrderContent() {
                             </div>
 
                             <div className="border-t border-neutral-100 pt-3 flex flex-col gap-2">
+                              {["pending", "confirmed"].includes(order.status) && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCancelReason("Ordered by mistake");
+                                    setCancelCustomNote("");
+                                    setCancellingOrder(order);
+                                  }}
+                                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#FECACA] bg-[#FEF2F2] py-2 text-xs font-bold uppercase tracking-wider text-[#991B1B] transition hover:bg-[#FEE2E2]"
+                                >
+                                  <XCircle size={14} />
+                                  <span>Cancel Order</span>
+                                </button>
+                              )}
+
                               <button
                                 type="button"
                                 onClick={() => handleBuyAgain(order.orderId)}
