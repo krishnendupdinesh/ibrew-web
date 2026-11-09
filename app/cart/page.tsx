@@ -306,6 +306,14 @@ export default function CartCheckoutPage() {
     paymentMethod: string;
   } | null>(null);
 
+  // If there are items in the cart (e.g. added from Wishlist or any product page),
+  // automatically clear any previously held order confirmation state so the user sees the active checkout session.
+  useEffect(() => {
+    if (cartItems.length > 0 && placedOrder) {
+      setPlacedOrder(null);
+    }
+  }, [cartItems.length, placedOrder]);
+
   const shippingFee =
     subtotal === 0
       ? 0
@@ -700,6 +708,7 @@ export default function CartCheckoutPage() {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={`/orders?id=${encodeURIComponent(placedOrder.orderId)}`}
+                onClick={() => setPlacedOrder(null)}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1B5E3A] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#14472C]"
               >
                 <Truck className="h-4 w-4" />
@@ -707,12 +716,14 @@ export default function CartCheckoutPage() {
               </Link>
               <Link
                 href="/"
+                onClick={() => setPlacedOrder(null)}
                 className="inline-flex items-center justify-center rounded-full bg-[#7A5A3C] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#1F1A17]"
               >
                 Back to Home
               </Link>
               <Link
                 href="/coffee"
+                onClick={() => setPlacedOrder(null)}
                 className="inline-flex items-center justify-center rounded-full border border-[#7A5A3C] bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-[0.16em] text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white"
               >
                 Explore More Products
