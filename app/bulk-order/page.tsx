@@ -387,15 +387,17 @@ const EMPTY_FORM: ContactForm = {
 // ---------------------------------------------------------------------------
 // HELPERS
 // ---------------------------------------------------------------------------
-const itemById = (id: string) => ITEMS.find((i) => i.id === id);
-
 // Returns "Label: value", or null when the value is empty (used for optional fields)
 const optional = (label: string, value: string) => (value.trim() ? `${label}: ${value}` : null);
 
 // Image that falls back to a category icon tile if the URL is missing or fails
 function ItemImage({ item, className }: { item: BulkItem; className?: string }) {
   const [failed, setFailed] = useState(false);
-  const Icon = CATEGORY_ICONS[item.category];
+  const Icon = CATEGORY_ICONS[item.category as Category] || ShoppingBasket;
+
+  useEffect(() => {
+    setFailed(false);
+  }, [item.image]);
 
   if (!item.image || failed) {
     return (
@@ -418,7 +420,11 @@ function ItemImage({ item, className }: { item: BulkItem; className?: string }) 
 // Small square thumbnail used inside the quote summary
 function Thumb({ item }: { item: BulkItem }) {
   const [failed, setFailed] = useState(false);
-  const Icon = CATEGORY_ICONS[item.category];
+  const Icon = CATEGORY_ICONS[item.category as Category] || ShoppingBasket;
+
+  useEffect(() => {
+    setFailed(false);
+  }, [item.image]);
 
   return (
     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md border bg-white" style={{ borderColor: LINE }}>
@@ -540,6 +546,7 @@ function ItemCard({ item, quantity, onSetQuantity }: ItemCardProps) {
 // QUOTE MODAL (review items, enter contact details, send)
 // ---------------------------------------------------------------------------
 type QuoteModalProps = {
+  itemsCatalog: BulkItem[];
   quote: QuoteState;
   onSetQuantity: (id: string, quantity: number) => void;
   onClose: () => void;
@@ -548,14 +555,17 @@ type QuoteModalProps = {
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) {
+function QuoteModal({ itemsCatalog, quote, onSetQuantity, onClose, onSent }: QuoteModalProps) {
   const [form, setForm] = useState<ContactForm>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [reference, setReference] = useState("");
 
   const lines = Object.entries(quote)
-    .map(([id, quantity]) => ({ item: itemById(id), quantity }))
+    .map(([id, quantity]) => ({
+      item: itemsCatalog.find((i) => i.id === id),
+      quantity,
+    }))
     .filter((l): l is { item: BulkItem; quantity: number } => Boolean(l.item) && l.quantity > 0);
 
   // Lock page scroll and close on Escape
@@ -930,10 +940,33 @@ function QuoteModal({ quote, onSetQuantity, onClose, onSent }: QuoteModalProps) 
 // BULK ORDER PAGE
 // ---------------------------------------------------------------------------
 export default function BulkOrderPage() {
-  const [activeCategory, setActiveCategory] = useState<Category | "All">("All");
+  const [itemsCatalog, setItemsCatalog] = useState<BulkItem[]>(ITEMS);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
   const [query, setQuery] = useState("");
   const [quote, setQuote] = useState<QuoteState>({});
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/quote/products", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+          setItemsCatalog(
+            data.items.map((raw: BulkItem & { slug?: string }) => ({
+              id: raw.id || raw.slug || String(raw.name),
+              name: raw.name,
+              category: (raw.category || "Coffee Powder") as Category,
+              description: raw.description || "",
+              unit: raw.unit || "kg",
+              moq: Math.max(1, Number(raw.moq || 1)),
+              step: Math.max(1, Number(raw.step || 1)),
+              image: raw.image || "",
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const setQuantity = (id: string, quantity: number) => {
     setQuote((q) => {
@@ -946,32 +979,47 @@ export default function BulkOrderPage() {
 
   const selectedCount = Object.keys(quote).length;
 
+  const dynamicCategories = useMemo(() => {
+    const base = [...CATEGORIES] as string[];
+    for (const item of itemsCatalog) {
+      if (item.category && !base.includes(item.category)) {
+        base.push(item.category);
+      }
+    }
+    return base;
+  }, [itemsCatalog]);
+
   const countByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const item of ITEMS) counts[item.category] = (counts[item.category] ?? 0) + 1;
+    for (const item of itemsCatalog) counts[item.category] = (counts[item.category] ?? 0) + 1;
     return counts;
-  }, []);
+  }, [itemsCatalog]);
 
   const visibleItems = useMemo(() => {
     const search = query.trim().toLowerCase();
-    return ITEMS.filter((item) => {
+    return itemsCatalog.filter((item) => {
       if (activeCategory !== "All" && item.category !== activeCategory) return false;
       if (search && !`${item.name} ${item.description} ${item.category}`.toLowerCase().includes(search)) return false;
       return true;
     });
-  }, [activeCategory, query]);
+  }, [itemsCatalog, activeCategory, query]);
 
   // Group items under their category heading
   const groups = useMemo(
     () =>
-      CATEGORIES.map((category) => ({
-        category,
-        items: visibleItems.filter((i) => i.category === category),
-      })).filter((g) => g.items.length > 0),
-    [visibleItems]
+      dynamicCategories
+        .map((category) => ({
+          category,
+          items: visibleItems.filter((i) => i.category === category),
+        }))
+        .filter((g) => g.items.length > 0),
+    [dynamicCategories, visibleItems]
   );
 
-  const chips: (Category | "All")[] = ["All", ...CATEGORIES];
+  const chips: string[] = useMemo(
+    () => ["All", ...dynamicCategories.filter((c) => (countByCategory[c] ?? 0) > 0)],
+    [dynamicCategories, countByCategory]
+  );
 
   return (
     <div className={`${ubuntu.className} min-h-screen overflow-x-hidden pb-24`} style={{ background: CREAM, color: INK }}>
@@ -1014,7 +1062,7 @@ export default function BulkOrderPage() {
         {/* Top bar: count + search */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-5" style={{ borderColor: LINE }}>
           <p aria-live="polite" className="text-[11px] uppercase tracking-[0.15em] sm:text-xs" style={{ color: MUTED }}>
-            Showing {visibleItems.length} of {ITEMS.length} products
+            Showing {visibleItems.length} of {itemsCatalog.length} products
           </p>
 
           <label
@@ -1037,7 +1085,7 @@ export default function BulkOrderPage() {
         <div className={`${hideScrollbar} -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0`}>
           {chips.map((chip) => {
             const on = activeCategory === chip;
-            const count = chip === "All" ? ITEMS.length : countByCategory[chip];
+            const count = chip === "All" ? itemsCatalog.length : countByCategory[chip] ?? 0;
             return (
               <button
                 key={chip}
@@ -1060,7 +1108,7 @@ export default function BulkOrderPage() {
         <div className="mt-8">
           {groups.length > 0 ? (
             groups.map(({ category, items }) => {
-              const Icon = CATEGORY_ICONS[category];
+              const Icon = CATEGORY_ICONS[category as Category] || ShoppingBasket;
               return (
                 <div key={category} className="mb-10">
                   <h2 className="mb-4 flex items-center gap-2 text-xl font-medium">
@@ -1129,6 +1177,7 @@ export default function BulkOrderPage() {
       {/* ---------- QUOTE MODAL ---------- */}
       {modalOpen && (
         <QuoteModal
+          itemsCatalog={itemsCatalog}
           quote={quote}
           onSetQuantity={setQuantity}
           onClose={() => setModalOpen(false)}

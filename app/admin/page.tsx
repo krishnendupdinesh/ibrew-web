@@ -1495,6 +1495,80 @@ export default function AdminPage() {
   }
   const [adminReviews, setAdminReviews] = useState<AdminReview[]>([]);
 
+  // Bulk Quotation Catalog Items
+  interface AdminBulkProduct {
+    id: string;
+    dbId?: number;
+    slug: string;
+    name: string;
+    category: string;
+    description: string;
+    unit: string;
+    moq: number;
+    step: number;
+    image: string;
+    sortOrder?: number;
+    isActive: boolean;
+  }
+  const [bulkProducts, setBulkProducts] = useState<AdminBulkProduct[]>([]);
+  const [quotesSubTab, setQuotesSubTab] = useState<"requests" | "catalog">("requests");
+  const [editingBulkProduct, setEditingBulkProduct] = useState<AdminBulkProduct | null>(null);
+  const [newBulkProduct, setNewBulkProduct] = useState({
+    name: "",
+    category: "Coffee Powder",
+    description: "",
+    unit: "kg",
+    moq: 10,
+    step: 5,
+    image: "",
+    isActive: true,
+  });
+  const [savingBulk, setSavingBulk] = useState(false);
+
+  const loadBulkProducts = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/bulk-products", { cache: "no-store" });
+      if (res.ok) {
+        const d = await res.json();
+        setBulkProducts(d.items || []);
+      }
+    } catch {}
+  }, []);
+
+  const handleBulkImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onImageReady: (dataUrl: string) => void
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new window.Image();
+      img.onload = () => {
+        const TARGET_SIZE = 800;
+        const canvas = document.createElement("canvas");
+        canvas.width = TARGET_SIZE;
+        canvas.height = TARGET_SIZE;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(0, 0, TARGET_SIZE, TARGET_SIZE);
+          const scale = Math.max(TARGET_SIZE / img.width, TARGET_SIZE / img.height);
+          const drawWidth = Math.round(img.width * scale);
+          const drawHeight = Math.round(img.height * scale);
+          const offsetX = Math.round((TARGET_SIZE - drawWidth) / 2);
+          const offsetY = Math.round((TARGET_SIZE - drawHeight) / 2);
+          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          onImageReady(canvas.toDataURL("image/jpeg", 0.88));
+        } else {
+          onImageReady(String(reader.result));
+        }
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const loadAnalytics = useCallback(async () => {
     setAnalyticsLoading(true);
     try {
@@ -1568,7 +1642,8 @@ export default function AdminPage() {
     if (tab === "coupons") loadCoupons();
     if (tab === "reviews") loadReviews();
     if (tab === "customers") loadCustomers();
-  }, [tab, loadAnalytics, loadLowStock, loadBanners, loadCoupons, loadReviews, loadCustomers]);
+    if (tab === "quotes") loadBulkProducts();
+  }, [tab, loadAnalytics, loadLowStock, loadBanners, loadCoupons, loadReviews, loadCustomers, loadBulkProducts]);
 
   // Product filters & modal state
   const [sectionFilter, setSectionFilter] = useState<ProductSection | "all">("all");
@@ -2156,7 +2231,7 @@ export default function AdminPage() {
                 { id: "banners", label: "Hero Banners", Icon: ImageIcon },
                 { id: "coupons", label: "Promo Coupons", Icon: Ticket },
                 { id: "reviews", label: "Customer Reviews", Icon: Star },
-                { id: "quotes", label: `Quotes (${quotes.length})`, Icon: FileText },
+                { id: "quotes", label: `Bulk & Quotes (${quotes.length})`, Icon: FileText },
                 { id: "customers", label: `Users (${customers.length})`, Icon: Users },
               ] as const
             ).map(({ id, label, Icon }) => {
@@ -3161,9 +3236,533 @@ export default function AdminPage() {
           </section>
         )}
 
-        {/* ---------- QUOTATION REQUESTS ---------- */}
+        {/* ---------- QUOTATION REQUESTS & BULK CATALOG ---------- */}
         {tab === "quotes" && (
-          <section className="mt-5" role="tabpanel">
+          <section className="mt-5 space-y-6" role="tabpanel">
+            {/* Sub-tab Toggle */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4" style={{ borderColor: LINE }}>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setQuotesSubTab("requests")}
+                  className={`cursor-pointer rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
+                    quotesSubTab === "requests"
+                      ? "bg-[#1F1A17] text-white"
+                      : "border border-[#E9DCC6] bg-white text-[#1F1A17] hover:border-[#7A5A3C]"
+                  }`}
+                >
+                  Quotation Requests ({quotes.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuotesSubTab("catalog");
+                    loadBulkProducts();
+                  }}
+                  className={`cursor-pointer rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
+                    quotesSubTab === "catalog"
+                      ? "bg-[#7A5A3C] text-white"
+                      : "border border-[#E9DCC6] bg-white text-[#7A5A3C] hover:border-[#7A5A3C]"
+                  }`}
+                >
+                  Bulk Order Products &amp; Images ({bulkProducts.length})
+                </button>
+              </div>
+              <Link
+                href="/bulk-order"
+                target="_blank"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#7A5A3C] bg-white px-3 py-1.5 text-xs font-bold text-[#7A5A3C] transition hover:bg-[#7A5A3C] hover:text-white"
+              >
+                <span>View Bulk Order Page</span>
+                <ExternalLink size={13} />
+              </Link>
+            </div>
+
+            {quotesSubTab === "catalog" ? (
+              <div className="space-y-6">
+                {/* Add New Bulk Product Form */}
+                <div className="rounded-2xl border bg-white p-6 shadow-xs" style={{ borderColor: LINE }}>
+                  <h3 className="text-base font-bold text-[#1F1A17]">
+                    Add New Bulk Quotation Product
+                  </h3>
+                  <p className="mt-0.5 text-xs text-neutral-500">
+                    Add wholesale items with custom Minimum Order Quantity (MOQ), step increment, and product image for the /bulk-order page.
+                  </p>
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!newBulkProduct.name.trim() || savingBulk) return;
+                      setSavingBulk(true);
+                      try {
+                        const res = await fetch("/api/admin/bulk-products", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(newBulkProduct),
+                        });
+                        if (res.ok) {
+                          showNotice(`Added "${newBulkProduct.name}" to Bulk Order catalog!`, "/bulk-order", "Bulk Orders");
+                          loadBulkProducts();
+                          setNewBulkProduct({
+                            name: "",
+                            category: "Coffee Powder",
+                            description: "",
+                            unit: "kg",
+                            moq: 10,
+                            step: 5,
+                            image: "",
+                            isActive: true,
+                          });
+                        } else {
+                          showNotice("Could not create bulk product.");
+                        }
+                      } finally {
+                        setSavingBulk(false);
+                      }
+                    }}
+                    className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3"
+                  >
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-700">Product Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={newBulkProduct.name}
+                        onChange={(e) => setNewBulkProduct({ ...newBulkProduct, name: e.target.value })}
+                        placeholder="e.g. Robusta Cherry AA Coffee"
+                        className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-700">Category *</label>
+                      <select
+                        value={newBulkProduct.category}
+                        onChange={(e) => setNewBulkProduct({ ...newBulkProduct, category: e.target.value })}
+                        className="mt-1 w-full rounded-lg border border-neutral-300 bg-white p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                      >
+                        <option value="Coffee Powder">Coffee Powder</option>
+                        <option value="Coffee Skin Care">Coffee Skin Care</option>
+                        <option value="Fragrances">Fragrances</option>
+                        <option value="Imported Mattresses">Imported Mattresses</option>
+                        <option value="Dates">Dates</option>
+                        <option value="Groceries">Groceries</option>
+                        <option value="Spices">Spices</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-700">Unit</label>
+                        <input
+                          type="text"
+                          value={newBulkProduct.unit}
+                          onChange={(e) => setNewBulkProduct({ ...newBulkProduct, unit: e.target.value })}
+                          placeholder="kg / pcs"
+                          className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-700">MOQ</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={newBulkProduct.moq}
+                          onChange={(e) => setNewBulkProduct({ ...newBulkProduct, moq: Number(e.target.value) })}
+                          className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-700">Step (+/-)</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={newBulkProduct.step}
+                          onChange={(e) => setNewBulkProduct({ ...newBulkProduct, step: Number(e.target.value) })}
+                          className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-neutral-700">Description</label>
+                      <input
+                        type="text"
+                        value={newBulkProduct.description}
+                        onChange={(e) => setNewBulkProduct({ ...newBulkProduct, description: e.target.value })}
+                        placeholder="Short wholesale product description, packaging details..."
+                        className="mt-1 w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-700">Product Image (URL or Upload)</label>
+                      <div className="mt-1 flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={newBulkProduct.image}
+                          onChange={(e) => setNewBulkProduct({ ...newBulkProduct, image: e.target.value })}
+                          placeholder="https://... or upload photo"
+                          className="w-full rounded-lg border border-neutral-300 p-2 text-xs outline-none focus:border-[#7A5A3C]"
+                        />
+                        <label className="shrink-0 cursor-pointer rounded-lg border border-[#7A5A3C] bg-[#FAF7F2] px-3 py-2 text-xs font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white">
+                          Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                              handleBulkImageUpload(e, (dataUrl) =>
+                                setNewBulkProduct((prev) => ({ ...prev, image: dataUrl }))
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-3 flex items-center justify-between pt-1">
+                      {newBulkProduct.image ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={newBulkProduct.image}
+                            alt="Preview"
+                            className="h-10 w-10 rounded-lg border object-cover"
+                          />
+                          <span className="text-[11px] text-emerald-700 font-semibold">Image ready</span>
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-neutral-400">No image selected yet</span>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={savingBulk}
+                        className="cursor-pointer rounded-lg bg-[#7A5A3C] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#1F1A17] disabled:opacity-60"
+                      >
+                        {savingBulk ? "Saving..." : "Add Bulk Product"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Edit Existing Bulk Product Modal / Drawer Box */}
+                {editingBulkProduct && (
+                  <div className="rounded-2xl border-2 border-[#7A5A3C] bg-[#FAF7F2] p-5 shadow-md">
+                    <div className="mb-3 flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-[#1F1A17]">
+                        Edit Bulk Product: {editingBulkProduct.name}
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => setEditingBulkProduct(null)}
+                        className="cursor-pointer text-xs font-semibold text-neutral-500 hover:text-neutral-800"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-700">Product Name</label>
+                        <input
+                          type="text"
+                          value={editingBulkProduct.name}
+                          onChange={(e) =>
+                            setEditingBulkProduct({ ...editingBulkProduct, name: e.target.value })
+                          }
+                          className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-700">Category</label>
+                        <select
+                          value={editingBulkProduct.category}
+                          onChange={(e) =>
+                            setEditingBulkProduct({ ...editingBulkProduct, category: e.target.value })
+                          }
+                          className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                        >
+                          <option value="Coffee Powder">Coffee Powder</option>
+                          <option value="Coffee Skin Care">Coffee Skin Care</option>
+                          <option value="Fragrances">Fragrances</option>
+                          <option value="Imported Mattresses">Imported Mattresses</option>
+                          <option value="Dates">Dates</option>
+                          <option value="Groceries">Groceries</option>
+                          <option value="Spices">Spices</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700">Unit</label>
+                          <input
+                            type="text"
+                            value={editingBulkProduct.unit}
+                            onChange={(e) =>
+                              setEditingBulkProduct({ ...editingBulkProduct, unit: e.target.value })
+                            }
+                            className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700">MOQ</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={editingBulkProduct.moq}
+                            onChange={(e) =>
+                              setEditingBulkProduct({
+                                ...editingBulkProduct,
+                                moq: Number(e.target.value),
+                              })
+                            }
+                            className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-neutral-700">Step</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={editingBulkProduct.step}
+                            onChange={(e) =>
+                              setEditingBulkProduct({
+                                ...editingBulkProduct,
+                                step: Number(e.target.value),
+                              })
+                            }
+                            className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                          />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-[11px] font-bold text-neutral-700">Description</label>
+                        <input
+                          type="text"
+                          value={editingBulkProduct.description}
+                          onChange={(e) =>
+                            setEditingBulkProduct({
+                              ...editingBulkProduct,
+                              description: e.target.value,
+                            })
+                          }
+                          className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-neutral-700">
+                          Image URL or Upload Photo
+                        </label>
+                        <div className="mt-1 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={editingBulkProduct.image}
+                            onChange={(e) =>
+                              setEditingBulkProduct({
+                                ...editingBulkProduct,
+                                image: e.target.value,
+                              })
+                            }
+                            className="w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                          />
+                          <label className="shrink-0 cursor-pointer rounded-md border border-[#7A5A3C] bg-white px-2.5 py-2 text-xs font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white">
+                            Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) =>
+                                handleBulkImageUpload(e, (dataUrl) =>
+                                  setEditingBulkProduct((prev) =>
+                                    prev ? { ...prev, image: dataUrl } : null
+                                  )
+                                )
+                              }
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {editingBulkProduct.image && (
+                          <img
+                            src={editingBulkProduct.image}
+                            alt={editingBulkProduct.name}
+                            className="h-12 w-12 rounded-lg border bg-white object-cover"
+                          />
+                        )}
+                        <label className="flex items-center gap-2 text-xs font-semibold text-[#1F1A17]">
+                          <input
+                            type="checkbox"
+                            checked={editingBulkProduct.isActive}
+                            onChange={(e) =>
+                              setEditingBulkProduct({
+                                ...editingBulkProduct,
+                                isActive: e.target.checked,
+                              })
+                            }
+                          />
+                          Visible on Bulk Orders page
+                        </label>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditingBulkProduct(null)}
+                          className="cursor-pointer rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-100"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const targetId = editingBulkProduct.dbId || editingBulkProduct.id;
+                            const res = await fetch(
+                              `/api/admin/bulk-products/${encodeURIComponent(String(targetId))}`,
+                              {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(editingBulkProduct),
+                              }
+                            );
+                            if (res.ok) {
+                              showNotice(
+                                `Updated "${editingBulkProduct.name}"!`,
+                                "/bulk-order",
+                                "Bulk Orders"
+                              );
+                              setEditingBulkProduct(null);
+                              loadBulkProducts();
+                            } else {
+                              showNotice("Failed to update bulk product.");
+                            }
+                          }}
+                          className="cursor-pointer rounded-lg bg-[#7A5A3C] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#1F1A17]"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Bulk Products Grid */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {bulkProducts
+                    .filter((bp) => {
+                      const q = query.trim().toLowerCase();
+                      if (!q) return true;
+                      return `${bp.name} ${bp.category} ${bp.description}`.toLowerCase().includes(q);
+                    })
+                    .map((bp) => (
+                      <div
+                        key={bp.id}
+                        className="flex flex-col justify-between overflow-hidden rounded-xl border bg-white p-4 shadow-xs transition hover:shadow-md"
+                        style={{ borderColor: LINE }}
+                      >
+                        <div className="flex gap-3.5">
+                          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-[#FAF7F2]">
+                            {bp.image ? (
+                              <img
+                                src={bp.image}
+                                alt={bp.name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center text-[10px] font-bold text-[#7A5A3C]">
+                                No Photo
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="rounded bg-[#FAF3E8] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#7A5A3C]">
+                                {bp.category}
+                              </span>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                  bp.isActive
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : "bg-neutral-100 text-neutral-500"
+                                }`}
+                              >
+                                {bp.isActive ? "Active" : "Hidden"}
+                              </span>
+                            </div>
+                            <h4 className="mt-1.5 truncate text-sm font-bold text-[#1F1A17]">
+                              {bp.name}
+                            </h4>
+                            <p className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
+                              {bp.description}
+                            </p>
+                            <p className="mt-1.5 text-[11px] font-semibold text-[#7A5A3C]">
+                              MOQ: {bp.moq} {bp.unit} · Step: +{bp.step} {bp.unit}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3">
+                          <label className="cursor-pointer rounded-lg border border-[#7A5A3C] bg-[#FAF7F2] px-2.5 py-1 text-[11px] font-bold text-[#7A5A3C] transition hover:bg-[#7A5A3C] hover:text-white">
+                            Change Photo
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) =>
+                                handleBulkImageUpload(e, async (dataUrl) => {
+                                  const targetId = bp.dbId || bp.id;
+                                  const res = await fetch(
+                                    `/api/admin/bulk-products/${encodeURIComponent(String(targetId))}`,
+                                    {
+                                      method: "PUT",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ ...bp, image: dataUrl }),
+                                    }
+                                  );
+                                  if (res.ok) {
+                                    showNotice(
+                                      `Updated photo for "${bp.name}"!`,
+                                      "/bulk-order",
+                                      "Bulk Orders"
+                                    );
+                                    loadBulkProducts();
+                                  }
+                                })
+                              }
+                            />
+                          </label>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setEditingBulkProduct(bp)}
+                              className="cursor-pointer rounded-md border border-neutral-200 px-2.5 py-1 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (!confirm(`Delete "${bp.name}" from Bulk Order catalog?`)) return;
+                                const targetId = bp.dbId || bp.id;
+                                const res = await fetch(
+                                  `/api/admin/bulk-products/${encodeURIComponent(String(targetId))}`,
+                                  { method: "DELETE" }
+                                );
+                                if (res.ok) {
+                                  showNotice(`Deleted "${bp.name}" from Bulk Order catalog.`);
+                                  loadBulkProducts();
+                                }
+                              }}
+                              className="cursor-pointer rounded-md p-1 text-neutral-400 hover:bg-red-50 hover:text-red-600"
+                              title="Delete bulk product"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            ) : (
+              <>
             <div className="mb-4 flex flex-wrap gap-2">
               {(["all", ...STATUS_OPTIONS.map((o) => o.value)] as const).map((s) => {
                 const on = statusFilter === s;
@@ -3339,6 +3938,8 @@ export default function AdminPage() {
                   );
                 })}
               </ul>
+            )}
+              </>
             )}
           </section>
         )}
