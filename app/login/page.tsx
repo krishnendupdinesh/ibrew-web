@@ -78,7 +78,7 @@ function LoginForm() {
 
       const safe = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
       const target = data.user.role === "admin" ? safe ?? "/admin" : safe ?? "/";
-      router.replace(target);
+      window.location.href = target;
     } catch {
       setError("Could not reach the server. Check your connection and try again.");
       setLoading(false);

@@ -183,31 +183,24 @@ export default function Navbar() {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
 
-    // 1. Immediately wipe client credentials from storage
+    // 1. Instantly wipe client state and storage (< 1ms UI response)
     try {
       window.sessionStorage.removeItem("ibrew_auth_user");
       window.localStorage.removeItem("ibrew_auth_user");
-    } catch {
-      // ignore
-    }
-
-    // 2. Call server logout endpoint to clear httpOnly cookie
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // ignore network errors during logout
-    }
-
-    // 3. Clear auth user state & notify other components after cookie is cleared
-    setAuthUser(null);
-    setIsLoggingOut(false);
-    try {
       window.dispatchEvent(new Event("ibrew-auth-changed"));
     } catch {
       // ignore
     }
+    setAuthUser(null);
 
-    // 4. Client-side navigation away from protected pages or smooth refresh
+    // 2. Clear cookie in parallel without delaying user feedback
+    fetch("/api/auth/logout", { method: "POST" })
+      .catch(() => {})
+      .finally(() => {
+        setIsLoggingOut(false);
+      });
+
+    // 3. Immediately redirect away from admin/protected pages or refresh
     if (pathname.startsWith("/admin") || pathname.startsWith("/orders") || pathname.startsWith("/profile")) {
       router.replace("/login");
     } else {
@@ -453,7 +446,7 @@ export default function Navbar() {
 
           {/* 3. Login / Logout + Cart buttons */}
           <div className="order-2 flex shrink-0 items-center gap-1.5 sm:gap-2.5 md:order-3">
-            {mounted && (authUser || isLoggingOut) ? (
+            {mounted && authUser ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
                 {authUser?.role === "admin" ? (
                   <Link
@@ -483,14 +476,14 @@ export default function Navbar() {
                   disabled={isLoggingOut}
                   title={authUser ? `Signed in as ${authUser.name} — Logout` : "Logout"}
                   aria-label="Logout"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-60 sm:h-10 sm:w-auto sm:px-3 sm:gap-1.5"
+                  className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-neutral-200 bg-neutral-50 px-2.5 text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-60 sm:h-10 sm:px-3"
                 >
                   {isLoggingOut ? (
                     <Loader2 size={16} className="animate-spin text-[#7A5A3C]" />
                   ) : (
                     <LogOut size={16} strokeWidth={1.8} className="shrink-0" />
                   )}
-                  <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Logout</span>
+                  <span className="text-xs sm:text-sm font-semibold">Logout</span>
                 </button>
               </div>
             ) : (
