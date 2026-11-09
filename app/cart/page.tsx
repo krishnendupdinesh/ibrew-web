@@ -118,6 +118,27 @@ export default function CartCheckoutPage() {
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponMsg, setCouponMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [activeCoupons, setActiveCoupons] = useState<
+    Array<{
+      id: number;
+      code: string;
+      description?: string;
+      discountType: string;
+      discountValue: number;
+      minOrderValue: number;
+    }>
+  >([]);
+
+  useEffect(() => {
+    fetch("/api/coupons/active")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.coupons && Array.isArray(data.coupons)) {
+          setActiveCoupons(data.coupons);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const applyCouponCode = async (codeToApply?: string) => {
     const code = (codeToApply ?? couponInput).trim();
@@ -1052,20 +1073,53 @@ export default function CartCheckoutPage() {
                         </button>
                       </div>
 
-                      {/* Coupon suggestions pill */}
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px]">
-                        <span className="text-neutral-500">Popular:</span>
-                        {["WELCOME10", "FLAT100", "FREESHIP"].map((code) => (
-                          <button
-                            key={code}
-                            type="button"
-                            onClick={() => applyCouponCode(code)}
-                            className="cursor-pointer rounded border border-dashed border-[#7A5A3C] bg-white px-1.5 py-0.5 text-[10px] font-bold text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
-                          >
-                            {code}
-                          </button>
-                        ))}
-                      </div>
+                      {/* Only show valid active coupons that meet requirements */}
+                      {activeCoupons.length > 0 && (
+                        <div className="mt-3 space-y-1.5">
+                          <p className="text-[11px] font-semibold text-neutral-600">Available Valid Offers:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {activeCoupons.map((c) => {
+                              const eligible = subtotal >= c.minOrderValue;
+                              return (
+                                <button
+                                  key={c.code}
+                                  type="button"
+                                  onClick={() => {
+                                    if (eligible) {
+                                      applyCouponCode(c.code);
+                                    } else {
+                                      setCouponMsg({
+                                        type: "error",
+                                        text: `Add ${formatPrice(c.minOrderValue - subtotal)} more to apply "${c.code}". Minimum order is ${formatPrice(c.minOrderValue)}.`,
+                                      });
+                                    }
+                                  }}
+                                  className={`group flex items-center gap-1.5 rounded-md border border-dashed px-2.5 py-1 text-left text-[11px] transition ${
+                                    eligible
+                                      ? "border-[#7A5A3C] bg-[#FAF7F2] text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white cursor-pointer"
+                                      : "border-neutral-200 bg-neutral-50 text-neutral-400 cursor-not-allowed opacity-75"
+                                  }`}
+                                  title={
+                                    eligible
+                                      ? `Click to apply ${c.code}`
+                                      : `Minimum cart value of ${formatPrice(c.minOrderValue)} required`
+                                  }
+                                >
+                                  <span className="font-mono font-bold tracking-wider">{c.code}</span>
+                                  <span className="text-[10px] opacity-80">
+                                    ({c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`})
+                                  </span>
+                                  {!eligible && (
+                                    <span className="text-[9px] text-neutral-500 font-medium">
+                                      (Min {formatPrice(c.minOrderValue)})
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
