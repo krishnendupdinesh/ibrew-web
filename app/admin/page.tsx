@@ -1551,13 +1551,24 @@ export default function AdminPage() {
     } catch {}
   }, []);
 
+  const loadCustomers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/users", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setCustomers(data.users || []);
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
     if (tab === "analytics") loadAnalytics();
     if (tab === "inventory") loadLowStock();
     if (tab === "banners") loadBanners();
     if (tab === "coupons") loadCoupons();
     if (tab === "reviews") loadReviews();
-  }, [tab, loadAnalytics, loadLowStock, loadBanners, loadCoupons, loadReviews]);
+    if (tab === "customers") loadCustomers();
+  }, [tab, loadAnalytics, loadLowStock, loadBanners, loadCoupons, loadReviews, loadCustomers]);
 
   // Product filters & modal state
   const [sectionFilter, setSectionFilter] = useState<ProductSection | "all">("all");
