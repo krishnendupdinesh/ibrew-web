@@ -3829,13 +3829,23 @@ export default function AdminPage() {
                       <td className="px-4 py-3 text-neutral-600">₹{c.minOrderValue}</td>
                       <td className="px-4 py-3 font-bold text-neutral-700">{c.timesUsed || 0}</td>
                       <td className="px-4 py-3">
-                        <span
-                          className={`rounded px-2 py-0.5 text-[11px] font-bold ${
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            await fetch(`/api/admin/coupons/${c.id}`, {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ ...c, isActive: !c.isActive }),
+                            });
+                            loadCoupons();
+                          }}
+                          className={`cursor-pointer rounded-full px-2.5 py-1 text-[11px] font-bold transition hover:opacity-80 ${
                             c.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
                           }`}
+                          title="Click to toggle Active / Disabled"
                         >
-                          {c.isActive ? "Active" : "Disabled"}
-                        </span>
+                          {c.isActive ? "Active (Click to Disable)" : "Disabled (Click to Enable)"}
+                        </button>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button

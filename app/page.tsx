@@ -57,12 +57,12 @@ const formatPrice = (n: number) => "₹" + n.toLocaleString("en-IN");
 // IMAGE URLS - paste your own image links here (all images are used by key)
 // ---------------------------------------------------------------------------
 const IMAGES = {
-  // Hero slides
-  heroCoffee: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_4TuRaK1Q9if9U1H5VQGkO9Z5V8DF5wA--pNSfLhlzw&s=10",
-  heroSpices: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNl51-7HI67lmMtQSgfP5b010GN_OCOlcBnV1YLNrwrw&s=10",
-  heroFragrance: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJCgBzxL6OYMI_BOHCmzFwkD7gCsQhzVVkGy420vlTFw&s=10",
-  heroMattress: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoIgNNgg9P9AFPQ2U4jp9wBW3__jz8D6MXuI6Igl_VCA&s=10",
-  heroBulk: "https://plus.unsplash.com/premium_photo-1679858782272-8ee1ba3d4c12?w=600&auto=format&fit=crop&q=60",
+  // Hero slides (High-resolution, distinct, responsive banners)
+  heroCoffee: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=80",
+  heroSpices: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1600&q=80",
+  heroFragrance: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1600&q=80",
+  heroMattress: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80",
+  heroBulk: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1600&q=80",
 
   // Category icons
   catCoffee: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
@@ -153,13 +153,20 @@ function HeroCarousel() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.banners && Array.isArray(data.banners) && data.banners.length > 0) {
-          const mapped = data.banners.map((b: { title: string; subtitle?: string; ctaText?: string; ctaLink?: string; imageUrl?: string; colorScheme?: string }) => ({
+          const fallbackImages = [
+            IMAGES.heroCoffee,
+            IMAGES.heroSpices,
+            IMAGES.heroFragrance,
+            IMAGES.heroMattress,
+            IMAGES.heroBulk,
+          ];
+          const mapped = data.banners.map((b: { title: string; subtitle?: string; ctaText?: string; ctaLink?: string; imageUrl?: string; image?: string; colorScheme?: string }, idx: number) => ({
             title: b.title,
             text: b.subtitle || "",
             cta: b.ctaText || "Shop now",
             href: b.ctaLink || "/coffee",
             color: b.colorScheme || "#5A3420",
-            image: b.imageUrl || IMAGES.heroCoffee,
+            image: b.imageUrl || b.image || fallbackImages[idx % fallbackImages.length],
           }));
           setDynamicSlides(mapped);
         }
