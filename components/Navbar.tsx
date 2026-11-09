@@ -38,7 +38,7 @@ const SECTION_LABELS: Record<string, string> = {
   "coffee-skin": "Skincare",
   spices: "Spices",
   fragrances: "Fragrances",
-  importedbed: "Imported Beds",
+  importedbed: "Imported Mattresses",
   groceries: "Groceries",
   dates: "Dates",
 };

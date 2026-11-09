@@ -42,7 +42,7 @@ const SECTION_OPTIONS = [
   { value: "coffee-skin", label: "Skincare" },
   { value: "spices", label: "Spices" },
   { value: "fragrances", label: "Fragrances" },
-  { value: "importedbed", label: "Imported Beds" },
+  { value: "importedbed", label: "Imported Mattresses" },
   { value: "groceries", label: "Groceries" },
   { value: "dates", label: "Dates" },
 ];
@@ -501,7 +501,7 @@ function SearchPageContent() {
               type="search"
               value={inputQuery}
               onChange={(e) => setInputQuery(e.target.value)}
-              placeholder="Search by name, spice, perfume, beans, bed, dates..."
+              placeholder="Search by name, spice, perfume, beans, mattress, dates..."
               className="w-full bg-transparent text-sm outline-none placeholder:text-neutral-400"
             />
             {inputQuery && (

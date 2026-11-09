@@ -398,7 +398,7 @@ export const INITIAL_SERVER_PRODUCTS: StoreProduct[] = [
     ],
   },
 
-  // ================= MATTRESSES & BEDS (/importedbed) =================
+  // ================= MATTRESSES (/importedbed) =================
   {
     id: "memory-foam-mattress",
     slug: "memory-foam-mattress",

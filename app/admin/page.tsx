@@ -177,7 +177,7 @@ const SECTIONS: {
     },
     {
       value: "importedbed",
-      label: "Mattresses & Beds",
+      label: "Mattresses",
       href: "/importedbed",
       categories: ["Memory Foam", "Orthopedic", "Spring", "Accessories"],
     },
@@ -1432,12 +1432,17 @@ export default function AdminPage() {
     badgeText?: string;
     ctaText?: string;
     ctaLink?: string;
+    link?: string;
     imageUrl?: string;
+    image?: string;
     colorScheme?: string;
     displayOrder: number;
+    sort_order?: number;
     isActive: boolean;
+    is_active?: number | boolean;
   }
   const [banners, setBanners] = useState<AdminBanner[]>([]);
+  const [editingBanner, setEditingBanner] = useState<AdminBanner | null>(null);
   const [newBanner, setNewBanner] = useState({
     bannerType: "hero_slide",
     title: "",
@@ -3658,59 +3663,240 @@ export default function AdminPage() {
             </div>
 
             {/* Existing Banners */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#7A5A3C]">Active Banner Slides</h3>
-              {banners.map((b) => (
-                <div
-                  key={b.id}
-                  className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-white p-4 shadow-xs"
-                  style={{ borderColor: LINE }}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-[#1F1A17]">Configured Hero Slides ({banners.length})</h3>
+                  <p className="text-xs text-neutral-500">Live preview of your homepage slider cards. Use the Edit button or status toggle to update instantly.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadBanners}
+                  className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
                 >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="h-12 w-16 rounded-md bg-cover bg-center shrink-0 border"
-                      style={{
-                        backgroundImage: `url(${b.imageUrl || "https://images.unsplash.com/photo-1544816155-12df9643f363?w=200"})`,
-                        backgroundColor: b.colorScheme || "#7A5A3C",
-                      }}
-                    />
-                    <div>
-                      <p className="text-sm font-bold text-[#1F1A17]">{b.title}</p>
-                      <p className="text-xs text-neutral-500">{b.subtitle || b.ctaLink}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
+                  Refresh Slides
+                </button>
+              </div>
+
+              {editingBanner && (
+                <div className="rounded-2xl border-2 border-[#7A5A3C] bg-[#FAF7F2] p-5 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-bold text-[#1F1A17]">Editing Banner: {editingBanner.title}</h4>
                     <button
                       type="button"
-                      onClick={async () => {
-                        await fetch(`/api/admin/banners/${b.id}`, {
-                          method: "PUT",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ ...b, isActive: !b.isActive }),
-                        });
-                        loadBanners();
-                      }}
-                      className={`cursor-pointer rounded-full px-3 py-1 text-xs font-bold ${
-                        b.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
-                      }`}
+                      onClick={() => setEditingBanner(null)}
+                      className="text-xs font-semibold text-neutral-500 hover:text-neutral-800"
                     >
-                      {b.isActive ? "Active" : "Inactive"}
+                      Cancel
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">Title</label>
+                      <input
+                        type="text"
+                        value={editingBanner.title}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, title: e.target.value })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">Subtitle / Tagline</label>
+                      <input
+                        type="text"
+                        value={editingBanner.subtitle || ""}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, subtitle: e.target.value })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">Image URL</label>
+                      <input
+                        type="text"
+                        value={editingBanner.imageUrl || editingBanner.image || ""}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, imageUrl: e.target.value, image: e.target.value })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">CTA Button Text</label>
+                      <input
+                        type="text"
+                        value={editingBanner.ctaText || ""}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, ctaText: e.target.value })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">CTA Link</label>
+                      <input
+                        type="text"
+                        value={editingBanner.ctaLink || ""}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, ctaLink: e.target.value })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-neutral-700">Display Order</label>
+                      <input
+                        type="number"
+                        value={editingBanner.displayOrder ?? editingBanner.sort_order ?? 1}
+                        onChange={(e) => setEditingBanner({ ...editingBanner, displayOrder: Number(e.target.value) })}
+                        className="mt-1 w-full rounded-md border border-neutral-300 bg-white p-2 text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditingBanner(null)}
+                      className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-100"
+                    >
+                      Cancel
                     </button>
                     <button
                       type="button"
                       onClick={async () => {
-                        if (confirm("Delete this banner?")) {
-                          await fetch(`/api/admin/banners/${b.id}`, { method: "DELETE" });
+                        const res = await fetch(`/api/admin/banners/${editingBanner.id}`, {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            title: editingBanner.title,
+                            subtitle: editingBanner.subtitle,
+                            image: editingBanner.imageUrl || editingBanner.image,
+                            imageUrl: editingBanner.imageUrl || editingBanner.image,
+                            cta_text: editingBanner.ctaText,
+                            ctaText: editingBanner.ctaText,
+                            link: editingBanner.ctaLink,
+                            ctaLink: editingBanner.ctaLink,
+                            sort_order: editingBanner.displayOrder,
+                            displayOrder: editingBanner.displayOrder,
+                            is_active: editingBanner.isActive ? 1 : 0,
+                            isActive: Boolean(editingBanner.isActive),
+                          }),
+                        });
+                        if (res.ok) {
+                          showNotice("Banner updated successfully!");
+                          setEditingBanner(null);
                           loadBanners();
+                        } else {
+                          showNotice("Failed to update banner.");
                         }
                       }}
-                      className="cursor-pointer rounded p-1 text-red-600 hover:bg-red-50"
+                      className="rounded-lg bg-[#7A5A3C] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#1F1A17]"
                     >
-                      <Trash2 size={16} />
+                      Save Changes
                     </button>
                   </div>
                 </div>
-              ))}
+              )}
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {banners.map((b) => {
+                  const bannerImg = b.imageUrl || b.image || "https://images.unsplash.com/photo-1544816155-12df9643f363?w=600";
+                  const active = Boolean(b.isActive || b.is_active === 1 || b.is_active === true);
+                  return (
+                    <div
+                      key={b.id}
+                      className="flex flex-col overflow-hidden rounded-xl border bg-white shadow-xs transition hover:shadow-md"
+                      style={{ borderColor: LINE }}
+                    >
+                      <div
+                        className="relative h-36 w-full bg-cover bg-center"
+                        style={{
+                          backgroundImage: `url(${bannerImg})`,
+                          backgroundColor: b.colorScheme || "#7A5A3C",
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+                        <span
+                          className={`absolute top-3 left-3 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                            active ? "bg-emerald-500 text-white" : "bg-neutral-600 text-neutral-200"
+                          }`}
+                        >
+                          {active ? "Active on Home" : "Disabled"}
+                        </span>
+                        <span className="absolute top-3 right-3 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white">
+                          Order #{b.displayOrder ?? b.sort_order ?? 0}
+                        </span>
+                        <div className="absolute bottom-3 left-3 right-3 text-white">
+                          <p className="line-clamp-1 text-sm font-bold drop-shadow-sm">{b.title}</p>
+                          <p className="line-clamp-1 text-[11px] text-neutral-200 drop-shadow-sm">{b.subtitle || "No subtitle"}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-1 flex-col justify-between p-3.5">
+                        <div className="space-y-1 text-xs text-neutral-600">
+                          <p><span className="font-bold text-neutral-800">CTA:</span> {b.ctaText || "Shop Now"} &rarr; <span className="font-mono text-neutral-500">{b.ctaLink || b.link || "/"}</span></p>
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const newActive = !active;
+                              const res = await fetch(`/api/admin/banners/${b.id}`, {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  ...b,
+                                  isActive: newActive,
+                                  is_active: newActive ? 1 : 0,
+                                }),
+                              });
+                              if (res.ok) {
+                                showNotice(`Banner "${b.title}" set to ${newActive ? "Active" : "Disabled"}`);
+                                loadBanners();
+                              } else {
+                                showNotice("Failed to update status");
+                              }
+                            }}
+                            className={`cursor-pointer rounded-full px-3 py-1 text-xs font-bold transition hover:opacity-80 ${
+                              active ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
+                            }`}
+                          >
+                            {active ? "Active" : "Disabled"}
+                          </button>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingBanner({
+                                  ...b,
+                                  imageUrl: b.imageUrl || b.image,
+                                  ctaLink: b.ctaLink || b.link,
+                                  ctaText: b.ctaText,
+                                  isActive: active,
+                                });
+                              }}
+                              className="rounded-md border border-neutral-200 px-2.5 py-1 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (confirm(`Delete banner "${b.title}"?`)) {
+                                  const res = await fetch(`/api/admin/banners/${b.id}`, { method: "DELETE" });
+                                  if (res.ok) {
+                                    showNotice("Banner deleted successfully!");
+                                    loadBanners();
+                                  }
+                                }
+                              }}
+                              className="cursor-pointer rounded-md p-1.5 text-red-600 hover:bg-red-50"
+                              title="Delete banner"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
         )}
@@ -3832,18 +4018,34 @@ export default function AdminPage() {
                         <button
                           type="button"
                           onClick={async () => {
-                            await fetch(`/api/admin/coupons/${c.id}`, {
+                            const newActive = !c.isActive;
+                            // Optimistic update
+                            setCoupons((prev) =>
+                              prev.map((item) => (item.id === c.id ? { ...item, isActive: newActive } : item))
+                            );
+                            const res = await fetch(`/api/admin/coupons/${c.id}`, {
                               method: "PUT",
                               headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ ...c, isActive: !c.isActive }),
+                              body: JSON.stringify({
+                                ...c,
+                                isActive: newActive,
+                                is_active: newActive ? 1 : 0,
+                              }),
                             });
-                            loadCoupons();
+                            if (res.ok) {
+                              showNotice(`Coupon "${c.code}" is now ${newActive ? "Active" : "Disabled"}`);
+                              loadCoupons();
+                            } else {
+                              showNotice("Failed to update coupon status.");
+                              loadCoupons();
+                            }
                           }}
-                          className={`cursor-pointer rounded-full px-2.5 py-1 text-[11px] font-bold transition hover:opacity-80 ${
-                            c.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
+                          className={`cursor-pointer inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition shadow-xs hover:opacity-90 active:scale-95 ${
+                            c.isActive ? "bg-emerald-100 text-emerald-800 border border-emerald-300" : "bg-neutral-100 text-neutral-600 border border-neutral-300"
                           }`}
                           title="Click to toggle Active / Disabled"
                         >
+                          <span className={`h-2 w-2 rounded-full ${c.isActive ? "bg-emerald-500 animate-pulse" : "bg-neutral-400"}`} />
                           {c.isActive ? "Active (Click to Disable)" : "Disabled (Click to Enable)"}
                         </button>
                       </td>

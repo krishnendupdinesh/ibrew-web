@@ -722,7 +722,7 @@ export default function CartCheckoutPage() {
                 { label: "Coffee Skincare", href: "/coffee-skin" },
                 { label: "Fragrances", href: "/fragrances" },
                 { label: "Groceries", href: "/groceries" },
-                { label: "Imported Bed", href: "/importedbed" },
+                { label: "Imported Mattresses", href: "/importedbed" },
               ].map((cat) => (
                 <Link
                   key={cat.href}

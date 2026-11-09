@@ -9,7 +9,7 @@ const shopLinks = [
   { label: "Skincare", href: "/coffee-skin" },
   { label: "Spices", href: "/spices" },
   { label: "Fragrances", href: "/fragrances" },
-  { label: "Imported Beds", href: "/importedbed" },
+  { label: "Imported Mattresses", href: "/importedbed" },
   { label: "Groceries", href: "/groceries" },
   { label: "Dates", href: "/dates" },
 ];
@@ -95,7 +95,7 @@ export default function Footer() {
 
             <p className="mt-3 max-w-md text-sm leading-6 text-[#fff8ef]/85">
               Discover rich coffee flavours, aromatic spices, exquisite
-              imported perfumes, and comfortable imported beds. Subscribe to
+              imported perfumes, and comfortable imported mattresses. Subscribe to
               hear about new arrivals, special offers, and more.
             </p>
 
@@ -233,7 +233,7 @@ export default function Footer() {
 
           <p className="mt-2 max-w-6xl text-xs leading-5 text-[#fff8ef]/85 sm:text-sm">
             Imaan&apos;s Store brings together coffee powder, flavourful
-            spices, imported perfumes, and imported beds in one convenient
+            spices, imported perfumes, and imported mattresses in one convenient
             destination. Explore a collection that combines everyday
             essentials with distinctive finds for your home and lifestyle.
           </p>

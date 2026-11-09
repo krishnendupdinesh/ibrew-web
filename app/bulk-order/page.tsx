@@ -67,9 +67,9 @@ const IMAGES = {
   perfume: "https://your-image-url.com/eau-de-parfum.jpg",
   bakhoor: "https://your-image-url.com/bakhoor.jpg",
 
-  queenBed: "https://your-image-url.com/queen-bed.jpg",
-  kingBed: "https://your-image-url.com/king-bed.jpg",
-  storageBed: "https://your-image-url.com/storage-bed.jpg",
+  queenBed: "https://your-image-url.com/queen-mattress.jpg",
+  kingBed: "https://your-image-url.com/king-mattress.jpg",
+  storageBed: "https://your-image-url.com/ortho-mattress.jpg",
 
   medjool: "https://your-image-url.com/medjool-dates.jpg",
   ajwa: "https://your-image-url.com/ajwa-dates.jpg",
@@ -92,7 +92,7 @@ const CATEGORIES = [
   "Coffee Powder",
   "Coffee Skin Care",
   "Fragrances",
-  "Imported Beds",
+  "Imported Mattresses",
   "Dates",
   "Groceries",
   "Spices",
@@ -127,7 +127,7 @@ const CATEGORY_ICONS: Record<Category, LucideIcon> = {
   "Coffee Powder": Coffee,
   "Coffee Skin Care": Droplets,
   Fragrances: Flower2,
-  "Imported Beds": BedDouble,
+  "Imported Mattresses": BedDouble,
   Dates: Cookie,
   Groceries: ShoppingBasket,
   Spices: Flame,
@@ -233,32 +233,32 @@ const ITEMS: BulkItem[] = [
     image: IMAGES.bakhoor,
   },
 
-  // Imported beds
+  // Imported mattresses
   {
-    id: "queen-bed",
-    name: "Queen Size Bed",
-    category: "Imported Beds",
-    description: "Upholstered imported bed frame with a solid headboard. Frame only, mattress on request.",
+    id: "queen-mattress",
+    name: "Queen Size Mattress",
+    category: "Imported Mattresses",
+    description: "Imported multi-layer luxury mattress engineered for restful sleep and spine alignment.",
     unit: "pcs",
     moq: 2,
     step: 1,
     image: IMAGES.queenBed,
   },
   {
-    id: "king-bed",
-    name: "King Size Bed",
-    category: "Imported Beds",
-    description: "Wide king frame for hotels, resorts and furnished apartments.",
+    id: "king-mattress",
+    name: "King Size Mattress",
+    category: "Imported Mattresses",
+    description: "Wide king premium mattress for hotels, resorts and luxury bedrooms.",
     unit: "pcs",
     moq: 2,
     step: 1,
     image: IMAGES.kingBed,
   },
   {
-    id: "storage-bed",
-    name: "Hydraulic Storage Bed",
-    category: "Imported Beds",
-    description: "Lift-up bed with a full storage base. Good for compact rooms.",
+    id: "ortho-mattress",
+    name: "Orthopedic Mattress",
+    category: "Imported Mattresses",
+    description: "Firm posture-support orthopedic mattress with breathable imported fabric.",
     unit: "pcs",
     moq: 2,
     step: 1,
@@ -995,7 +995,7 @@ export default function BulkOrderPage() {
           <p className="mt-3 text-lg sm:text-xl md:text-2xl">Order in volume. Get a quotation within a day.</p>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 md:text-base">
             Choose the products you need, set the quantity, and send us a quotation request. We cover coffee, skin
-            care, fragrances, imported beds, dates, groceries and spices for retailers, hotels, cafes and gifting.
+            care, fragrances, imported mattresses, dates, groceries and spices for retailers, hotels, cafes and gifting.
           </p>
 
           <button
