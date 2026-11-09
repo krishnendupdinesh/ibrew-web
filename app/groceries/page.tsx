@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
 import { truncateWords, useSectionProducts } from "../../lib/productStore";
-import { addToCart } from "../../lib/cartStore";
+import { addToCart, openCartDrawer } from "../../lib/cartStore";
 import { toggleWishlistItem, useWishlist } from "../../lib/wishlistStore";
 import {
   ChevronDown,
@@ -371,7 +371,7 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
       quantity: 1,
       image: product.image,
     });
-    router.push("/cart");
+    openCartDrawer();
   };
 
   const chooseSize = (index: number) => {

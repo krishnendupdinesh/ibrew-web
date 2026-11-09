@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
 import { truncateWords, useAllProducts, type StoreProduct } from "../../lib/productStore";
-import { addToCart } from "../../lib/cartStore";
+import { addToCart, openCartDrawer } from "../../lib/cartStore";
 import { useWishlist } from "../../lib/wishlistStore";
 import {
   ChevronDown,
@@ -217,7 +217,7 @@ function SearchProductCard({
       },
       1
     );
-    router.push("/cart");
+    openCartDrawer();
   };
 
   return (

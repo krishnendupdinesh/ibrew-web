@@ -11,7 +11,7 @@ import {
   truncateWords,
   type StoreProduct,
 } from "../lib/productStore";
-import { addToCart, setCartItemQuantity, useCart } from "../lib/cartStore";
+import { addToCart, openCartDrawer, setCartItemQuantity, useCart } from "../lib/cartStore";
 import { toggleWishlistItem, useWishlist } from "../lib/wishlistStore";
 import {
   BadgeCheck,
@@ -984,7 +984,7 @@ export default function HomePage() {
       },
       1
     );
-    router.push("/cart");
+    openCartDrawer();
   };
 
   const bestAndMostSelling = catalog.filter(
