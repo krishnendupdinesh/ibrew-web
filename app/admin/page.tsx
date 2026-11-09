@@ -4144,7 +4144,7 @@ export default function AdminPage() {
                         type="button"
                         onClick={async () => {
                           if (confirm("Delete this review permanently?")) {
-                            await fetch(`/api/admin/reviews/${rev.id}/approval`, { method: "DELETE" });
+                            await fetch(`/api/admin/reviews/${rev.id}`, { method: "DELETE" });
                             loadReviews();
                           }
                         }}
