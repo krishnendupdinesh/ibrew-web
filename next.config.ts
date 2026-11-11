@@ -16,9 +16,39 @@ const nextConfig: NextConfig = {
     },
   },
 
-  // Sends every request that starts with /api to the Express backend (using 127.0.0.1 avoids Windows IPv6 localhost delay).
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
+      {
+        protocol: "https",
+        hostname: "static.toiimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+    ],
+  },
+
+  // Sends every request that starts with /api to the Express backend
   async rewrites() {
-    const backend = (process.env.BACKEND_URL || "http://127.0.0.1:5001").replace(/\/+$/, "");
+    const backend = (
+      process.env.NEXT_PUBLIC_API_URL ||
+      process.env.BACKEND_URL ||
+      "http://localhost:5001"
+    ).replace(/\/+$/, "");
+
     return [
       {
         source: "/api/:path*",
