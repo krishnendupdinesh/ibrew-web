@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, connection } from "next/server";
 import {
   filterCatalogBySection,
   readServerCatalog,
@@ -14,6 +14,7 @@ const NO_CACHE_HEADERS = {
 };
 
 export async function GET(req: NextRequest) {
+  await connection();
   const section = req.nextUrl.searchParams.get("section");
   const q = req.nextUrl.searchParams.get("q");
   const category = req.nextUrl.searchParams.get("category");

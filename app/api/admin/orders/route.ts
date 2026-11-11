@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { getServerOrders, setServerOrders } from "../../../../lib/serverOrderStore";
 import type { StoreOrder } from "../../../../lib/orderStore";
 import { getBackendUrl } from "../../../../lib/backendConfig";
 
 export async function GET(request: Request) {
+  await connection();
   const localMem = getServerOrders();
   const backendUrl = getBackendUrl();
 

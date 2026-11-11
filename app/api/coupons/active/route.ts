@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { getBackendUrl } from "@/lib/backendConfig";
 
 export async function GET() {
+  await connection();
   const backendBase = getBackendUrl();
   try {
     const res = await fetch(`${backendBase}/api/coupons/active`, {

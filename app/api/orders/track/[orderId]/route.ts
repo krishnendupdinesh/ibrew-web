@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, connection } from "next/server";
 import { getBackendUrl } from "@/lib/backendConfig";
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ orderId: string }> }
 ) {
+  await connection();
   try {
     const { orderId } = await context.params;
     if (!orderId) {

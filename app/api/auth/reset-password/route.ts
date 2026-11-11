@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { cookies } from "next/headers";
 import {
   getAdminCredentials,
@@ -21,6 +21,7 @@ function attachTokenCookie(res: NextResponse, user: AuthUser) {
 }
 
 export async function GET() {
+  await connection();
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const decoded = token ? verifyJwtHs256(token) : null;

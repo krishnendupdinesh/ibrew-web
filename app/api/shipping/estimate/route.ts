@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, connection } from "next/server";
 import { getBackendUrl } from "@/lib/backendConfig";
 
 export async function GET(request: NextRequest) {
+  await connection();
   const backendBase = getBackendUrl();
   const searchParams = request.nextUrl.searchParams.toString();
   const queryStr = searchParams ? `?${searchParams}` : "";

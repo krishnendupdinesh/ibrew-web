@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, connection } from "next/server";
 import { readServerCatalog, writeServerCatalog } from "../../../../lib/serverProductCatalog";
 import type { ProductSection, ProductSize, StoreProduct } from "../../../../lib/productStore";
 import { getBackendUrl } from "../../../../lib/backendConfig";
@@ -42,6 +42,7 @@ function normalizeSizes(rawSizes: unknown): ProductSize[] {
 }
 
 export async function GET(req: NextRequest) {
+  await connection();
   const backendBase = getBackendUrl();
 
   try {

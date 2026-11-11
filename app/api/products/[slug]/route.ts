@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, connection } from "next/server";
 import { getBackendUrl } from "@/lib/backendConfig";
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }
 ) {
+  await connection();
   const { slug } = await context.params;
   const backendBase = getBackendUrl();
 

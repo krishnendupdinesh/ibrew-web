@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { verifyJwtHs256 } from "../../../../lib/serverAuth";
 import { getBackendUrl } from "../../../../lib/backendConfig";
 
 export async function GET(request: Request) {
+  await connection();
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;

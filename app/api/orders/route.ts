@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, connection } from "next/server";
 import { addServerOrder } from "../../../lib/serverOrderStore";
 import type { StoreOrder } from "../../../lib/orderStore";
 import { getBackendUrl } from "../../../lib/backendConfig";
 
 export async function GET(request: Request) {
+  await connection();
   try {
     const { searchParams } = new URL(request.url);
     const backendUrl = getBackendUrl();
