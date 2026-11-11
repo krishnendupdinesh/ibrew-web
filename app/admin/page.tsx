@@ -11,6 +11,8 @@ import {
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   Download,
   Edit3,
@@ -25,6 +27,7 @@ import {
   Loader2,
   LogOut,
   Mail,
+  Menu,
   MessageCircle,
   Minus,
   Package,
@@ -1390,6 +1393,22 @@ export default function AdminPage() {
     "orders" | "products" | "analytics" | "inventory" | "banners" | "coupons" | "reviews" | "quotes" | "customers"
   >("orders");
 
+  // Sidebar collapse & mobile drawer state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    // Eagerly fetch low stock count on load so the sidebar badge is populated immediately
+    fetch("/api/admin/inventory/low-stock")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((d) => {
+        if (d && Array.isArray(d.alerts)) {
+          setLowStockItems(d.alerts);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Analytics & Inventory State
   interface AnalyticsData {
     summary?: {
@@ -1674,17 +1693,12 @@ export default function AdminPage() {
   const load = useCallback(async () => {
     setError("");
     const cachedCatalog = readLocalCatalog();
-    const cachedOrders = readLocalOrders();
 
     if (cachedCatalog.length > 0) {
       setProducts((prev) => (prev.length === 0 ? cachedCatalog : prev));
       setLoading(false);
     } else {
       setLoading(true);
-    }
-
-    if (cachedOrders.length > 0) {
-      setOrders(cachedOrders);
     }
 
     try {
@@ -1714,15 +1728,8 @@ export default function AdminPage() {
       if (oRes && oRes.ok) {
         const oData = await oRes.json();
         const serverOrders: StoreOrder[] = Array.isArray(oData.orders) ? oData.orders : [];
-        // Merge with local orders so no order placed in this browser is ever lost
-        const mergedMap = new Map<string, StoreOrder>();
-        for (const o of cachedOrders) mergedMap.set(o.orderId, o);
-        for (const o of serverOrders) mergedMap.set(o.orderId || o.id, o);
-        const merged = Array.from(mergedMap.values()).sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        setOrders(merged);
-        writeLocalOrders(merged);
+        setOrders(serverOrders);
+        writeLocalOrders(serverOrders);
       }
 
       setLoading(false);
@@ -1753,12 +1760,20 @@ export default function AdminPage() {
   }, [router]);
 
   useEffect(() => {
+    // If opening admin dashboard, ensure stale local browser orders cache is cleared
+    // so MySQL database is strictly reflected
+    try {
+      window.localStorage.removeItem("ibrew_orders_v1");
+    } catch {
+      // ignore
+    }
+
     queueMicrotask(() => {
       load();
     });
 
     const syncLocalOrders = () => {
-      setOrders(readLocalOrders());
+      load();
     };
     window.addEventListener("ibrew-orders-updated", syncLocalOrders);
     window.addEventListener("storage", syncLocalOrders);
@@ -2087,27 +2102,127 @@ export default function AdminPage() {
     },
   ];
 
+  interface NavItem {
+    id: "orders" | "products" | "analytics" | "inventory" | "banners" | "coupons" | "reviews" | "quotes" | "customers";
+    label: string;
+    Icon: typeof ShoppingBag;
+    badge?: string;
+    badgeVariant?: "warning" | "danger" | "neutral";
+  }
+
+  const navItems: NavItem[] = [
+    {
+      id: "orders",
+      label: "Orders",
+      Icon: ShoppingBag,
+      badge: stats.pendingOrders > 0 ? `${stats.pendingOrders} New` : orders.length > 0 ? String(orders.length) : undefined,
+      badgeVariant: stats.pendingOrders > 0 ? "warning" : "neutral",
+    },
+    {
+      id: "products",
+      label: "Products",
+      Icon: Package,
+      badge: products.length > 0 ? String(products.length) : undefined,
+      badgeVariant: "neutral",
+    },
+    {
+      id: "analytics",
+      label: "Analytics & Trends",
+      Icon: BarChart3,
+    },
+    {
+      id: "inventory",
+      label: "Low Stock Alerts",
+      Icon: Bell,
+      badge: (lowStockItems.length > 0 || stats.lowOrOut > 0)
+        ? String(lowStockItems.length || stats.lowOrOut)
+        : undefined,
+      badgeVariant: "danger",
+    },
+    {
+      id: "banners",
+      label: "Hero Banners",
+      Icon: ImageIcon,
+    },
+    {
+      id: "coupons",
+      label: "Promo Coupons",
+      Icon: Ticket,
+    },
+    {
+      id: "reviews",
+      label: "Customer Reviews",
+      Icon: Star,
+    },
+    {
+      id: "quotes",
+      label: "Bulk & Quotes",
+      Icon: FileText,
+      badge: stats.freshQuotes > 0 ? `${stats.freshQuotes} New` : quotes.length > 0 ? String(quotes.length) : undefined,
+      badgeVariant: stats.freshQuotes > 0 ? "warning" : "neutral",
+    },
+    {
+      id: "customers",
+      label: "Users",
+      Icon: Users,
+      badge: customers.length > 0 ? String(customers.length) : undefined,
+      badgeVariant: "neutral",
+    },
+  ];
+
   return (
-    <div className={`${ubuntu.className} min-h-screen`} style={{ background: "#FAF7F2", color: INK }}>
-      {/* ---------- TOP BAR ---------- */}
-      <header className="border-b bg-white" style={{ borderColor: LINE }}>
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
-          <div>
-            <h1 className="text-xl font-bold sm:text-2xl">Admin dashboard</h1>
-            {adminName && (
-              <p className="text-xs" style={{ color: MUTED }}>
-                Signed in as {adminName} ({adminEmail})
-              </p>
-            )}
+    <div className={`${ubuntu.className} min-h-screen flex flex-col`} style={{ background: "#FAF7F2", color: INK }}>
+      {/* ---------- TOP HEADER BAR ---------- */}
+      <header className="sticky top-0 z-40 border-b bg-white shadow-xs" style={{ borderColor: LINE }}>
+        <div className="flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            {/* Hamburger button for mobile drawer */}
+            <button
+              type="button"
+              onClick={() => setMobileSidebarOpen(true)}
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-[#7A5A3C] transition hover:bg-neutral-100 md:hidden"
+              aria-label="Open navigation sidebar"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+
+            {/* Desktop collapse toggle button */}
+            <button
+              type="button"
+              onClick={() => setSidebarCollapsed((prev) => !prev)}
+              className="hidden h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-[#7A5A3C] transition hover:bg-neutral-100 md:flex"
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-bold sm:text-xl text-[#1F1A17] tracking-tight">Admin dashboard</h1>
+                <span className="hidden sm:inline-flex items-center rounded-full bg-[#E9DCC6]/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#7A5A3C]">
+                  Store Control
+                </span>
+              </div>
+              {adminName && (
+                <p className="text-xs text-[#1F1A17]/60 hidden sm:block truncate max-w-xs md:max-w-md">
+                  Signed in as <span className="font-medium text-[#1F1A17]">{adminName}</span> ({adminEmail})
+                </p>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Top Actions: Export CSV, Add Product, Admin Password, View Site, Refresh, Logout */}
+          <div className="flex items-center gap-2 overflow-x-auto py-1">
             <a
               href="/api/admin/export/orders"
               download="imaans_orders.csv"
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#1B5E3A] bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[#1B5E3A] transition-colors hover:bg-[#1B5E3A] hover:text-white"
+              className="hidden sm:flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#1B5E3A] bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1B5E3A] transition-colors hover:bg-[#1B5E3A] hover:text-white shrink-0"
+              title="Export Orders CSV"
             >
-              <Download aria-hidden className="h-3.5 w-3.5" /> Export Orders CSV
+              <Download aria-hidden className="h-3.5 w-3.5" />
+              <span className="hidden lg:inline">Export Orders CSV</span>
+              <span className="lg:hidden">Export</span>
             </a>
 
             <button
@@ -2116,48 +2231,58 @@ export default function AdminPage() {
                 setEditingProduct(null);
                 setModalOpen(true);
               }}
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#7A5A3C] px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#1F1A17] active:scale-95"
+              className="flex cursor-pointer items-center gap-1.5 rounded-lg bg-[#7A5A3C] px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#1F1A17] active:scale-95 shrink-0 shadow-xs"
+              title="Add product"
             >
-              <Plus aria-hidden className="h-4 w-4" /> Add product
+              <Plus aria-hidden className="h-4 w-4" />
+              <span className="hidden sm:inline">Add product</span>
             </button>
 
             <button
               type="button"
               onClick={() => setPasswordModalOpen(true)}
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#7A5A3C] bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white"
+              className="hidden md:flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#7A5A3C] bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-white shrink-0"
+              title="Admin Password"
             >
-              <KeyRound aria-hidden className="h-3.5 w-3.5" /> Admin Password
+              <KeyRound aria-hidden className="h-3.5 w-3.5" />
+              <span className="hidden xl:inline">Admin Password</span>
             </button>
 
             <Link
               href="/"
-              className="rounded-lg border border-[#7A5A3C] bg-white px-4 py-2 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0]"
+              className="hidden lg:flex rounded-lg border border-[#7A5A3C] bg-white px-3.5 py-1.5 text-xs font-medium uppercase tracking-widest text-[#7A5A3C] transition-colors hover:bg-[#7A5A3C] hover:text-[#F5EDE0] shrink-0"
+              title="View site"
             >
               View site
             </Link>
+
             <button
               type="button"
               onClick={load}
               disabled={loading}
               aria-label="Refresh data"
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-white hover:bg-neutral-100 disabled:opacity-50"
-              style={{ borderColor: LINE }}
+              title="Refresh data"
+              className="flex h-8.5 w-8.5 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-[#7A5A3C] hover:bg-neutral-100 disabled:opacity-50 shrink-0"
             >
               <RefreshCw aria-hidden className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
+
             <button
               type="button"
               onClick={logout}
               disabled={isLoggingOut}
-              className="flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-medium uppercase tracking-widest text-[#1F1A17] transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-75"
+              className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium uppercase tracking-widest text-[#1F1A17] transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-75 shrink-0"
+              title="Log out"
             >
               {isLoggingOut ? (
                 <>
-                  <Loader2 aria-hidden className="h-4 w-4 animate-spin text-[#7A5A3C]" /> Logging out...
+                  <Loader2 aria-hidden className="h-4 w-4 animate-spin text-[#7A5A3C]" />
+                  <span className="hidden sm:inline">Logging out...</span>
                 </>
               ) : (
                 <>
-                  <LogOut aria-hidden className="h-4 w-4" /> Log out
+                  <LogOut aria-hidden className="h-4 w-4" />
+                  <span className="hidden sm:inline">Log out</span>
                 </>
               )}
             </button>
@@ -2165,119 +2290,378 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
-        {error && (
-          <p
-            role="alert"
-            className="mb-5 rounded-md border bg-white px-4 py-3 text-sm"
-            style={{ borderColor: ERROR, color: ERROR }}
-          >
-            {error}
-          </p>
-        )}
-
-        {notice && (
+      {/* ---------- BODY LAYOUT: SIDEBAR + MAIN CONTENT AREA ---------- */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* MOBILE SIDEBAR BACKDROP */}
+        {mobileSidebarOpen && (
           <div
-            role="status"
-            className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 text-sm font-medium"
-            style={{ borderColor: SUCCESS, color: SUCCESS }}
-          >
-            <span className="flex items-center gap-2">
-              <Check className="h-4 w-4" /> {notice.text}
-            </span>
-            {notice.href && (
-              <Link
-                href={notice.href}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wider text-white"
-                style={{ background: SUCCESS }}
-              >
-                Open {notice.pageLabel} Page ({notice.href}) <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-            )}
-          </div>
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity md:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
         )}
 
-        {/* ---------- STATS ---------- */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {statCards.map((s) => (
-            <div key={s.label} className="rounded-xl border bg-white p-4" style={{ borderColor: LINE }}>
-              <p className="text-xs" style={{ color: MUTED }}>
-                {s.label}
-              </p>
-              <p className="mt-1 text-3xl font-bold tabular-nums">{loading ? "-" : s.value}</p>
-              <p className="mt-1 text-[11px]" style={{ color: MUTED }}>
-                {s.sub}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* ---------- TABS + SEARCH ---------- */}
-        <div
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b pb-4"
+        {/* MOBILE SLIDE-OUT DRAWER */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r bg-[#FAF7F2] transition-transform duration-300 ease-in-out md:hidden ${
+            mobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+          }`}
           style={{ borderColor: LINE }}
+          aria-label="Mobile Navigation Sidebar"
         >
-          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Dashboard sections">
-            {(
-              [
-                {
-                  id: "orders",
-                  label: `Orders (${orders.length})${stats.pendingOrders > 0 ? ` · ${stats.pendingOrders} New` : ""}`,
-                  Icon: ShoppingBag,
-                },
-                { id: "products", label: `Products (${products.length})`, Icon: Package },
-                { id: "analytics", label: "Analytics & Trends", Icon: BarChart3 },
-                { id: "inventory", label: "Low Stock Alerts", Icon: Bell },
-                { id: "banners", label: "Hero Banners", Icon: ImageIcon },
-                { id: "coupons", label: "Promo Coupons", Icon: Ticket },
-                { id: "reviews", label: "Customer Reviews", Icon: Star },
-                { id: "quotes", label: `Bulk & Quotes (${quotes.length})`, Icon: FileText },
-                { id: "customers", label: `Users (${customers.length})`, Icon: Users },
-              ] as const
-            ).map(({ id, label, Icon }) => {
-              const on = tab === id;
+          {/* Drawer Header */}
+          <div className="flex h-16 items-center justify-between border-b px-5 bg-white" style={{ borderColor: LINE }}>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#7A5A3C] text-white font-bold text-sm">
+                IB
+              </div>
+              <div>
+                <p className="font-bold text-sm tracking-tight text-[#1F1A17]">Imaans Store</p>
+                <p className="text-[11px] text-[#7A5A3C] font-semibold">Admin Panel</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileSidebarOpen(false)}
+              className="rounded-lg p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+              aria-label="Close sidebar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Drawer Navigation List */}
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#7A5A3C]/70">
+              Management Sections
+            </p>
+            {navItems.map((item) => {
+              const active = tab === item.id;
+              const { id, label, Icon, badge, badgeVariant } = item;
               return (
                 <button
                   key={id}
                   type="button"
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => setTab(id)}
-                  className={`flex cursor-pointer items-center gap-2 rounded-full border border-[#7A5A3C] px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${
-                    on
-                      ? "bg-[#7A5A3C] text-white shadow-xs"
-                      : "bg-white text-[#7A5A3C] hover:bg-[#7A5A3C] hover:text-white"
+                  onClick={() => {
+                    setTab(id);
+                    setMobileSidebarOpen(false);
+                  }}
+                  className={`flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-xs font-bold transition-all ${
+                    active
+                      ? "bg-[#7A5A3C] text-white shadow-sm"
+                      : "text-[#1F1A17] hover:bg-white hover:text-[#7A5A3C]"
                   }`}
                 >
-                  <Icon aria-hidden className="h-3.5 w-3.5" /> {label}
+                  <div className="flex items-center gap-3">
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#7A5A3C]"}`} />
+                    <span className="truncate">{label}</span>
+                  </div>
+                  {badge && (
+                    <span
+                      className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+                        active
+                          ? "bg-white/20 text-white"
+                          : badgeVariant === "danger"
+                          ? "bg-red-100 text-red-700"
+                          : badgeVariant === "warning"
+                          ? "bg-amber-100 text-amber-800"
+                          : "bg-neutral-200 text-neutral-700"
+                      }`}
+                    >
+                      {badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
 
-          <label
-            className="flex w-full items-center gap-2 rounded-md border bg-white px-3 focus-within:border-[#7A5A3C] sm:w-80"
-            style={{ borderColor: LINE }}
-          >
-            <Search aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: MUTED }} />
-            <span className="sr-only">Search</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={
-                tab === "orders"
-                  ? "Search order ID, customer, phone, item..."
-                  : tab === "products"
-                    ? "Search product, category, tag, size..."
-                    : tab === "quotes"
-                      ? "Search name, email, reference, item..."
-                      : "Search name, email, phone..."
+          {/* Drawer Footer Info */}
+          <div className="border-t p-4 bg-white/50 text-xs space-y-2" style={{ borderColor: LINE }}>
+            {adminName && (
+              <p className="truncate text-neutral-600 font-medium">
+                Admin: <span className="text-[#1F1A17] font-semibold">{adminName}</span>
+              </p>
+            )}
+            <div className="flex items-center justify-between pt-1">
+              <Link
+                href="/"
+                className="text-[#7A5A3C] font-semibold hover:underline inline-flex items-center gap-1 text-[11px]"
+              >
+                <ExternalLink className="h-3 w-3" /> View Website
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileSidebarOpen(false);
+                  setPasswordModalOpen(true);
+                }}
+                className="text-[#7A5A3C] font-semibold hover:underline text-[11px]"
+              >
+                Password
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        {/* DESKTOP COLLAPSIBLE SIDEBAR */}
+        <aside
+          className={`hidden md:flex flex-col border-r bg-[#FAF7F2] transition-all duration-300 ease-in-out shrink-0 select-none ${
+            sidebarCollapsed ? "w-20" : "w-64"
+          }`}
+          style={{ borderColor: LINE }}
+          aria-label="Desktop Navigation Sidebar"
+        >
+          {/* Sidebar Top Brand Badge */}
+          <div className="flex h-16 items-center border-b px-4 bg-white" style={{ borderColor: LINE }}>
+            {sidebarCollapsed ? (
+              <div
+                className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[#7A5A3C] text-white font-bold text-sm shadow-xs cursor-pointer"
+                onClick={() => setSidebarCollapsed(false)}
+                title="Expand sidebar"
+              >
+                IB
+              </div>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#7A5A3C] text-white font-bold text-sm shadow-xs">
+                    IB
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-sm tracking-tight text-[#1F1A17] truncate">Imaans Store</p>
+                    <p className="text-[11px] text-[#7A5A3C] font-semibold uppercase tracking-wider">Control Panel</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSidebarCollapsed(true)}
+                  className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
+                  title="Collapse sidebar"
+                  aria-label="Collapse sidebar"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation Links */}
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            {!sidebarCollapsed && (
+              <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#7A5A3C]/70">
+                Main Sections
+              </p>
+            )}
+
+            {navItems.map((item) => {
+              const active = tab === item.id;
+              const { id, label, Icon, badge, badgeVariant } = item;
+
+              if (sidebarCollapsed) {
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setTab(id)}
+                    className={`relative mx-auto flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl transition-all ${
+                      active
+                        ? "bg-[#7A5A3C] text-white shadow-sm"
+                        : "text-[#7A5A3C] hover:bg-white hover:shadow-xs"
+                    }`}
+                    title={label}
+                  >
+                    <Icon className="h-5 w-5" />
+                    {badge && (
+                      <span
+                        className={`absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-black ${
+                          badgeVariant === "danger"
+                            ? "bg-red-600 text-white"
+                            : badgeVariant === "warning"
+                            ? "bg-amber-500 text-white"
+                            : "bg-[#7A5A3C] text-white"
+                        }`}
+                      >
+                        {badge.includes("New") ? "!" : badge}
+                      </span>
+                    )}
+                  </button>
+                );
               }
-              className="w-full min-w-0 bg-transparent py-2.5 text-sm outline-none placeholder:text-[#1F1A17]/40"
-            />
-          </label>
-        </div>
+
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setTab(id)}
+                  className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all ${
+                    active
+                      ? "bg-[#7A5A3C] text-white shadow-sm"
+                      : "text-[#1F1A17] hover:bg-white hover:text-[#7A5A3C]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? "text-white" : "text-[#7A5A3C]"}`} />
+                    <span className="truncate">{label}</span>
+                  </div>
+                  {badge && (
+                    <span
+                      className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-extrabold shrink-0 ${
+                        active
+                          ? "bg-white/20 text-white"
+                          : badgeVariant === "danger"
+                          ? "bg-red-100 text-red-700"
+                          : badgeVariant === "warning"
+                          ? "bg-amber-100 text-amber-800"
+                          : "bg-neutral-200 text-neutral-700"
+                      }`}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sidebar Collapse Toggle Footer */}
+          <div className="border-t p-3 bg-white" style={{ borderColor: LINE }}>
+            {sidebarCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed(false)}
+                className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition"
+                title="Expand sidebar"
+                aria-label="Expand sidebar"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            ) : (
+              <div className="flex items-center justify-between px-1 text-[11px] text-[#7A5A3C]">
+                <span className="font-semibold">Sidebar Mode</span>
+                <button
+                  type="button"
+                  onClick={() => setSidebarCollapsed(true)}
+                  className="flex items-center gap-1 font-bold hover:underline cursor-pointer"
+                >
+                  <ChevronLeft className="h-3 w-3" /> Collapse
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* ---------- MAIN CONTENT AREA (ADJUSTS WITH SIDEBAR) ---------- */}
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 min-w-0">
+          <div className="mx-auto max-w-7xl">
+            {error && (
+              <p
+                role="alert"
+                className="mb-5 rounded-md border bg-white px-4 py-3 text-sm"
+                style={{ borderColor: ERROR, color: ERROR }}
+              >
+                {error}
+              </p>
+            )}
+
+            {notice && (
+              <div
+                role="status"
+                className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 text-sm font-medium"
+                style={{ borderColor: SUCCESS, color: SUCCESS }}
+              >
+                <span className="flex items-center gap-2">
+                  <Check className="h-4 w-4" /> {notice.text}
+                </span>
+                {notice.href && (
+                  <Link
+                    href={notice.href}
+                    className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-xs font-bold uppercase tracking-wider text-white"
+                    style={{ background: SUCCESS }}
+                  >
+                    Open {notice.pageLabel} Page ({notice.href}) <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                )}
+              </div>
+            )}
+
+            {/* ---------- STATS CARDS ---------- */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+              {statCards.map((s) => (
+                <div key={s.label} className="rounded-xl border bg-white p-4 shadow-xs" style={{ borderColor: LINE }}>
+                  <p className="text-xs" style={{ color: MUTED }}>
+                    {s.label}
+                  </p>
+                  <p className="mt-1 text-3xl font-bold tabular-nums">{loading ? "-" : s.value}</p>
+                  <p className="mt-1 text-[11px]" style={{ color: MUTED }}>
+                    {s.sub}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ---------- SECTION HEADER & SEARCH BAR ---------- */}
+            <div
+              className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b pb-4"
+              style={{ borderColor: LINE }}
+            >
+              <div>
+                <h2 className="text-lg font-bold capitalize text-[#1F1A17] flex items-center gap-2">
+                  {tab === "orders" && <ShoppingBag className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "products" && <Package className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "analytics" && <BarChart3 className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "inventory" && <Bell className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "banners" && <ImageIcon className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "coupons" && <Ticket className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "reviews" && <Star className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "quotes" && <FileText className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "customers" && <Users className="h-5 w-5 text-[#7A5A3C]" />}
+                  {tab === "orders" && `Orders Management (${orders.length})`}
+                  {tab === "products" && `Products Catalog (${products.length})`}
+                  {tab === "analytics" && "Analytics & Trends"}
+                  {tab === "inventory" && "Low Stock Inventory Alerts"}
+                  {tab === "banners" && "Hero Banners Management"}
+                  {tab === "coupons" && "Promo Coupons Management"}
+                  {tab === "reviews" && "Customer Reviews & Moderation"}
+                  {tab === "quotes" && `Bulk Quotations & B2B Catalog (${quotes.length})`}
+                  {tab === "customers" && `Registered Customers (${customers.length})`}
+                </h2>
+                <p className="text-xs text-[#1F1A17]/60 mt-0.5">
+                  {tab === "orders" && "Manage customer orders, update delivery status, and print shipping invoices"}
+                  {tab === "products" && "Add, edit, or adjust inventory pricing and size variants for catalog products"}
+                  {tab === "analytics" && "Overview of revenue performance, top-performing items, and order velocity"}
+                  {tab === "inventory" && "Instant stock alerts and one-click batch inventory restocking"}
+                  {tab === "banners" && "Manage homepage hero slideshow banners, links, and promo titles"}
+                  {tab === "coupons" && "Create discount codes, set cart thresholds, and configure limits"}
+                  {tab === "reviews" && "Moderate customer ratings, approve comments, and manage media"}
+                  {tab === "quotes" && "Review incoming B2B wholesale quotation requests and product tiers"}
+                  {tab === "customers" && "Directory of registered customer accounts and order histories"}
+                </p>
+              </div>
+
+              <label
+                className="flex w-full items-center gap-2 rounded-lg border bg-white px-3 focus-within:border-[#7A5A3C] focus-within:ring-1 focus-within:ring-[#7A5A3C] sm:w-80 shadow-xs"
+                style={{ borderColor: LINE }}
+              >
+                <Search aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} style={{ color: MUTED }} />
+                <span className="sr-only">Search</span>
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={
+                    tab === "orders"
+                      ? "Search order ID, customer, phone, item..."
+                      : tab === "products"
+                        ? "Search product, category, tag, size..."
+                        : tab === "quotes"
+                          ? "Search name, email, reference, item..."
+                          : "Search name, email, phone..."
+                  }
+                  className="w-full min-w-0 bg-transparent py-2 text-sm outline-none placeholder:text-[#1F1A17]/40"
+                />
+              </label>
+            </div>
 
         {/* ---------- ORDERS MANAGEMENT TAB ---------- */}
         {tab === "orders" && (
@@ -4771,7 +5155,9 @@ export default function AdminPage() {
             )}
           </section>
         )}
-      </main>
+          </div>
+        </main>
+      </div>
 
       {/* ---------- ADD / EDIT PRODUCT MODAL ---------- */}
       {modalOpen && (

@@ -88,6 +88,7 @@ function OrderContent() {
   const initialOrderId = searchParams.get("id") || searchParams.get("orderId") || "";
 
   const [searchQuery, setSearchQuery] = useState(initialOrderId);
+  const [guestContact, setGuestContact] = useState("");
   const [orders, setOrders] = useState<StoreOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
@@ -122,7 +123,11 @@ function OrderContent() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reason: fullReason }),
+          body: JSON.stringify({
+            reason: fullReason,
+            email: cancellingOrder.customer?.email,
+            phone: cancellingOrder.customer?.phone,
+          }),
         }
       );
       const data = await res.json().catch(() => ({}));
@@ -203,7 +208,12 @@ function OrderContent() {
   const handleDownloadInvoice = async (orderId: string) => {
     try {
       showNotice("Generating GST invoice...");
-      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/invoice`);
+      const order = orders.find((o) => o.orderId === orderId);
+      const params = new URLSearchParams();
+      if (order?.customer?.email) params.set("email", order.customer.email);
+      if (order?.customer?.phone) params.set("phone", order.customer.phone);
+      const q = params.toString() ? `?${params.toString()}` : "";
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/invoice${q}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.invoice) {
         showNotice(data.error || "Invoice not available yet.");
@@ -261,7 +271,7 @@ function OrderContent() {
                 <p style="margin:0;"><b>${inv.businessDetails?.companyName || "Imaan's Store"}</b></p>
                 <p style="margin:0;">${inv.businessDetails?.addressLine1 || ""}</p>
                 <p style="margin:0;">${inv.businessDetails?.city || ""}, ${inv.businessDetails?.state || ""} - ${inv.businessDetails?.pincode || ""}</p>
-                <p style="margin:0;">Email: ${inv.businessDetails?.email || "support@imaans.com"}</p>
+                <p style="margin:0;">Email: ${inv.businessDetails?.email || "imaanstrading@gmail.com"}</p>
               </div>
               <div class="cust-info">
                 <p style="margin:0 0 4px;font-weight:bold;text-transform:uppercase;font-size:11px;color:#7A5A3C;">Billed To / Delivered To</p>
@@ -379,7 +389,16 @@ function OrderContent() {
 
     setSearching(true);
     try {
-      const res = await fetch(`/api/orders/track/${encodeURIComponent(query)}`, {
+      const searchParams = new URLSearchParams();
+      if (guestContact.trim()) {
+        if (guestContact.includes("@")) {
+          searchParams.set("email", guestContact.trim());
+        } else {
+          searchParams.set("phone", guestContact.trim());
+        }
+      }
+      const qs = searchParams.toString() ? `?${searchParams.toString()}` : "";
+      const res = await fetch(`/api/orders/track/${encodeURIComponent(query)}${qs}`, {
         cache: "no-store",
       });
       const data = await res.json();
@@ -572,24 +591,38 @@ function OrderContent() {
                 Enter your order ID (e.g. <code>IBREW-20261102-123456</code>) to verify confirmation &amp; courier dispatch status.
               </p>
             </div>
-            <form onSubmit={handleSearchOrder} className="flex w-full items-center gap-2 md:w-auto">
+            <form onSubmit={handleSearchOrder} className="flex w-full flex-col sm:flex-row items-stretch sm:items-center gap-2 md:w-auto">
               <div
-                className="flex flex-1 items-center gap-2 rounded-xl border bg-[#FAF7F2] px-3.5 py-2.5 sm:w-80"
+                className="flex flex-1 items-center gap-2 rounded-xl border bg-[#FAF7F2] px-3.5 py-2.5 sm:w-64"
                 style={{ borderColor: LINE }}
               >
                 <Search size={16} className="text-[#7A5A3C] shrink-0" />
                 <input
                   type="text"
-                  placeholder="Enter Order ID..."
+                  placeholder="Order ID (e.g. IBREW-...)"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-transparent text-xs font-semibold outline-none placeholder:text-[#1F1A17]/40"
                 />
               </div>
+              {!user && (
+                <div
+                  className="flex flex-1 items-center gap-2 rounded-xl border bg-[#FAF7F2] px-3.5 py-2.5 sm:w-56"
+                  style={{ borderColor: LINE }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Your Email or Phone..."
+                    value={guestContact}
+                    onChange={(e) => setGuestContact(e.target.value)}
+                    className="w-full bg-transparent text-xs font-semibold outline-none placeholder:text-[#1F1A17]/40"
+                  />
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={searching}
-                className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#7A5A3C] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] disabled:opacity-60"
+                className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#7A5A3C] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#1F1A17] disabled:opacity-60"
               >
                 {searching ? (
                   <>

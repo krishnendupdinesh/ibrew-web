@@ -7,10 +7,12 @@ export async function GET(
 ) {
   const { orderId } = await context.params;
   const backendBase = getBackendUrl();
+  const url = new URL(request.url);
+  const search = url.search;
 
   try {
     const res = await fetch(
-      `${backendBase}/api/orders/${encodeURIComponent(orderId)}/invoice`,
+      `${backendBase}/api/orders/${encodeURIComponent(orderId)}/invoice${search}`,
       {
         cache: "no-store",
         headers: {

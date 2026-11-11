@@ -156,29 +156,14 @@ export function readLocalCatalog(): StoreProduct[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
-    if (deleted.size === 0) return parsed;
-    return parsed.filter((p) => {
-      const pid = String(p.id).toLowerCase().trim();
-      const pslug = p.slug ? String(p.slug).toLowerCase().trim() : "";
-      return !deleted.has(pid) && (!pslug || !deleted.has(pslug));
-    });
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
 export function readDeletedIds(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(DELETED_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map((s) => String(s).trim()).filter(Boolean) : [];
-  } catch {
-    return [];
-  }
+  return [];
 }
 
 export function writeLocalCatalog(products: StoreProduct[]) {
@@ -234,29 +219,21 @@ export function mergeSectionProducts<T extends { id: string; name: string; categ
   staticDefaults: T[],
   apiProducts?: StoreProduct[]
 ): T[] {
-  const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
-  const isDeleted = (item: { id?: string; slug?: string }) => {
-    if (item.id && deleted.has(String(item.id).toLowerCase().trim())) return true;
-    if (item.slug && deleted.has(String(item.slug).toLowerCase().trim())) return true;
-    return false;
-  };
-
   // 1. Backend API products from MySQL (ground truth)
-  // When the API has returned a list, it is authoritative. Never resurrect deleted items from staticDefaults!
   if (Array.isArray(apiProducts)) {
     const sectionApiProducts = apiProducts.filter(
-      (p) => (!p.section || p.section === section) && !isDeleted(p)
+      (p) => !p.section || p.section === section
     );
     return sectionApiProducts as unknown as T[];
   }
 
   // 2. Fallback when API products haven't loaded yet: local cache, else static defaults
-  const localForSection = readLocalCatalog().filter((p) => p.section === section && !isDeleted(p));
+  const localForSection = readLocalCatalog().filter((p) => p.section === section);
   if (localForSection.length > 0) {
     return localForSection as unknown as T[];
   }
 
-  return staticDefaults.filter((p) => !isDeleted(p));
+  return staticDefaults;
 }
 
 /**
@@ -320,17 +297,10 @@ export function useSectionProducts<T extends { id: string; name: string; categor
  * Merges backend API products across all sections.
  */
 export function getAllMergedProducts(apiProducts?: StoreProduct[]): StoreProduct[] {
-  const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
-  const isDeleted = (item: { id?: string; slug?: string }) => {
-    if (item.id && deleted.has(String(item.id).toLowerCase().trim())) return true;
-    if (item.slug && deleted.has(String(item.slug).toLowerCase().trim())) return true;
-    return false;
-  };
-
   if (Array.isArray(apiProducts)) {
-    return apiProducts.filter((p) => !isDeleted(p));
+    return apiProducts;
   }
-  const local = readLocalCatalog().filter((p) => !isDeleted(p));
+  const local = readLocalCatalog();
   if (local.length > 0) {
     return local;
   }

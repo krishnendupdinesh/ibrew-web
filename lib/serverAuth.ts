@@ -1,15 +1,4 @@
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-
-const JWT_SECRET = process.env.JWT_SECRET || "adrijbyfkdfkugbcjustsnriudbbdfjf";
-
-const DEFAULT_ADMIN_USERNAME = (process.env.ADMIN_USERNAME || "admin").trim().toLowerCase();
-const DEFAULT_ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@ibrew.com").trim().toLowerCase();
-const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Admin@12345";
-const DEFAULT_ADMIN_NAME = process.env.ADMIN_NAME || "ibrew Admin";
-
-const CREDENTIALS_FILE = path.join(process.cwd(), ".admin-credentials.json");
 
 export interface AuthUser {
   id: string;
@@ -25,64 +14,39 @@ export interface AdminCredentials {
   name: string;
   username: string;
   email: string;
-  passwordPlain: string;
 }
 
-const g = globalThis as unknown as {
-  __ibrewAdminCreds?: AdminCredentials;
-};
-
-function loadPersistedAdminCreds(): AdminCredentials {
-  try {
-    if (fs.existsSync(CREDENTIALS_FILE)) {
-      const raw = fs.readFileSync(CREDENTIALS_FILE, "utf8");
-      const parsed = JSON.parse(raw);
-      if (parsed && parsed.passwordPlain) {
-        return {
-          id: "admin-default",
-          name: parsed.name || DEFAULT_ADMIN_NAME,
-          username: (parsed.username || DEFAULT_ADMIN_USERNAME).trim().toLowerCase(),
-          email: (parsed.email || DEFAULT_ADMIN_EMAIL).trim().toLowerCase(),
-          passwordPlain: String(parsed.passwordPlain),
-        };
-      }
-    }
-  } catch {
-    // ignore file read errors
+/**
+ * Lazy getter for JWT secret. Evaluated at request time so Next.js build
+ * does not fail when JWT_SECRET is not supplied during static asset generation.
+ */
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET?.trim();
+  if (!secret) {
+    throw new Error("JWT_SECRET environment variable is missing.");
   }
-  return {
-    id: "admin-default",
-    name: DEFAULT_ADMIN_NAME,
-    username: DEFAULT_ADMIN_USERNAME,
-    email: DEFAULT_ADMIN_EMAIL,
-    passwordPlain: DEFAULT_ADMIN_PASSWORD,
-  };
+  return secret;
 }
 
-function savePersistedAdminCreds(creds: AdminCredentials) {
-  try {
-    fs.writeFileSync(CREDENTIALS_FILE, JSON.stringify(creds, null, 2), "utf8");
-  } catch {
-    // ignore file write errors
-  }
+/**
+ * Constant-time string equality check using SHA-256 digests.
+ * Hashing fixed-size buffers completely prevents length mismatch exceptions
+ * while ensuring constant execution time against side-channel timing attacks.
+ */
+export function safeCompareStrings(a: string, b: string): boolean {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const hashA = crypto.createHash("sha256").update(a).digest();
+  const hashB = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
 }
 
 export function getAdminCredentials(): AdminCredentials {
-  if (!g.__ibrewAdminCreds) {
-    g.__ibrewAdminCreds = loadPersistedAdminCreds();
-  }
-  return g.__ibrewAdminCreds;
-}
-
-export function updateAdminPassword(newPassword: string): AdminCredentials {
-  const current = getAdminCredentials();
-  const updated: AdminCredentials = {
-    ...current,
-    passwordPlain: newPassword,
+  return {
+    id: "admin-default",
+    name: process.env.ADMIN_NAME || "ibrew Admin",
+    username: (process.env.ADMIN_USERNAME || "admin").trim().toLowerCase(),
+    email: (process.env.ADMIN_EMAIL || "admin@ibrew.com").trim().toLowerCase(),
   };
-  g.__ibrewAdminCreds = updated;
-  savePersistedAdminCreds(updated);
-  return updated;
 }
 
 function base64UrlEncode(input: Buffer | string): string {
@@ -101,8 +65,13 @@ function base64UrlDecode(str: string): string {
 }
 
 export function signJwtHs256(user: AuthUser): string {
+  const secret = getJwtSecret();
   const header = base64UrlEncode(JSON.stringify({ alg: "HS256", typ: "JWT" }));
   const nowSec = Math.floor(Date.now() / 1000);
+  const isCustomer = user.role === "customer";
+  // Customers: 10 years persistent JWT validity; Admins: 7 days
+  const expDurationSec = isCustomer ? 10 * 365 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
+
   const payload = base64UrlEncode(
     JSON.stringify({
       id: user.id,
@@ -112,24 +81,28 @@ export function signJwtHs256(user: AuthUser): string {
       phone: user.phone || "",
       role: user.role,
       iat: nowSec,
-      exp: nowSec + 7 * 24 * 60 * 60,
+      exp: nowSec + expDurationSec,
     })
   );
   const signature = base64UrlEncode(
-    crypto.createHmac("sha256", JWT_SECRET).update(`${header}.${payload}`).digest()
+    crypto.createHmac("sha256", secret).update(`${header}.${payload}`).digest()
   );
   return `${header}.${payload}.${signature}`;
 }
 
 export function verifyJwtHs256(token: string): Record<string, unknown> | null {
   try {
+    const secret = getJwtSecret();
     const parts = token.split(".");
     if (parts.length !== 3) return null;
     const [header, payload, signature] = parts;
     const expectedSig = base64UrlEncode(
-      crypto.createHmac("sha256", JWT_SECRET).update(`${header}.${payload}`).digest()
+      crypto.createHmac("sha256", secret).update(`${header}.${payload}`).digest()
     );
-    if (signature !== expectedSig) return null;
+
+    // Constant-time comparison
+    if (!safeCompareStrings(signature, expectedSig)) return null;
+
     const decoded = JSON.parse(base64UrlDecode(payload));
     if (decoded.exp && Math.floor(Date.now() / 1000) > Number(decoded.exp)) {
       return null;
@@ -141,8 +114,8 @@ export function verifyJwtHs256(token: string): Record<string, unknown> | null {
 }
 
 /**
- * Checks if the login identifier (permanent username OR permanent admin email)
- * and current admin password match the Admin account.
+ * Checks if the login identifier and password match configured admin environment variables.
+ * Safe against timing attacks.
  */
 export function checkDefaultAdmin(identifier: string, password: string): AuthUser | null {
   const creds = getAdminCredentials();
@@ -150,7 +123,12 @@ export function checkDefaultAdmin(identifier: string, password: string): AuthUse
   const isAdminIdentifier =
     normalized === creds.username || normalized === creds.email;
 
-  if (isAdminIdentifier && password === creds.passwordPlain) {
+  const envAdminPassword = process.env.ADMIN_PASSWORD;
+  if (!isAdminIdentifier || !envAdminPassword) {
+    return null;
+  }
+
+  if (safeCompareStrings(password, envAdminPassword)) {
     return {
       id: creds.id,
       name: creds.name,
@@ -164,12 +142,11 @@ export function checkDefaultAdmin(identifier: string, password: string): AuthUse
 }
 
 /**
- * Prevents any customer from registering with the admin username,
- * admin email, or admin password.
+ * Prevents any customer from registering with the admin username or email.
  */
 export function validateCustomerRegistrationNotAdmin(
   email: string,
-  password: string,
+  _password: string,
   name?: string
 ): string | null {
   const creds = getAdminCredentials();
@@ -186,7 +163,8 @@ export function validateCustomerRegistrationNotAdmin(
     return "This username or email is reserved and cannot be used.";
   }
 
-  if (password === creds.passwordPlain || password === DEFAULT_ADMIN_PASSWORD) {
+  const envAdminPassword = process.env.ADMIN_PASSWORD;
+  if (envAdminPassword && safeCompareStrings(_password, envAdminPassword)) {
     return "This password is not allowed. Please choose a different password.";
   }
 

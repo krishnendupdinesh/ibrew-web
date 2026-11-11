@@ -227,11 +227,13 @@ function SearchProductCard({
     >
       {/* Product Image & Badges */}
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
-        <ProductImage src={product.image} name={product.name} />
+        <Link href={`/product/${product.slug || product.id}`} className="block h-full w-full">
+          <ProductImage src={product.image} name={product.name} />
+        </Link>
 
         {(product.badge || product.isMostSelling || product.isBestSeller || discount > 0) && !outOfStock && (
           <span
-            className="absolute left-0 top-0 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
+            className="absolute left-0 top-0 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white pointer-events-none"
             style={{ background: BROWN }}
           >
             {product.badge || (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : `${discount}% OFF`)}
@@ -239,7 +241,7 @@ function SearchProductCard({
         )}
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md pointer-events-none">
             Out of Stock
           </span>
         )}
@@ -249,7 +251,7 @@ function SearchProductCard({
           onClick={() => onToggleWish(product, size)}
           aria-pressed={wished}
           aria-label={wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-          className="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white"
+          className="absolute right-1 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white z-10"
           style={{ color: RED }}
         >
           <Heart className="h-4 w-4" strokeWidth={1.7} fill={wished ? RED : "none"} />
@@ -273,7 +275,7 @@ function SearchProductCard({
 
       {/* Product Title */}
       <h3 className="mt-1 line-clamp-2 min-h-[2.5em] text-sm font-semibold leading-5 text-neutral-900">
-        <Link href={sectionRoute} className="hover:text-[#7A5A3C] transition-colors">
+        <Link href={`/product/${product.slug || product.id}`} className="hover:text-[#7A5A3C] transition-colors">
           {product.name}
         </Link>
       </h3>

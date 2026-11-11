@@ -46,7 +46,7 @@ const hideScrollbar = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 // ---------------------------------------------------------------------------
 // CONTACT DETAILS - used by the "send another way" buttons if the form fails
 // ---------------------------------------------------------------------------
-const CONTACT_EMAIL = "support@imaans.com";
+const CONTACT_EMAIL = "imaanstrading@gmail.com";
 const WHATSAPP_NUMBER = "919876543210";
 
 // ---------------------------------------------------------------------------

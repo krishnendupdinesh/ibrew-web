@@ -8,12 +8,16 @@ import { getBackendUrl } from "../../../../lib/backendConfig";
 
 function attachTokenCookie(res: NextResponse, user: AuthUser) {
   const token = signJwtHs256(user);
+  const isCustomer = user.role === "customer";
+  // Customers: 10 years persistent cookie; Admins: 7 days
+  const maxAge = isCustomer ? 10 * 365 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
+
   res.cookies.set("token", token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 7 * 24 * 60 * 60,
+    maxAge: maxAge,
   });
   return res;
 }
@@ -72,7 +76,22 @@ export async function POST(request: Request) {
       };
 
       const res = NextResponse.json({ user }, { status: 201 });
-      return attachTokenCookie(res, user);
+      attachTokenCookie(res, user);
+
+      // Forward Set-Cookie headers from backend (including refreshToken)
+      const setCookies = upstream.headers.getSetCookie ? upstream.headers.getSetCookie() : [];
+      if (setCookies && setCookies.length > 0) {
+        setCookies.forEach((cookieStr) => {
+          res.headers.append("set-cookie", cookieStr);
+        });
+      } else {
+        const rawSetCookie = upstream.headers.get("set-cookie");
+        if (rawSetCookie) {
+          res.headers.set("set-cookie", rawSetCookie);
+        }
+      }
+
+      return res;
     } catch (err) {
       console.error("Backend register fetch error:", err);
       return NextResponse.json(

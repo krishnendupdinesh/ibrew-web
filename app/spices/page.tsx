@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
 import { truncateWords, useSectionProducts } from "../../lib/productStore";
-import { addToCart, openCartDrawer } from "../../lib/cartStore";
+import { addToCart, openCartDrawer, setCartItemQuantity } from "../../lib/cartStore";
 import { toggleWishlistItem, useWishlist } from "../../lib/wishlistStore";
 import {
   ChevronDown,
@@ -66,6 +66,7 @@ type ProductSize = {
 
 type Product = {
   id: string;
+  slug?: string;
   name: string;
   category: string;
   description: string;
@@ -358,15 +359,17 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
     <article className="group flex min-w-0 flex-col rounded-xl border bg-white p-3 shadow-2xs transition hover:shadow-md" style={{ borderColor: LINE }}>
       {/* Image, badge, wishlist heart, out-of-stock label */}
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
-        <ProductImage
-          src={product.image}
-          name={product.name}
-          className={`transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
-        />
+        <Link href={`/product/${product.slug || product.id}`} className="block h-full w-full">
+          <ProductImage
+            src={product.image}
+            name={product.name}
+            className={`transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
+          />
+        </Link>
 
         {(product.badge || product.isMostSelling || product.isBestSeller || discount > 0) && !outOfStock && (
           <span
-            className="absolute left-0 top-0 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
+            className="absolute left-0 top-0 rounded-br-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white pointer-events-none"
             style={{ background: BROWN }}
           >
             {product.badge || (product.isMostSelling ? "Most Selling" : product.isBestSeller ? "Bestseller" : `${discount}% off`)}
@@ -374,7 +377,7 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
         )}
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md pointer-events-none">
             Out of Stock
           </span>
         )}
@@ -384,7 +387,7 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
           onClick={() => onToggleWish(product.id)}
           aria-pressed={wished}
           aria-label={wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-          className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white"
+          className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:bg-white z-10"
           style={{ color: RED }}
         >
           <Heart aria-hidden className="h-[18px] w-[18px]" strokeWidth={1.5} fill={wished ? RED : "none"} />
@@ -392,7 +395,9 @@ function ProductCard({ product, wished, onToggleWish, onCartChange }: ProductCar
       </div>
 
       {/* Name */}
-      <h3 className="mt-2.5 line-clamp-2 min-h-[2.5em] text-sm font-semibold leading-5 text-[#1F1A17]">{product.name}</h3>
+      <Link href={`/product/${product.slug || product.id}`} className="hover:text-[#7A5A3C] transition-colors">
+        <h3 className="mt-2.5 line-clamp-2 min-h-[2.5em] text-sm font-semibold leading-5 text-[#1F1A17]">{product.name}</h3>
+      </Link>
 
       {/* Description with word limit */}
       <p
@@ -567,10 +572,17 @@ export default function SpicesPage() {
   const { wishedIds: wishlist } = useWishlist();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // TODO: connect this to your own cart (context, store or API).
-  // Called whenever a card's quantity changes (quantity 0 = removed from cart).
   const handleCartChange = (item: AddToCartItem) => {
-    // Handled via cartStore
+    setCartItemQuantity(
+      {
+        productId: item.productId,
+        name: item.name,
+        size: item.size,
+        price: item.price,
+        image: item.image,
+      },
+      item.quantity
+    );
   };
 
   const toggleWish = (id: string) => {

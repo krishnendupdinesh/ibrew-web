@@ -443,67 +443,78 @@ export default function CartCheckoutPage() {
 
       // If Razorpay payment (UPI or Card)
       let razorpayPaymentId = "";
+      let razorpaySignature = "";
       if (paymentMethod === "upi" || paymentMethod === "card") {
         try {
           const rzpRes = await fetch("/api/orders/razorpay/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              amount: grandTotal,
+              items: orderPayload.items,
+              couponCode: appliedCoupon?.code,
+              customer: { email, phone },
               receipt: `rcpt_${datePart}`,
             }),
           });
           const rzpData = await rzpRes.json();
-          if (rzpRes.ok && rzpData.orderId) {
-            orderPayload.razorpayOrderId = rzpData.orderId;
-            if (rzpData.isDemo) {
-              // Simulated instant verified checkout for test keys
-              orderPayload.razorpayPaymentId = `pay_demo_${Date.now()}`;
-              orderPayload.paymentStatus = "paid";
-            } else if (typeof window !== "undefined" && (window as unknown as { Razorpay: unknown }).Razorpay) {
-              const RazorpayConstructor = (window as unknown as {
-                Razorpay: new (opts: Record<string, unknown>) => { open: () => void };
-              }).Razorpay;
-              const paymentSuccess = await new Promise<{ paymentId: string; signature: string } | null>((resolve) => {
-                const rzp = new RazorpayConstructor({
-                  key: rzpData.key,
-                  amount: rzpData.amount,
-                  currency: "INR",
-                  name: "Imaan's Store",
-                  description: `Order #${orderId}`,
-                  order_id: rzpData.orderId,
-                  prefill: {
-                    name: fullName.trim(),
-                    email: email.trim(),
-                    contact: phone.trim(),
-                  },
-                  theme: { color: "#7A5A3C" },
-                  handler: (response: { razorpay_payment_id: string; razorpay_signature: string }) => {
-                    resolve({
-                      paymentId: response.razorpay_payment_id,
-                      signature: response.razorpay_signature,
-                    });
-                  },
-                  modal: {
-                    ondismiss: () => resolve(null),
-                  },
-                });
-                rzp.open();
-              });
-
-              if (!paymentSuccess) {
-                setFormError("Payment cancelled. You can change payment method or retry.");
-                setIsSubmitting(false);
-                return;
-              }
-
-              orderPayload.razorpayPaymentId = paymentSuccess.paymentId;
-              orderPayload.razorpaySignature = paymentSuccess.signature;
-              orderPayload.paymentStatus = "paid";
-            }
+          if (!rzpRes.ok || !rzpData.orderId) {
+            setFormError(rzpData.error || "Online payment unavailable. Please select Cash on Delivery.");
+            setIsSubmitting(false);
+            return;
           }
-        } catch {
-          // Fall back gracefully to direct order submission
+
+          orderPayload.razorpayOrderId = rzpData.orderId;
+
+          if (typeof window !== "undefined" && (window as unknown as { Razorpay: unknown }).Razorpay) {
+            const RazorpayConstructor = (window as unknown as {
+              Razorpay: new (opts: Record<string, unknown>) => { open: () => void };
+            }).Razorpay;
+            const paymentSuccess = await new Promise<{ paymentId: string; signature: string } | null>((resolve) => {
+              const rzp = new RazorpayConstructor({
+                key: rzpData.key,
+                amount: rzpData.amount,
+                currency: "INR",
+                name: "Imaan's Store",
+                description: `Order #${orderId}`,
+                order_id: rzpData.orderId,
+                prefill: {
+                  name: fullName.trim(),
+                  email: email.trim(),
+                  contact: phone.trim(),
+                },
+                theme: { color: "#7A5A3C" },
+                handler: (response: { razorpay_payment_id: string; razorpay_signature: string }) => {
+                  resolve({
+                    paymentId: response.razorpay_payment_id,
+                    signature: response.razorpay_signature,
+                  });
+                },
+                modal: {
+                  ondismiss: () => resolve(null),
+                },
+              });
+              rzp.open();
+            });
+
+            if (!paymentSuccess) {
+              setFormError("Payment was cancelled or dismissed. You can retry or choose Cash on Delivery.");
+              setIsSubmitting(false);
+              return;
+            }
+
+            razorpayPaymentId = paymentSuccess.paymentId;
+            razorpaySignature = paymentSuccess.signature;
+            orderPayload.razorpayPaymentId = razorpayPaymentId;
+            orderPayload.razorpaySignature = razorpaySignature;
+          } else {
+            setFormError("Payment gateway could not be loaded. Please refresh or choose Cash on Delivery.");
+            setIsSubmitting(false);
+            return;
+          }
+        } catch (err: unknown) {
+          setFormError((err as Error)?.message || "Failed to initiate online payment.");
+          setIsSubmitting(false);
+          return;
         }
       }
 
@@ -523,6 +534,20 @@ export default function CartCheckoutPage() {
 
       const savedOrder = data.order || orderPayload;
       prependLocalOrder(savedOrder);
+
+      // Verify payment with server if Razorpay checkout was completed
+      if (razorpayPaymentId && orderPayload.razorpayOrderId) {
+        await fetch("/api/orders/razorpay/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: savedOrder.orderId,
+            razorpay_order_id: orderPayload.razorpayOrderId,
+            razorpay_payment_id: razorpayPaymentId,
+            razorpay_signature: razorpaySignature,
+          }),
+        }).catch(() => {});
+      }
 
       // 1. Immediately deduct stock counter in local catalog cache
       try {

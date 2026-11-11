@@ -22,17 +22,16 @@ const informationLinks = [
 ];
 
 const policyLinks = [
-  { label: "Shipping & Returns", href: "/orders" },
-  { label: "Customer Support", href: "https://wa.me/919876543210" },
+  { label: "Shipping & Returns", href: "/shipping-returns" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Customer Support", href: "https://wa.me/7907217317" },
 ];
 
 const socialLinks = [
   { label: "Facebook", href: "https://www.facebook.com/", symbol: "f" },
   { label: "Instagram", href: "https://www.instagram.com/", symbol: "◎" },
   { label: "YouTube", href: "https://www.youtube.com/", symbol: "▶" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/", symbol: "in" },
   { label: "X", href: "https://x.com/", symbol: "𝕏" },
-  { label: "Pinterest", href: "https://www.pinterest.com/", symbol: "p" },
 ];
 
 function FooterLinks({
@@ -174,11 +173,11 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="mailto:support@imaans.com"
+                  href="mailto:imaanstrading@gmail.com"
                   className="flex items-center gap-3 break-all transition-colors hover:text-[#e9d2a8]"
                 >
                   <Mail size={20} className="shrink-0" />
-                  <span>support@imaans.com</span>
+                  <span>imaanstrading@gmail.com</span>
                 </a>
               </div>
             </div>
@@ -220,7 +219,7 @@ export default function Footer() {
                 </h3>
 
                 <a
-                  href="https://wa.me/919876543210"
+                  href="https://wa.me/7907217317"
                   className="text-sm text-[#fff8ef]/90 transition-colors hover:text-white hover:underline sm:text-base"
                 >
                   Get in Touch

@@ -42,5 +42,7 @@ next-env.d.ts
 
 # local runtime caches / credentials
 !.env.example
+backups/
+*.json.bak
 .admin-credentials.json
 /data/products.json

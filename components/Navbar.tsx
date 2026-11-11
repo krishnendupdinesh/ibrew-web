@@ -144,11 +144,38 @@ export default function Navbar() {
   }, []);
 
   // Sync auth once on mount and on storage / custom auth events
+  // Also schedules background token refresh check every 10 minutes to ensure permanent seamless session
   useEffect(() => {
     queueMicrotask(() => {
       setMounted(true);
       syncAuthUser();
     });
+
+    const refreshInterval = setInterval(() => {
+      const cached =
+        typeof window !== "undefined"
+          ? window.sessionStorage.getItem("ibrew_auth_user") ||
+            window.localStorage.getItem("ibrew_auth_user")
+          : null;
+      if (cached) {
+        fetch("/api/auth/refresh", { method: "POST" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => {
+            if (data?.user) {
+              setAuthUser(data.user);
+              try {
+                window.sessionStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+                window.localStorage.setItem("ibrew_auth_user", JSON.stringify(data.user));
+              } catch {
+                // ignore
+              }
+            }
+          })
+          .catch(() => {});
+      }
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(refreshInterval);
   }, [syncAuthUser]);
 
   // Fast synchronous cache read on pathname change (avoids repeated network calls)

@@ -390,6 +390,7 @@ type ProductCategory =
 
 type Product = {
   id: string;
+  slug?: string;
   name: string;
   size?: string;
   detail: string;
@@ -449,15 +450,17 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
   return (
     <article className="group w-[150px] shrink-0 snap-start rounded-xl border border-black/10 bg-white p-2 shadow-2xs transition hover:shadow-md sm:w-[184px]">
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-50">
-        <Photo
-          src={product.image}
-          alt={product.name}
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
-        />
+        <Link href={`/product/${product.slug || product.id}`} className="block h-full w-full">
+          <Photo
+            src={product.image}
+            alt={product.name}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105 ${outOfStock ? "opacity-40" : ""}`}
+          />
+        </Link>
 
         {(displayBadge || discountPercent > 0) && !outOfStock && (
           <span
-            className="absolute left-0 top-2 rounded-r-md px-2 py-0.5 text-[10px] font-semibold text-white"
+            className="absolute left-0 top-2 rounded-r-md px-2 py-0.5 text-[10px] font-semibold text-white pointer-events-none"
             style={{ background: BROWN }}
           >
             {displayBadge ? displayBadge : `${discountPercent}% off`}
@@ -482,19 +485,21 @@ function ProductCard({ product, onAddToCart }: ProductCardProps) {
           }
           aria-pressed={wished}
           aria-label={wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-          className="absolute right-1.5 top-1.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[#B42318] shadow-xs transition hover:bg-white"
+          className="absolute right-1.5 top-1.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white/90 text-[#B42318] shadow-xs transition hover:bg-white z-10"
         >
           <Heart className="h-4 w-4" strokeWidth={1.6} fill={wished ? "#B42318" : "none"} />
         </button>
 
         {outOfStock && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-md">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-[#B42318] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-md pointer-events-none">
             Out of Stock
           </span>
         )}
       </div>
 
-      <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[13px] font-semibold leading-tight">{product.name}</h3>
+      <Link href={`/product/${product.slug || product.id}`} className="hover:text-[#7A5A3C] transition-colors">
+        <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[13px] font-semibold leading-tight">{product.name}</h3>
+      </Link>
       <p
         className="mt-1 line-clamp-2 min-h-[2.2em] text-[11px] leading-tight text-neutral-500"
         title={product.description || product.detail}
@@ -903,14 +908,8 @@ export default function HomePage() {
 
   useEffect(() => {
     const mapToHomeProducts = (list: StoreProduct[]): Product[] => {
-      const deleted = new Set(readDeletedIds().map((s) => s.toLowerCase().trim()));
       return list
-        .filter((p) => {
-          if (p.featuredOnHome === false) return false;
-          if (p.id && deleted.has(String(p.id).toLowerCase().trim())) return false;
-          if (p.slug && deleted.has(String(p.slug).toLowerCase().trim())) return false;
-          return true;
-        })
+        .filter((p) => p.featuredOnHome !== false)
         .map((p) => {
           const sizes = p.sizes && p.sizes.length ? p.sizes : [{ label: "", price: 0, stock: 0 }];
           const firstAvailable = sizes.find((s) => s.stock > 0) ?? sizes[0];

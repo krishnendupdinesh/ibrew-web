@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Ubuntu } from "next/font/google";
 import { truncateWords, useSectionProducts } from "../../lib/productStore";
-import { addToCart, openCartDrawer } from "../../lib/cartStore";
+import { addToCart, openCartDrawer, setCartItemQuantity } from "../../lib/cartStore";
 import { toggleWishlistItem, useWishlist } from "../../lib/wishlistStore";
 import {
   ChevronDown,
@@ -521,10 +521,17 @@ export default function CoffeePage() {
   const { wishedIds: wishlist } = useWishlist();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // TODO: connect this to your own cart (context, store or API).
-  // Called whenever a card's quantity changes (quantity 0 = removed from cart).
   const handleCartChange = (item: AddToCartItem) => {
-    console.log("Cart change:", item);
+    setCartItemQuantity(
+      {
+        productId: item.productId,
+        name: item.name,
+        size: item.size,
+        price: item.price,
+        image: item.image,
+      },
+      item.quantity
+    );
   };
 
   const toggleWish = (id: string) => {

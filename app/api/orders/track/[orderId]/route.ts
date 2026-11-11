@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { getBackendUrl } from "../../../../../lib/backendConfig";
+import { NextRequest, NextResponse } from "next/server";
+import { getBackendUrl } from "@/lib/backendConfig";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   context: { params: Promise<{ orderId: string }> }
 ) {
   try {
@@ -12,17 +12,23 @@ export async function GET(
     }
 
     const backendUrl = getBackendUrl();
-    const res = await fetch(`${backendUrl}/api/orders/track/${encodeURIComponent(orderId)}`, {
-      headers: {
-        cookie: request.headers.get("cookie") || "",
-      },
-      cache: "no-store",
-    });
+    const url = new URL(request.url);
+    const search = url.search;
+
+    const res = await fetch(
+      `${backendUrl}/api/orders/track/${encodeURIComponent(orderId)}${search}`,
+      {
+        headers: {
+          cookie: request.headers.get("cookie") || "",
+        },
+        cache: "no-store",
+      }
+    );
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       return NextResponse.json(
-        { error: data.error || "Order not found. Please check your Order ID." },
+        { error: data.error || "Order not found." },
         { status: res.status }
       );
     }
@@ -33,4 +39,3 @@ export async function GET(
     return NextResponse.json({ error: "Could not track order." }, { status: 500 });
   }
 }
-

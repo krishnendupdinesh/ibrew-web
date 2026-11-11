@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import {
   getAdminCredentials,
   signJwtHs256,
-  updateAdminPassword,
   verifyJwtHs256,
   type AuthUser,
 } from "../../../../lib/serverAuth";
@@ -61,10 +60,10 @@ export async function POST(request: Request) {
     }
 
     const currentCreds = getAdminCredentials();
-    const updatedCreds = updateAdminPassword(newPassword);
+    const backendUrl = getBackendUrl();
 
-    // Sync to Express backend if running
-    fetch(`${getBackendUrl()}/api/auth/reset-password`, {
+    // Delegate to Express MySQL backend to hash with bcrypt and persist in database
+    const upstream = await fetch(`${backendUrl}/api/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -72,17 +71,24 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         email: currentCreds.email,
-        currentPassword: currentCreds.passwordPlain,
         newPassword,
       }),
-      signal: AbortSignal.timeout(2500),
-    }).catch(() => {});
+      signal: AbortSignal.timeout(5000),
+    });
+
+    const data = await upstream.json().catch(() => ({}));
+    if (!upstream.ok) {
+      return NextResponse.json(
+        { error: data.error || "Could not reset password." },
+        { status: upstream.status || 400 }
+      );
+    }
 
     const updatedUser: AuthUser = {
-      id: updatedCreds.id,
-      name: updatedCreds.name,
-      email: updatedCreds.email,
-      username: updatedCreds.username,
+      id: "admin-default",
+      name: currentCreds.name,
+      email: currentCreds.email,
+      username: currentCreds.username,
       phone: "",
       role: "admin",
     };
@@ -90,15 +96,16 @@ export async function POST(request: Request) {
     const res = NextResponse.json({
       user: updatedUser,
       credentials: {
-        name: updatedCreds.name,
-        username: updatedCreds.username,
-        email: updatedCreds.email,
+        name: currentCreds.name,
+        username: currentCreds.username,
+        email: currentCreds.email,
       },
-      message: "Admin password updated successfully!",
+      message: "Admin password updated and hashed in MySQL successfully!",
     });
 
     return attachTokenCookie(res, updatedUser);
-  } catch {
+  } catch (err) {
+    console.error("POST /api/auth/reset-password error:", err);
     return NextResponse.json({ error: "Could not reset password." }, { status: 400 });
   }
 }

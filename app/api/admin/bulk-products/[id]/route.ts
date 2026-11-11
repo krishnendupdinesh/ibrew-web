@@ -49,3 +49,4 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete bulk product" }, { status: 500 });
   }
 }
+

@@ -77,8 +77,8 @@ export default function PrivacyPolicyPage() {
             <p className="text-sm leading-relaxed text-[#1F1A17]/80">
               We implement strict access controls and encrypted sessions to safeguard your account.
               If you have any questions regarding your privacy or orders, please reach out to us at{" "}
-              <a href="mailto:support@imaans.com" className="font-semibold text-[#7A5A3C] underline">
-                support@imaans.com
+              <a href="mailto:imaanstrading@gmail.com" className="font-semibold text-[#7A5A3C] underline">
+                imaanstrading@gmail.com
               </a>{" "}
               or call{" "}
               <a href="tel:+919876543210" className="font-semibold text-[#7A5A3C] underline">
@@ -102,3 +102,4 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+
