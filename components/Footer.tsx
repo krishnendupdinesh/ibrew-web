@@ -146,9 +146,10 @@ export default function Footer() {
                 Physical Store &amp; Office
               </h3>
               <div className="mt-3 text-sm leading-6 text-[#fff8ef]/90">
-                <p className="font-semibold text-white">Imaan&apos;s Artisanal Products Pvt. Ltd.</p>
-                <p>Estate Road, Madikeri</p>
-                <p>Coorg, Karnataka - 571201, India</p>
+                <p className="font-semibold text-white">Imaan's Trading</p>
+                <p>NH-66</p>
+                <p>Arikady, Kumbala </p> 
+                  <p>671321, Kasaragod, Kerala</p>
                 <p className="mt-2 flex items-center gap-2 text-xs text-[#fff8ef]/70">
                   <Clock size={14} className="shrink-0" />
                   Mon – Sat: 9:00 AM – 7:30 PM IST
@@ -164,11 +165,11 @@ export default function Footer() {
                 </h4>
                 <div className="flex flex-col gap-2.5 text-sm">
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+917907217317"
                     className="flex items-center gap-2 transition-colors hover:text-[#e9d2a8]"
                   >
                     <Smartphone size={16} className="shrink-0 text-[#e9d2a8]" />
-                    <span>+91 98765 43210</span>
+                    <span>+91 7907217317</span>
                   </a>
 
                   <a
@@ -249,7 +250,7 @@ export default function Footer() {
           {/* Copyright & Policy quick bar */}
           <div className="mt-6 flex flex-col gap-3 border-t border-white/20 pt-5 text-xs text-[#fff8ef]/75 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              © 2026 Imaan&apos;s Artisanal Products Pvt. Ltd. All rights reserved.
+              © 2026 Empire AE IT Services. All rights reserved.
             </p>
 
             <div className="flex flex-wrap gap-4 text-xs">
