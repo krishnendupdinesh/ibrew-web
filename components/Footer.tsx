@@ -1,8 +1,8 @@
-
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Mail, Smartphone, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Mail, Smartphone, ArrowRight, MapPin, Clock } from "lucide-react";
 
 const shopLinks = [
   { label: "Coffee", href: "/coffee" },
@@ -15,6 +15,8 @@ const shopLinks = [
 ];
 
 const informationLinks = [
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
   { label: "All Products", href: "/search" },
   { label: "Bulk / Wholesale", href: "/bulk-order" },
   { label: "Track My Orders", href: "/orders" },
@@ -22,9 +24,10 @@ const informationLinks = [
 ];
 
 const policyLinks = [
-  { label: "Shipping & Returns", href: "/shipping-returns" },
   { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Customer Support", href: "https://wa.me/7907217317" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Refund & Cancellation", href: "/refund-cancellation" },
+  { label: "Shipping & Delivery", href: "/shipping-returns" },
 ];
 
 const socialLinks = [
@@ -47,15 +50,15 @@ function FooterLinks({
         {title}
       </h3>
 
-      <ul className="space-y-4">
+      <ul className="space-y-3.5">
         {links.map((link) => (
           <li key={link.label}>
-            <a
+            <Link
               href={link.href}
               className="text-sm text-[#fff8ef]/90 transition-colors hover:text-white hover:underline sm:text-base"
             >
               {link.label}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -85,7 +88,8 @@ export default function Footer() {
     <footer className="bg-[#000000] text-[#fffaf3]">
       <div className="mx-auto max-w-[1440px] px-5 py-12 sm:px-8 sm:py-14 lg:px-12 lg:py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
-          {/* Store information and newsletter */}
+          
+          {/* Store information, newsletter & address */}
           <div className="sm:col-span-2 lg:col-span-5">
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
               Join Imaan&apos;s Community
@@ -135,72 +139,67 @@ export default function Footer() {
               </p>
             )}
 
-            {/* Social media */}
-            <div className="mt-10">
-              <h3 className="mb-4 text-xl font-semibold sm:text-2xl">
-                Follow us on
+            {/* Physical Store Address Section */}
+            <div className="mt-10 rounded-xl border border-white/15 bg-white/[0.04] p-5">
+              <h3 className="flex items-center gap-2 text-base font-bold uppercase tracking-wide text-[#e9d2a8] sm:text-lg">
+                <MapPin size={20} className="shrink-0 text-[#e9d2a8]" />
+                Physical Store &amp; Office
               </h3>
+              <div className="mt-3 text-sm leading-6 text-[#fff8ef]/90">
+                <p className="font-semibold text-white">Imaan&apos;s Artisanal Products Pvt. Ltd.</p>
+                <p>Estate Road, Madikeri</p>
+                <p>Coorg, Karnataka - 571201, India</p>
+                <p className="mt-2 flex items-center gap-2 text-xs text-[#fff8ef]/70">
+                  <Clock size={14} className="shrink-0" />
+                  Mon – Sat: 9:00 AM – 7:30 PM IST
+                </p>
+              </div>
+            </div>
 
-              <div className="flex flex-wrap items-center gap-5">
-                {socialLinks.map((social) => (
+            {/* Contact & Social media */}
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-[#e9d2a8]">
+                  Contact Us
+                </h4>
+                <div className="flex flex-col gap-2.5 text-sm">
                   <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="flex h-7 min-w-5 items-center justify-center text-lg font-bold text-[#fffaf3] transition-transform hover:-translate-y-1 hover:text-[#e9d2a8]"
+                    href="tel:+919876543210"
+                    className="flex items-center gap-2 transition-colors hover:text-[#e9d2a8]"
                   >
-                    {social.symbol}
+                    <Smartphone size={16} className="shrink-0 text-[#e9d2a8]" />
+                    <span>+91 98765 43210</span>
                   </a>
-                ))}
+
+                  <a
+                    href="mailto:imaanstrading@gmail.com"
+                    className="flex items-center gap-2 break-all transition-colors hover:text-[#e9d2a8]"
+                  >
+                    <Mail size={16} className="shrink-0 text-[#e9d2a8]" />
+                    <span>imaanstrading@gmail.com</span>
+                  </a>
+                </div>
               </div>
-            </div>
 
-            {/* Contact */}
-            <div className="mt-10">
-              <h3 className="mb-4 text-xl font-semibold sm:text-2xl">
-                Contact Us
-              </h3>
-
-              <div className="flex flex-col gap-4 text-sm sm:text-base">
-                <a
-                  href="tel:+919876543210"
-                  className="flex items-center gap-3 transition-colors hover:text-[#e9d2a8]"
-                >
-                  <Smartphone size={20} className="shrink-0" />
-                  <span>+91 98765 43210</span>
-                </a>
-
-                <a
-                  href="mailto:imaanstrading@gmail.com"
-                  className="flex items-center gap-3 break-all transition-colors hover:text-[#e9d2a8]"
-                >
-                  <Mail size={20} className="shrink-0" />
-                  <span>imaanstrading@gmail.com</span>
-                </a>
+              <div>
+                <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-[#e9d2a8]">
+                  Follow Us
+                </h4>
+                <div className="flex flex-wrap items-center gap-4">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.label}
+                      className="flex h-7 min-w-5 items-center justify-center text-lg font-bold text-[#fffaf3] transition-transform hover:-translate-y-1 hover:text-[#e9d2a8]"
+                    >
+                      {social.symbol}
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Product highlights */}
-            <div className="mt-10">
-              <h3 className="mb-4 text-xl font-semibold sm:text-2xl">
-                Explore Our Collection
-              </h3>
-
-              <p className="max-w-md text-sm leading-6 text-[#fff8ef]/85">
-                From your favourite cup of coffee to distinctive fragrances
-                and everyday essentials, find something special at
-                Imaan&apos;s Store.
-              </p>
-
-              <a
-                href="/search"
-                className="mt-5 inline-flex items-center gap-2 border border-[#e7d5c2]/80 px-5 py-3 text-sm font-semibold transition-colors hover:bg-white/10"
-              >
-                EXPLORE OUR STORE
-                <ArrowRight size={16} />
-              </a>
             </div>
           </div>
 
@@ -214,46 +213,88 @@ export default function Footer() {
               <FooterLinks title="Policies" links={policyLinks} />
 
               <div className="mt-10">
-                <h3 className="mb-6 text-base font-bold uppercase tracking-wide sm:text-lg">
+                <h3 className="mb-4 text-base font-bold uppercase tracking-wide sm:text-lg">
                   Customer Care
                 </h3>
 
+                <p className="mb-3 text-xs leading-relaxed text-[#fff8ef]/80">
+                  Have a question about an order or our store? Chat with our team in Coorg directly on WhatsApp:
+                </p>
+
                 <a
                   href="https://wa.me/7907217317"
-                  className="text-sm text-[#fff8ef]/90 transition-colors hover:text-white hover:underline sm:text-base"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#e7d5c2]/80 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
                 >
-                  Get in Touch
+                  WhatsApp Support
+                  <ArrowRight size={14} />
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Brand description */}
+        {/* Brand description & Razorpay Compliance */}
         <div className="mt-12 border-t border-white/20 pt-7 sm:mt-14">
           <p className="text-xs font-semibold leading-5 sm:text-sm">
             Imaan&apos;s Store — Quality for Every Lifestyle
           </p>
 
           <p className="mt-2 max-w-6xl text-xs leading-5 text-[#fff8ef]/85 sm:text-sm">
-            Imaan&apos;s Store brings together coffee powder, flavourful
-            spices, imported perfumes, and imported mattresses in one convenient
-            destination. Explore a collection that combines everyday
-            essentials with distinctive finds for your home and lifestyle.
+            Operated by <strong>Imaan&apos;s Artisanal Products Pvt. Ltd.</strong>, Estate Road, Madikeri, Coorg, Karnataka - 571201. 
+            Bringing together estate-roasted coffee, rich spices, authentic imported perfumes, dates, and orthopedic mattresses in one convenient destination.
           </p>
 
-          {/* Copyright */}
+          {/* Copyright & Policy quick bar */}
           <div className="mt-6 flex flex-col gap-3 border-t border-white/20 pt-5 text-xs text-[#fff8ef]/75 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              © 2026 Empire AE IT Services. All rights reserved.
+              © 2026 Imaan&apos;s Artisanal Products Pvt. Ltd. All rights reserved.
             </p>
 
-            <a
-              href="/privacy-policy"
-              className="w-fit transition-colors hover:text-white hover:underline"
-            >
-              Privacy Policy
-            </a>
+            <div className="flex flex-wrap gap-4 text-xs">
+              <Link
+                href="/about"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                About Us
+              </Link>
+              <span>·</span>
+              <Link
+                href="/contact"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                Contact Us
+              </Link>
+              <span>·</span>
+              <Link
+                href="/privacy-policy"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              <span>·</span>
+              <Link
+                href="/terms"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                Terms &amp; Conditions
+              </Link>
+              <span>·</span>
+              <Link
+                href="/refund-cancellation"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                Refund Policy
+              </Link>
+              <span>·</span>
+              <Link
+                href="/shipping-returns"
+                className="transition-colors hover:text-white hover:underline"
+              >
+                Shipping Policy
+              </Link>
+            </div>
           </div>
         </div>
       </div>

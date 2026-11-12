@@ -804,6 +804,40 @@
     "updatedAt": "2026-11-11T09:47:33.000Z"
   },
   {
+    "id": "30119",
+    "slug": "lipbalm-7460",
+    "name": "lipbalm",
+    "section": "coffee-skin",
+    "category": "Soap",
+    "description": "",
+    "detail": "",
+    "image": "",
+    "images": [],
+    "badge": "",
+    "tags": [],
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "featuredOnHome": true,
+    "rating": 4.7,
+    "reviewCount": 36,
+    "ingredients": "",
+    "origin": "",
+    "roastLevel": "",
+    "brewingGuide": "",
+    "specifications": {},
+    "lowStockThreshold": 5,
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 25
+      }
+    ],
+    "createdAt": "2026-11-12T05:20:00.000Z",
+    "updatedAt": "2026-11-12T05:20:00.000Z"
+  },
+  {
     "id": "99",
     "slug": "cloud-comfort-memory-foam-mattress",
     "name": "Cloud Comfort Memory Foam Mattress",
