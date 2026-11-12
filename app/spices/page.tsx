@@ -46,12 +46,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "https://plus.unsplash.com/premium_photo-1669130744503-4939a5bcef43?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
-  turmeric: "https://your-image-url.com/turmeric-powder.jpg",
-  redChilli: "https://your-image-url.com/red-chilli-powder.jpg",
-  cuminSeeds: "https://your-image-url.com/cumin-seeds.jpg",
-  blackPepper: "https://your-image-url.com/black-pepper.jpg",
-  garamMasala: "https://your-image-url.com/garam-masala.jpg",
-  chaatMasala: "https://your-image-url.com/chaat-masala.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -93,91 +87,150 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "turmeric-powder",
-    name: "Turmeric Powder",
-    category: "Ground Spices",
-    description: "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
-    rating: 4.7,
-    reviewCount: 128,
-    badge: "Bestseller",
-    image: IMAGES.turmeric,
-    sizes: [
-      { label: "100g", price: 69, mrp: 79, stock: 40 },
-      { label: "200g", price: 125, mrp: 149, stock: 22 },
-      { label: "500g", price: 289, mrp: 349, stock: 4 },
-    ],
+    "id": "turmeric-powder",
+    "slug": "turmeric-powder",
+    "name": "Turmeric Powder",
+    "category": "Ground Spices",
+    "description": "Bright golden haldi with high curcumin content. Adds colour and warmth to every dish.",
+    "rating": 4.7,
+    "reviewCount": 128,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStH-xDGHnNA7D-Ousu3kA_AmDO5WUkuu988WCcLVzddQ&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 69,
+        "mrp": 79,
+        "stock": 40
+      },
+      {
+        "label": "200g",
+        "price": 125,
+        "mrp": 149,
+        "stock": 22
+      },
+      {
+        "label": "500g",
+        "price": 289,
+        "mrp": 349,
+        "stock": 4
+      }
+    ]
   },
   {
-    id: "red-chilli-powder",
-    name: "Red Chilli Powder",
-    category: "Ground Spices",
-    description: "Sun-dried red chillies, finely ground. Vibrant colour with a clean, fiery heat.",
-    rating: 4.5,
-    reviewCount: 86,
-    image: IMAGES.redChilli,
-    sizes: [
-      { label: "100g", price: 89, stock: 30 },
-      { label: "200g", price: 165, mrp: 189, stock: 18 },
-      { label: "500g", price: 389, mrp: 449, stock: 0 },
-    ],
+    "id": "black-pepper",
+    "slug": "black-pepper",
+    "name": "Black Pepper Whole",
+    "category": "Whole Spices",
+    "description": "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
+    "rating": 4.4,
+    "reviewCount": 52,
+    "badge": "Most Selling",
+    "isBestSeller": false,
+    "isMostSelling": true,
+    "image": "/api/uploads/products/black-pepper-1794370677497-9f45ccf0.jpg",
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 119,
+        "stock": 40
+      },
+      {
+        "label": "100g",
+        "price": 219,
+        "mrp": 249,
+        "stock": 20
+      }
+    ]
   },
   {
-    id: "cumin-seeds",
-    name: "Cumin Seeds (Jeera)",
-    category: "Whole Spices",
-    description: "Hand-picked whole jeera with a warm, earthy aroma. Perfect for tempering and spice blends.",
-    rating: 4.8,
-    reviewCount: 64,
-    badge: "New",
-    image: IMAGES.cuminSeeds,
-    sizes: [
-      { label: "100g", price: 99, stock: 15 },
-      { label: "250g", price: 229, mrp: 249, stock: 3 },
-    ],
+    "id": "garam-masala",
+    "slug": "garam-masala",
+    "name": "Garam Masala",
+    "category": "Spice Blends",
+    "description": "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
+    "rating": 4.3,
+    "reviewCount": 41,
+    "badge": "Top seller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGg9XfPODuCEUu3ebnfMWO1KMEEV_MmmFVrz6CD4KAmA&s=10",
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 99,
+        "stock": 22
+      },
+      {
+        "label": "100g",
+        "price": 179,
+        "mrp": 199,
+        "stock": 9
+      }
+    ]
   },
   {
-    id: "black-pepper",
-    name: "Black Pepper Whole",
-    category: "Whole Spices",
-    description: "Bold, pungent peppercorns from the Malabar coast. Crush fresh for the sharpest flavour.",
-    rating: 4.4,
-    reviewCount: 52,
-    image: IMAGES.blackPepper,
-    sizes: [
-      { label: "50g", price: 119, stock: 40 },
-      { label: "100g", price: 219, mrp: 249, stock: 20 },
-    ],
+    "id": "cumin-seeds",
+    "slug": "cumin-seeds",
+    "name": "Cumin Seeds (Jeera)",
+    "category": "Whole Spices",
+    "description": "Hand-picked whole jeera with a warm, earthy aroma. Perfect for tempering and spice blends.",
+    "rating": 4.8,
+    "reviewCount": 64,
+    "badge": "New",
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwYYRqBjMoAG5WhjY1kx9NLfKkw3dk8mJthvQvtrrL-Q&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 99,
+        "stock": 15
+      },
+      {
+        "label": "250g",
+        "price": 229,
+        "mrp": 249,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "garam-masala",
-    name: "Garam Masala",
-    category: "Spice Blends",
-    description: "A fragrant blend of roasted whole spices. Finish curries, dals and biryanis with it.",
-    rating: 4.3,
-    reviewCount: 41,
-    badge: "Top seller",
-    image: IMAGES.garamMasala,
-    sizes: [
-      { label: "50g", price: 99, stock: 22 },
-      { label: "100g", price: 179, mrp: 199, stock: 9 },
-    ],
-  },
-  {
-    id: "chaat-masala",
-    name: "Chaat Masala",
-    category: "Spice Blends",
-    description: "Tangy, zesty blend with black salt and amchur. Sprinkle on fruit, snacks and chaats.",
-    rating: 4.6,
-    reviewCount: 33,
-    image: IMAGES.chaatMasala,
-    sizes: [
-      { label: "50g", price: 79, stock: 0 },
-      { label: "100g", price: 139, mrp: 159, stock: 0 },
-    ],
-  },
+    "id": "red-chilli-powder",
+    "slug": "red-chilli-powder",
+    "name": "Red Chilli Powder",
+    "category": "Ground Spices",
+    "description": "Sun-dried red chillies, finely ground. Vibrant colour with a clean, fiery heat.",
+    "rating": 4.5,
+    "reviewCount": 86,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfX1yUMNAYK5KuFIHeV8_rVlCryXeI89h7q0BR5fwPVA&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 89,
+        "stock": 30
+      },
+      {
+        "label": "200g",
+        "price": 165,
+        "mrp": 189,
+        "stock": 18
+      },
+      {
+        "label": "500g",
+        "price": 389,
+        "mrp": 449,
+        "stock": 0
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Whole Spices", "Ground Spices", "Spice Blends"];
+const CATEGORY_OPTIONS = ["Ground Spices","Whole Spices","Spice Blends"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

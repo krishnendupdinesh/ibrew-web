@@ -46,12 +46,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "https://images.unsplash.com/photo-1654064550858-c62b971a378a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
-  memoryFoam: "https://your-image-url.com/memory-foam-mattress.jpg",
-  orthopedic: "https://your-image-url.com/orthopedic-mattress.jpg",
-  pocketSpring: "https://your-image-url.com/pocket-spring-mattress.jpg",
-  topper: "https://your-image-url.com/mattress-topper.jpg",
-  pillow: "https://your-image-url.com/memory-foam-pillow.jpg",
-  protector: "https://your-image-url.com/mattress-protector.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -93,96 +87,176 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "memory-foam-mattress",
-    name: "Memory Foam Mattress",
-    category: "Memory Foam",
-    description: "Contouring memory foam that relieves pressure points and keeps your spine aligned all night.",
-    rating: 4.7,
-    reviewCount: 128,
-    badge: "Bestseller",
-    image: IMAGES.memoryFoam,
-    sizes: [
-      { label: 'Single 72x36"', price: 8999, mrp: 11999, stock: 14 },
-      { label: 'Double 75x48"', price: 12999, mrp: 16999, stock: 10 },
-      { label: 'Queen 78x60"', price: 15999, mrp: 20999, stock: 6 },
-      { label: 'King 78x72"', price: 18999, mrp: 24999, stock: 4 },
-    ],
+    "id": "memory-foam-mattress",
+    "slug": "memory-foam-mattress",
+    "name": "Memory Foam Mattress",
+    "category": "Memory Foam",
+    "description": "Contouring memory foam that relieves pressure points and keeps your spine aligned all night.",
+    "rating": 4.7,
+    "reviewCount": 128,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxD26TbYfTNdcD0EqNCOYOzJTjVs2ssDRaynvS04tUzQ&s",
+    "sizes": [
+      {
+        "label": "Single 72x36\"",
+        "price": 8999,
+        "mrp": 11999,
+        "stock": 14
+      },
+      {
+        "label": "Double 75x48\"",
+        "price": 12999,
+        "mrp": 16999,
+        "stock": 10
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 15999,
+        "mrp": 20999,
+        "stock": 6
+      },
+      {
+        "label": "King 78x72\"",
+        "price": 18999,
+        "mrp": 24999,
+        "stock": 4
+      }
+    ]
   },
   {
-    id: "orthopedic-mattress",
-    name: "Orthopedic Mattress",
-    category: "Orthopedic",
-    description: "Firm, high-density support designed to ease back and joint pain. Doctor-recommended comfort.",
-    rating: 4.6,
-    reviewCount: 96,
-    image: IMAGES.orthopedic,
-    sizes: [
-      { label: 'Single 72x36"', price: 7499, mrp: 9999, stock: 18 },
-      { label: 'Double 75x48"', price: 10999, mrp: 14499, stock: 12 },
-      { label: 'Queen 78x60"', price: 13499, mrp: 17999, stock: 8 },
-      { label: 'King 78x72"', price: 15999, mrp: 20999, stock: 0 },
-    ],
+    "id": "pocket-spring-luxury-mattress",
+    "slug": "pocket-spring-luxury-mattress",
+    "name": "Pocket Spring Luxury Mattress",
+    "category": "Spring",
+    "description": "Pocket spring mattress with zero motion transfer and a plush pillow top.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBd_UPovcvT-Nrea2jK6j5FWgQJTEHtN7xkVhuKyBWig&s=10",
+    "sizes": [
+      {
+        "label": "Queen",
+        "price": 24999,
+        "mrp": 29999,
+        "stock": 4
+      },
+      {
+        "label": "King",
+        "price": 28999,
+        "mrp": 34999,
+        "stock": 2
+      }
+    ]
   },
   {
-    id: "pocket-spring-mattress",
-    name: "Pocket Spring Mattress",
-    category: "Spring",
-    description: "Individually wrapped springs with a soft quilted top. Bouncy, breathable and motion isolating.",
-    rating: 4.8,
-    reviewCount: 64,
-    badge: "New",
-    image: IMAGES.pocketSpring,
-    sizes: [
-      { label: 'Double 75x48"', price: 17999, stock: 9 },
-      { label: 'Queen 78x60"', price: 21999, mrp: 25999, stock: 5 },
-      { label: 'King 78x72"', price: 25999, mrp: 29999, stock: 3 },
-    ],
+    "id": "cloud-comfort-memory-foam-mattress",
+    "slug": "cloud-comfort-memory-foam-mattress",
+    "name": "Cloud Comfort Memory Foam Mattress",
+    "category": "Memory Foam",
+    "description": "Multi-layer memory foam mattress that contours to your body for deep sleep.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5638LQ8yd9qRpd_WdWMCXrOtexB28irCh9hecFiCw9Q&s=10",
+    "sizes": [
+      {
+        "label": "Single",
+        "price": 12999,
+        "mrp": 15999,
+        "stock": 6
+      },
+      {
+        "label": "Queen",
+        "price": 18999,
+        "mrp": 22999,
+        "stock": 4
+      },
+      {
+        "label": "King",
+        "price": 22999,
+        "mrp": 27999,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "memory-foam-topper",
-    name: "Gel Memory Foam Topper",
-    category: "Accessories",
-    description: "Cooling gel-infused topper that adds a soft comfort layer to any mattress.",
-    rating: 4.4,
-    reviewCount: 52,
-    badge: "Top seller",
-    image: IMAGES.topper,
-    sizes: [
-      { label: 'Single 72x36"', price: 2999, stock: 25 },
-      { label: 'Double 75x48"', price: 3999, mrp: 4999, stock: 20 },
-      { label: 'Queen 78x60"', price: 4999, mrp: 5999, stock: 15 },
-    ],
+    "id": "pocket-spring-mattress",
+    "slug": "pocket-spring-mattress",
+    "name": "Pocket Spring Mattress",
+    "category": "Spring",
+    "description": "Individually wrapped springs with a soft quilted top. Bouncy, breathable and motion isolating.",
+    "rating": 4.8,
+    "reviewCount": 64,
+    "badge": "New",
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8IN3htbQBZvYRCkJlkDKMMj3jdfESdA8hSkAy1UBmFQ&s=10",
+    "sizes": [
+      {
+        "label": "Double 75x48\"",
+        "price": 17999,
+        "stock": 9
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 21999,
+        "mrp": 25999,
+        "stock": 5
+      },
+      {
+        "label": "King 78x72\"",
+        "price": 25999,
+        "mrp": 29999,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "memory-foam-pillow",
-    name: "Memory Foam Pillow",
-    category: "Accessories",
-    description: "Ergonomic contour pillow that supports your neck and keeps its shape night after night.",
-    rating: 4.3,
-    reviewCount: 41,
-    image: IMAGES.pillow,
-    sizes: [
-      { label: "1 pillow", price: 999, stock: 40 },
-      { label: "Pack of 2", price: 1799, mrp: 1998, stock: 22 },
-    ],
-  },
-  {
-    id: "mattress-protector",
-    name: "Waterproof Mattress Protector",
-    category: "Accessories",
-    description: "Soft, breathable and fully waterproof. Protects against spills, dust and allergens.",
-    rating: 4.6,
-    reviewCount: 33,
-    image: IMAGES.protector,
-    sizes: [
-      { label: 'Single 72x36"', price: 899, stock: 0 },
-      { label: 'Double 75x48"', price: 1299, mrp: 1599, stock: 0 },
-      { label: 'Queen 78x60"', price: 1599, mrp: 1999, stock: 0 },
-    ],
-  },
+    "id": "orthopedic-mattress",
+    "slug": "orthopedic-mattress",
+    "name": "Orthopedic Mattress",
+    "category": "Orthopedic",
+    "description": "Firm, high-density support designed to ease back and joint pain. Doctor-recommended comfort.",
+    "rating": 4.6,
+    "reviewCount": 96,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkXhKqGpmiG-J7-IoHVuK6KJqIEbNfH1Kdh2gmLiat2w&s=10",
+    "sizes": [
+      {
+        "label": "Single 72x36\"",
+        "price": 7499,
+        "mrp": 9999,
+        "stock": 18
+      },
+      {
+        "label": "Double 75x48\"",
+        "price": 10999,
+        "mrp": 14499,
+        "stock": 12
+      },
+      {
+        "label": "Queen 78x60\"",
+        "price": 13499,
+        "mrp": 17999,
+        "stock": 8
+      },
+      {
+        "label": "King 78x72\"",
+        "price": 15999,
+        "mrp": 20999,
+        "stock": 0
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Memory Foam", "Orthopedic", "Spring", "Accessories"];
+const CATEGORY_OPTIONS = ["Memory Foam","Spring","Orthopedic"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

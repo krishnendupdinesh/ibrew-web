@@ -227,12 +227,17 @@ export function mergeSectionProducts<T extends { id: string; name: string; categ
     return sectionApiProducts as unknown as T[];
   }
 
-  // 2. Fallback when API products haven't loaded yet: local cache, else static defaults
+  // 2. Fallback when API products haven't loaded yet: local cache
   const localForSection = readLocalCatalog().filter((p) => p.section === section);
   if (localForSection.length > 0) {
     return localForSection as unknown as T[];
   }
 
+  if (staticDefaults && staticDefaults.length > 0) {
+    console.warn(
+      `[useSectionProducts] Warning: Live products unavailable for section "${section}". Falling back to sample defaults.`
+    );
+  }
   return staticDefaults;
 }
 
@@ -273,8 +278,8 @@ export function useSectionProducts<T extends { id: string; name: string; categor
             return;
           }
         }
-      } catch {
-        // Fallback to existing items
+      } catch (err) {
+        console.warn(`[useSectionProducts] Error fetching live products for "${section}":`, err);
       }
       if (active) {
         setItems(mergeSectionProducts(section, staticDefaults));
@@ -304,6 +309,7 @@ export function getAllMergedProducts(apiProducts?: StoreProduct[]): StoreProduct
   if (local.length > 0) {
     return local;
   }
+  console.warn("[getAllMergedProducts] Warning: No products available in API or local cache.");
   return [];
 }
 

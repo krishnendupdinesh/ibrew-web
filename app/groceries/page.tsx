@@ -42,14 +42,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
-  tomatoes: "https://your-image-url.com/tomatoes.jpg",
-  bananas: "https://your-image-url.com/bananas.jpg",
-  milk: "https://your-image-url.com/milk.jpg",
-  eggs: "https://your-image-url.com/eggs.jpg",
-  bread: "https://your-image-url.com/bread.jpg",
-  basmatiRice: "https://your-image-url.com/basmati-rice.jpg",
-  toorDal: "https://your-image-url.com/toor-dal.jpg",
-  chips: "https://your-image-url.com/chips.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -91,115 +83,143 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "fresh-tomatoes",
-    name: "Fresh Tomatoes",
-    category: "Fruits & Vegetables",
-    description: "Juicy, ripe tomatoes picked fresh from the farm. Perfect for curries, salads and chutneys.",
-    rating: 4.5,
-    reviewCount: 212,
-    badge: "Fresh",
-    image: IMAGES.tomatoes,
-    sizes: [
-      { label: "500g", price: 39, mrp: 49, stock: 40 },
-      { label: "1kg", price: 72, mrp: 90, stock: 25 },
-    ],
+    "id": "basmati-rice-premium",
+    "slug": "basmati-rice-premium",
+    "name": "Premium Basmati Rice",
+    "category": "Staples & Grains",
+    "description": "Aged basmati rice with long, fluffy grains and natural aroma.",
+    "rating": 5,
+    "reviewCount": 22,
+    "badge": "Most Selling",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJe-S6fj0iQcNs1hxSY3LDuiV3Oixez9M4AHQeZu_t1A&s=10",
+    "sizes": [
+      {
+        "label": "1kg",
+        "price": 179,
+        "mrp": 210,
+        "stock": 19
+      },
+      {
+        "label": "5kg",
+        "price": 849,
+        "mrp": 999,
+        "stock": 20
+      }
+    ]
   },
   {
-    id: "robusta-bananas",
-    name: "Robusta Bananas",
-    category: "Fruits & Vegetables",
-    description: "Naturally ripened, sweet and creamy bananas. A healthy snack any time of the day.",
-    rating: 4.4,
-    reviewCount: 96,
-    image: IMAGES.bananas,
-    sizes: [
-      { label: "6 pcs", price: 45, stock: 30 },
-      { label: "12 pcs", price: 85, mrp: 99, stock: 3 },
-    ],
+    "id": "toor-dal",
+    "slug": "toor-dal",
+    "name": "Toor Dal",
+    "category": "Staples & Grains",
+    "description": "Unpolished, protein-rich toor dal. Cleaned and sorted for everyday cooking.",
+    "rating": 4.5,
+    "reviewCount": 119,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJjSJQji60DJGlmxgLZ_oBtjBsCCqfbfmy0fsrjLfEeg&s=10",
+    "sizes": [
+      {
+        "label": "500g",
+        "price": 89,
+        "stock": 22
+      },
+      {
+        "label": "1kg",
+        "price": 169,
+        "mrp": 189,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "full-cream-milk",
-    name: "Full Cream Milk",
-    category: "Dairy & Bakery",
-    description: "Rich and creamy pasteurised milk. Delivered chilled and fresh every morning.",
-    rating: 4.7,
-    reviewCount: 340,
-    badge: "Bestseller",
-    image: IMAGES.milk,
-    sizes: [
-      { label: "500ml", price: 33, stock: 60 },
-      { label: "1L", price: 66, stock: 45 },
-    ],
+    "id": "farm-eggs",
+    "slug": "farm-eggs",
+    "name": "Farm Fresh Eggs",
+    "category": "Dairy & Bakery",
+    "description": "Protein-rich white eggs from healthy, free-roaming hens. Great for breakfast and baking.",
+    "rating": 4.6,
+    "reviewCount": 158,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Z0dOHXOq3vUzXG05kOuai7LCRakMWrmmcvIC7bKELw&s=10",
+    "sizes": [
+      {
+        "label": "6 pcs",
+        "price": 54,
+        "stock": 50
+      },
+      {
+        "label": "12 pcs",
+        "price": 99,
+        "mrp": 110,
+        "stock": 28
+      },
+      {
+        "label": "30 pcs",
+        "price": 235,
+        "mrp": 270,
+        "stock": 0
+      }
+    ]
   },
   {
-    id: "farm-eggs",
-    name: "Farm Fresh Eggs",
-    category: "Dairy & Bakery",
-    description: "Protein-rich white eggs from healthy, free-roaming hens. Great for breakfast and baking.",
-    rating: 4.6,
-    reviewCount: 158,
-    image: IMAGES.eggs,
-    sizes: [
-      { label: "6 pcs", price: 54, stock: 50 },
-      { label: "12 pcs", price: 99, mrp: 110, stock: 28 },
-      { label: "30 pcs", price: 235, mrp: 270, stock: 0 },
-    ],
+    "id": "robusta-bananas",
+    "slug": "robusta-bananas",
+    "name": "Robusta Bananas",
+    "category": "Fruits & Vegetables",
+    "description": "Naturally ripened, sweet and creamy bananas. A healthy snack any time of the day.",
+    "rating": 4.4,
+    "reviewCount": 96,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDP5pQ5B8yjpuleufMhyPo93ds61jNJAknOOBJ8oU7AQ&s=10",
+    "sizes": [
+      {
+        "label": "6 pcs",
+        "price": 45,
+        "stock": 30
+      },
+      {
+        "label": "12 pcs",
+        "price": 85,
+        "mrp": 99,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "whole-wheat-bread",
-    name: "Whole Wheat Bread",
-    category: "Dairy & Bakery",
-    description: "Soft, freshly baked sandwich bread made with whole wheat flour. No maida.",
-    rating: 4.3,
-    reviewCount: 74,
-    badge: "New",
-    image: IMAGES.bread,
-    sizes: [{ label: "400g", price: 45, stock: 14 }],
-  },
-  {
-    id: "basmati-rice",
-    name: "Basmati Rice",
-    category: "Staples & Grains",
-    description: "Long-grain, aged basmati with a lovely aroma. Cooks up fluffy and non-sticky.",
-    rating: 4.8,
-    reviewCount: 285,
-    badge: "Top seller",
-    image: IMAGES.basmatiRice,
-    sizes: [
-      { label: "1kg", price: 129, mrp: 149, stock: 35 },
-      { label: "5kg", price: 599, mrp: 699, stock: 12 },
-      { label: "10kg", price: 1149, mrp: 1349, stock: 4 },
-    ],
-  },
-  {
-    id: "toor-dal",
-    name: "Toor Dal",
-    category: "Staples & Grains",
-    description: "Unpolished, protein-rich toor dal. Cleaned and sorted for everyday cooking.",
-    rating: 4.5,
-    reviewCount: 119,
-    image: IMAGES.toorDal,
-    sizes: [
-      { label: "500g", price: 89, stock: 22 },
-      { label: "1kg", price: 169, mrp: 189, stock: 3 },
-    ],
-  },
-  {
-    id: "potato-chips",
-    name: "Classic Salted Chips",
-    category: "Snacks & Beverages",
-    description: "Thin, crispy potato chips lightly salted. The perfect crunchy snack.",
-    rating: 4.2,
-    reviewCount: 63,
-    image: IMAGES.chips,
-    sizes: [
-      { label: "52g", price: 20, stock: 35 },
-      { label: "130g", price: 50, mrp: 60, stock: 0 },
-    ],
-  },
+    "id": "fresh-tomatoes",
+    "slug": "fresh-tomatoes",
+    "name": "Fresh Tomatoes",
+    "category": "Fruits & Vegetables",
+    "description": "Juicy, ripe tomatoes picked fresh from the farm. Perfect for curries, salads and chutneys.",
+    "rating": 4.5,
+    "reviewCount": 212,
+    "badge": "Fresh",
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfwBUBAdmXkUOhsMDJ1JFIt8BqaKJAxcWyfy7CV3SGrQ&s=10",
+    "sizes": [
+      {
+        "label": "500g",
+        "price": 39,
+        "mrp": 49,
+        "stock": 40
+      },
+      {
+        "label": "1kg",
+        "price": 72,
+        "mrp": 90,
+        "stock": 25
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Fruits & Vegetables", "Dairy & Bakery", "Staples & Grains", "Snacks & Beverages"];
+const CATEGORY_OPTIONS = ["Staples & Grains","Dairy & Bakery","Fruits & Vegetables"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

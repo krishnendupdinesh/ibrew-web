@@ -43,9 +43,15 @@ export async function GET(req: NextRequest) {
         }
         return NextResponse.json({ products: backendList }, { headers: NO_CACHE_HEADERS });
       }
+    } else {
+      console.warn(
+        `[GET /api/products] Upstream backend returned status ${res.status}. Falling back to server cache.`
+      );
     }
-  } catch {
-    // Backend unreachable or not restarted yet — fall back to server catalog file
+  } catch (err: unknown) {
+    console.warn(
+      `[GET /api/products] Backend fetch failed (${(err as Error)?.message || err}). Falling back to server cache.`
+    );
   }
 
   let filtered = filterCatalogBySection(localCatalog, section);

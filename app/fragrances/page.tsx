@@ -46,12 +46,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "images/fragrance.banner.jpeg",
-  oudNoir: "https://your-image-url.com/oud-noir-perfume.jpg",
-  citrusBloom: "https://your-image-url.com/citrus-bloom-perfume.jpg",
-  roseMuskMist: "https://your-image-url.com/rose-musk-body-mist.jpg",
-  vanillaMist: "https://your-image-url.com/vanilla-body-mist.jpg",
-  sandalwoodAttar: "https://your-image-url.com/sandalwood-attar.jpg",
-  jasmineAttar: "https://your-image-url.com/jasmine-attar.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -93,91 +87,149 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "oud-noir",
-    name: "Oud Noir Eau de Parfum",
-    category: "Perfume",
-    description: "Deep, woody and smoky with warm amber. A bold scent that lasts all day.",
-    rating: 4.8,
-    reviewCount: 142,
-    badge: "Bestseller",
-    image: IMAGES.oudNoir,
-    sizes: [
-      { label: "30ml", price: 899, mrp: 999, stock: 24 },
-      { label: "50ml", price: 1399, mrp: 1599, stock: 12 },
-      { label: "100ml", price: 2299, mrp: 2699, stock: 4 },
-    ],
+    "id": "oud-noir",
+    "slug": "oud-noir",
+    "name": "Oud Noir Eau de Parfum",
+    "category": "Perfume",
+    "description": "Deep, woody and smoky with warm amber. A bold scent that lasts all day.",
+    "rating": 4.8,
+    "reviewCount": 142,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCdnFGvYUl69vrQpDO1drZaiXD9s23ohXWjhXUw21_oQ&s=10",
+    "sizes": [
+      {
+        "label": "30ml",
+        "price": 899,
+        "mrp": 999,
+        "stock": 24
+      },
+      {
+        "label": "50ml",
+        "price": 1399,
+        "mrp": 1599,
+        "stock": 12
+      },
+      {
+        "label": "100ml",
+        "price": 2299,
+        "mrp": 2699,
+        "stock": 4
+      }
+    ]
   },
   {
-    id: "citrus-bloom",
-    name: "Citrus Bloom Eau de Toilette",
-    category: "Perfume",
-    description: "Fresh bergamot and orange blossom with a light musky finish. Bright and easy to wear.",
-    rating: 4.5,
-    reviewCount: 96,
-    image: IMAGES.citrusBloom,
-    sizes: [
-      { label: "30ml", price: 699, stock: 30 },
-      { label: "50ml", price: 1099, mrp: 1299, stock: 18 },
-      { label: "100ml", price: 1899, mrp: 2199, stock: 0 },
-    ],
+    "id": "vanilla-mist",
+    "slug": "vanilla-mist",
+    "name": "Vanilla Sugar Body Mist",
+    "category": "Body Mist",
+    "description": "Warm vanilla with a hint of caramel. Sweet, cosy and gently long lasting.",
+    "rating": 4.4,
+    "reviewCount": 58,
+    "badge": "Top seller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "/api/uploads/products/vanilla-mist-1794370788146-cfbb1428.jpg",
+    "sizes": [
+      {
+        "label": "100ml",
+        "price": 349,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 2",
+        "price": 599,
+        "mrp": 698,
+        "stock": 20
+      }
+    ]
   },
   {
-    id: "rose-musk-mist",
-    name: "Rose Musk Body Mist",
-    category: "Body Mist",
-    description: "Soft rose petals and white musk in a light mist. Perfect for a quick refresh through the day.",
-    rating: 4.6,
-    reviewCount: 74,
-    badge: "New",
-    image: IMAGES.roseMuskMist,
-    sizes: [
-      { label: "100ml", price: 399, stock: 15 },
-      { label: "200ml", price: 699, mrp: 799, stock: 3 },
-    ],
+    "id": "sandalwood-attar",
+    "slug": "sandalwood-attar",
+    "name": "Sandalwood Attar",
+    "category": "Attar",
+    "description": "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
+    "rating": 4.7,
+    "reviewCount": 49,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCWDeglVi8at9IzMZzoagXGhEgY5ofDyUBBKWEkx1wTg&s=10",
+    "sizes": [
+      {
+        "label": "6ml",
+        "price": 349,
+        "stock": 22
+      },
+      {
+        "label": "12ml",
+        "price": 599,
+        "mrp": 699,
+        "stock": 9
+      }
+    ]
   },
   {
-    id: "vanilla-mist",
-    name: "Vanilla Sugar Body Mist",
-    category: "Body Mist",
-    description: "Warm vanilla with a hint of caramel. Sweet, cosy and gently long lasting.",
-    rating: 4.4,
-    reviewCount: 58,
-    badge: "Top seller",
-    image: IMAGES.vanillaMist,
-    sizes: [
-      { label: "100ml", price: 349, stock: 40 },
-      { label: "Pack of 2", price: 599, mrp: 698, stock: 20 },
-    ],
+    "id": "rose-musk-mist",
+    "slug": "rose-musk-mist",
+    "name": "Rose Musk Body Mist",
+    "category": "Body Mist",
+    "description": "Soft rose petals and white musk in a light mist. Perfect for a quick refresh through the day.",
+    "rating": 4.6,
+    "reviewCount": 74,
+    "badge": "New",
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrQl3ovxrgZEUYWeoB_6j1CTx0c63EWdx1dsGr4Y3h_w&s=10",
+    "sizes": [
+      {
+        "label": "100ml",
+        "price": 399,
+        "stock": 15
+      },
+      {
+        "label": "200ml",
+        "price": 699,
+        "mrp": 799,
+        "stock": 3
+      }
+    ]
   },
   {
-    id: "sandalwood-attar",
-    name: "Sandalwood Attar",
-    category: "Attar",
-    description: "Alcohol-free roll-on attar with creamy sandalwood. Calm, earthy and traditional.",
-    rating: 4.7,
-    reviewCount: 49,
-    image: IMAGES.sandalwoodAttar,
-    sizes: [
-      { label: "6ml", price: 349, stock: 22 },
-      { label: "12ml", price: 599, mrp: 699, stock: 9 },
-    ],
-  },
-  {
-    id: "jasmine-attar",
-    name: "Jasmine Attar",
-    category: "Attar",
-    description: "Pure jasmine in a rich, alcohol-free oil. Sweet floral notes that stay close to the skin.",
-    rating: 4.6,
-    reviewCount: 37,
-    image: IMAGES.jasmineAttar,
-    sizes: [
-      { label: "6ml", price: 399, stock: 0 },
-      { label: "12ml", price: 699, mrp: 799, stock: 0 },
-    ],
-  },
+    "id": "citrus-bloom",
+    "slug": "citrus-bloom",
+    "name": "Citrus Bloom Eau de Toilette",
+    "category": "Perfume",
+    "description": "Fresh bergamot and orange blossom with a light musky finish. Bright and easy to wear.",
+    "rating": 4.5,
+    "reviewCount": 96,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRELzBWdFiGV1ByOef7K5TfiCAGx3m-zcQMLmt7X-iS2w&s=10",
+    "sizes": [
+      {
+        "label": "30ml",
+        "price": 699,
+        "stock": 30
+      },
+      {
+        "label": "50ml",
+        "price": 1099,
+        "mrp": 1299,
+        "stock": 18
+      },
+      {
+        "label": "100ml",
+        "price": 1899,
+        "mrp": 2199,
+        "stock": 0
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Perfume", "Body Mist", "Attar"];
+const CATEGORY_OPTIONS = ["Perfume","Body Mist","Attar"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

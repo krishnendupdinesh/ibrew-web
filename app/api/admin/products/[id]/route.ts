@@ -149,20 +149,37 @@ export async function DELETE(
     const { id } = await context.params;
     const backendBase = getBackendUrl();
 
+    let backendData: { error?: string; ok?: boolean } = {};
+    let backendRes: Response | null = null;
+
     try {
-      const backendRes = await fetch(`${backendBase}/api/admin/products/${encodeURIComponent(id)}`, {
+      const headers: Record<string, string> = {};
+      const cookie = req.headers.get("cookie");
+      if (cookie) headers["cookie"] = cookie;
+      const auth = req.headers.get("authorization");
+      if (auth) headers["authorization"] = auth;
+
+      backendRes = await fetch(`${backendBase}/api/admin/products/${encodeURIComponent(id)}`, {
         method: "DELETE",
-        headers: {
-          cookie: req.headers.get("cookie") || "",
-        },
+        headers,
       });
 
-      const backendData = await backendRes.json().catch(() => ({}));
+      backendData = await backendRes.json().catch(() => ({}));
       if (!backendRes.ok) {
-        return NextResponse.json(
+        const errorRes = NextResponse.json(
           { error: backendData.error || "Could not delete product from database." },
           { status: backendRes.status || 500 }
         );
+
+        // Forward any Set-Cookie headers
+        const setCookies = backendRes.headers.getSetCookie ? backendRes.headers.getSetCookie() : [];
+        if (setCookies && setCookies.length > 0) {
+          setCookies.forEach((c) => errorRes.headers.append("set-cookie", c));
+        } else {
+          const raw = backendRes.headers.get("set-cookie");
+          if (raw) errorRes.headers.set("set-cookie", raw);
+        }
+        return errorRes;
       }
     } catch (err) {
       console.error("Backend MySQL connection error in admin DELETE:", err);
@@ -175,9 +192,21 @@ export async function DELETE(
     const catalog = readServerCatalog().filter((p) => p.id !== id && p.slug !== id);
     writeServerCatalog(catalog);
 
-    return NextResponse.json({ ok: true }, { headers: NO_CACHE_HEADERS });
-  } catch {
-    return NextResponse.json({ error: "Could not delete product." }, { status: 500 });
+    const successRes = NextResponse.json({ ok: true }, { headers: NO_CACHE_HEADERS });
+    if (backendRes) {
+      const setCookies = backendRes.headers.getSetCookie ? backendRes.headers.getSetCookie() : [];
+      if (setCookies && setCookies.length > 0) {
+        setCookies.forEach((c) => successRes.headers.append("set-cookie", c));
+      } else {
+        const raw = backendRes.headers.get("set-cookie");
+        if (raw) successRes.headers.set("set-cookie", raw);
+      }
+    }
+
+    return successRes;
+  } catch (err: unknown) {
+    const msg = (err as Error)?.message || "Could not delete product.";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 

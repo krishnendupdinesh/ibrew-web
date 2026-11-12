@@ -46,12 +46,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "https://plus.unsplash.com/premium_photo-1676208748373-a31d5af9f752?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
-  medjool: "https://your-image-url.com/medjool-dates.jpg",
-  ajwa: "https://your-image-url.com/ajwa-dates.jpg",
-  kimia: "https://your-image-url.com/kimia-dates.jpg",
-  dryDates: "https://your-image-url.com/dry-dates.jpg",
-  dateSyrup: "https://your-image-url.com/date-syrup.jpg",
-  datePaste: "https://your-image-url.com/date-paste.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -93,93 +87,155 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "medjool-dates",
-    name: "Medjool Dates",
-    category: "Premium Dates",
-    description: "Large, soft and caramel-like dates. Naturally sweet and perfect for snacking.",
-    rating: 4.8,
-    reviewCount: 142,
-    badge: "Bestseller",
-    image: IMAGES.medjool,
-    sizes: [
-      { label: "250g", price: 399, mrp: 449, stock: 24 },
-      { label: "500g", price: 749, mrp: 849, stock: 12 },
-      { label: "1kg", price: 1399, mrp: 1599, stock: 4 },
-    ],
+    "id": "medjool-dates",
+    "slug": "medjool-dates",
+    "name": "Medjool Dates",
+    "category": "Premium Dates",
+    "description": "Large, soft and caramel-like dates. Naturally sweet and perfect for snacking.",
+    "rating": 4.8,
+    "reviewCount": 142,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiV5zULTMNb3gWuNP_KftdHmqVNK4pytWCe2JkTxV8IA&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 399,
+        "mrp": 449,
+        "stock": 24
+      },
+      {
+        "label": "500g",
+        "price": 749,
+        "mrp": 849,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1399,
+        "mrp": 1599,
+        "stock": 4
+      }
+    ]
   },
   {
-    id: "ajwa-dates",
-    name: "Ajwa Dates",
-    category: "Premium Dates",
-    description: "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
-    rating: 4.9,
-    reviewCount: 96,
-    badge: "Premium",
-    image: IMAGES.ajwa,
-    sizes: [
-      { label: "250g", price: 599, stock: 30 },
-      { label: "500g", price: 1099, mrp: 1249, stock: 18 },
-      { label: "1kg", price: 2049, mrp: 2399, stock: 0 },
-    ],
+    "id": "dry-dates",
+    "slug": "dry-dates",
+    "name": "Dry Dates (Kharek)",
+    "category": "Dry Dates",
+    "description": "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
+    "rating": 4.4,
+    "reviewCount": 52,
+    "badge": "Top seller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqi_b45PRmd2KcI0voz8B436MqNDpoEBKsn7VYVsq8QQ&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 179,
+        "stock": 40
+      },
+      {
+        "label": "500g",
+        "price": 329,
+        "mrp": 369,
+        "stock": 20
+      },
+      {
+        "label": "1kg",
+        "price": 599,
+        "mrp": 699,
+        "stock": 10
+      }
+    ]
   },
   {
-    id: "kimia-dates",
-    name: "Kimia Dates",
-    category: "Premium Dates",
-    description: "Soft, juicy and moist dates with a mild honey-like sweetness. Great for the whole family.",
-    rating: 4.5,
-    reviewCount: 64,
-    badge: "New",
-    image: IMAGES.kimia,
-    sizes: [
-      { label: "250g", price: 249, stock: 15 },
-      { label: "500g", price: 449, mrp: 499, stock: 3 },
-    ],
+    "id": "ajwa-dates",
+    "slug": "ajwa-dates",
+    "name": "Ajwa Dates",
+    "category": "Premium Dates",
+    "description": "Dark, soft and rich dates from Madinah. Prized for their unique taste and tradition.",
+    "rating": 4.9,
+    "reviewCount": 96,
+    "badge": "Premium",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3qnDxKr3ob09dIzxwFcQzdeKHzvFRAmfRRpaB8zGHVw&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 599,
+        "stock": 30
+      },
+      {
+        "label": "500g",
+        "price": 1099,
+        "mrp": 1249,
+        "stock": 18
+      },
+      {
+        "label": "1kg",
+        "price": 2049,
+        "mrp": 2399,
+        "stock": 0
+      }
+    ]
   },
   {
-    id: "dry-dates",
-    name: "Dry Dates (Kharek)",
-    category: "Dry Dates",
-    description: "Hard, chewy dried dates with a rich flavour. Ideal for festive sweets and milk.",
-    rating: 4.4,
-    reviewCount: 52,
-    badge: "Top seller",
-    image: IMAGES.dryDates,
-    sizes: [
-      { label: "250g", price: 179, stock: 40 },
-      { label: "500g", price: 329, mrp: 369, stock: 20 },
-      { label: "1kg", price: 599, mrp: 699, stock: 10 },
-    ],
+    "id": "date-paste",
+    "slug": "date-paste",
+    "name": "Seedless Date Paste",
+    "category": "Date Products",
+    "description": "Smooth, seedless paste made from soft dates. Great for baking, smoothies and desserts.",
+    "rating": 4.6,
+    "reviewCount": 33,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYdv1jc7FD1Q26-rd0yOMC9yW38Rmv6kqE97s0kUHp4A&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 229,
+        "stock": 12
+      },
+      {
+        "label": "500g",
+        "price": 419,
+        "mrp": 469,
+        "stock": 6
+      }
+    ]
   },
   {
-    id: "date-syrup",
-    name: "Pure Date Syrup",
-    category: "Date Products",
-    description: "100% natural syrup made from ripe dates. A healthy swap for sugar and honey.",
-    rating: 4.3,
-    reviewCount: 41,
-    image: IMAGES.dateSyrup,
-    sizes: [
-      { label: "250ml", price: 249, stock: 22 },
-      { label: "500ml", price: 449, mrp: 499, stock: 9 },
-    ],
-  },
-  {
-    id: "date-paste",
-    name: "Seedless Date Paste",
-    category: "Date Products",
-    description: "Smooth, seedless paste made from soft dates. Great for baking, smoothies and desserts.",
-    rating: 4.6,
-    reviewCount: 33,
-    image: IMAGES.datePaste,
-    sizes: [
-      { label: "250g", price: 229, stock: 0 },
-      { label: "500g", price: 419, mrp: 469, stock: 0 },
-    ],
-  },
+    "id": "date-syrup",
+    "slug": "date-syrup",
+    "name": "Pure Date Syrup",
+    "category": "Date Products",
+    "description": "100% natural syrup made from ripe dates. A healthy swap for sugar and honey.",
+    "rating": 4.3,
+    "reviewCount": 41,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiMuCYaCCNz35cyarCHOgZUK0DnE5IZ7iGmnXMrxGLSA&s=10",
+    "sizes": [
+      {
+        "label": "250ml",
+        "price": 249,
+        "stock": 22
+      },
+      {
+        "label": "500ml",
+        "price": 449,
+        "mrp": 499,
+        "stock": 9
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Premium Dates", "Dry Dates", "Date Products"];
+const CATEGORY_OPTIONS = ["Premium Dates","Dry Dates","Date Products"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

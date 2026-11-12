@@ -1921,14 +1921,17 @@ export default function AdminPage() {
     removeLocalProduct(product.id, product.slug);
     try {
       const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Could not delete product.");
+      }
       broadcastCatalogChange();
       showNotice(`Deleted "${product.name}".`);
-    } catch {
+    } catch (err) {
       setProducts(previous);
       writeLocalCatalog(previous);
       broadcastCatalogChange();
-      setError("Could not delete the product.");
+      setError(err instanceof Error ? err.message : "Could not delete the product.");
     }
   };
 

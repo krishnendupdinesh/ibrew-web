@@ -46,9 +46,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "images/ibrew-banner.jpeg",
-  filterCoffee: "https://your-image-url.com/filter-coffee.jpg",
-  instantCoffee: "https://your-image-url.com/instant-coffee.jpg",
-  coffeeBeans: "https://your-image-url.com/coffee-beans.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -90,51 +87,152 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "filter-coffee",
-    name: "Filter Coffee Powder",
-    category: "Coffee Powder",
-    description: "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
-    rating: 4.7,
-    reviewCount: 128,
-    badge: "Bestseller",
-    image: IMAGES.filterCoffee,
-    sizes: [
-      { label: "250g", price: 349, mrp: 399, stock: 24 },
-      { label: "500g", price: 649, mrp: 749, stock: 12 },
-      { label: "1kg", price: 1199, mrp: 1399, stock: 4 },
-    ],
+    "id": "instant-coffee",
+    "slug": "instant-coffee",
+    "name": "Pure Instant Coffee",
+    "category": "Coffee Powder",
+    "description": "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
+    "rating": 4.5,
+    "reviewCount": 86,
+    "badge": "Most Selling",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxJvNvH9yY0igWXFcNAl_0dw3CpDByMWbr5cyaUFR_gA&s=10",
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 199,
+        "stock": 30
+      },
+      {
+        "label": "100g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 18
+      },
+      {
+        "label": "200g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 0
+      }
+    ]
   },
   {
-    id: "instant-coffee",
-    name: "Pure Instant Coffee",
-    category: "Coffee Powder",
-    description: "100% pure instant coffee with no chicory. Dissolves instantly, tastes freshly brewed.",
-    rating: 4.5,
-    reviewCount: 86,
-    image: IMAGES.instantCoffee,
-    sizes: [
-      { label: "50g", price: 199, stock: 30 },
-      { label: "100g", price: 349, mrp: 399, stock: 18 },
-      { label: "200g", price: 649, mrp: 749, stock: 0 },
-    ],
+    "id": "filter-coffee",
+    "slug": "filter-coffee",
+    "name": "Filter Coffee Powder",
+    "category": "Coffee Powder",
+    "description": "Medium roast with a strong, rich aroma. Made for South Indian filter coffee.",
+    "rating": 4.7,
+    "reviewCount": 128,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqTc2JVUdet-0L__eqqEPXfF7fdca3ycTeIcWnWLusEQ&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 349,
+        "mrp": 399,
+        "stock": 22
+      },
+      {
+        "label": "500g",
+        "price": 649,
+        "mrp": 749,
+        "stock": 12
+      },
+      {
+        "label": "1kg",
+        "price": 1199,
+        "mrp": 1399,
+        "stock": 4
+      }
+    ]
   },
   {
-    id: "coffee-beans",
-    name: "Arabica Coffee Beans",
-    category: "Coffee Beans",
-    description: "Single-estate whole beans, slow roasted. Grind fresh for the fullest flavour.",
-    rating: 4.8,
-    reviewCount: 64,
-    badge: "New",
-    image: IMAGES.coffeeBeans,
-    sizes: [
-      { label: "250g", price: 499, stock: 15 },
-      { label: "500g", price: 929, mrp: 999, stock: 3 },
-    ],
+    "id": "coorg-estate-arabica-beans",
+    "slug": "coorg-estate-arabica-beans",
+    "name": "Coorg Estate Arabica Beans",
+    "category": "Coffee Beans",
+    "description": "Shade-grown Arabica beans from Coorg with fruity notes and a clean finish.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDmS4MMSdmudlBt9bC8ll2PhIakLkmOpkqnaoxXpBUSg&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 449,
+        "mrp": 499,
+        "stock": 20
+      },
+      {
+        "label": "500g",
+        "price": 849,
+        "mrp": 949,
+        "stock": 10
+      }
+    ]
   },
+  {
+    "id": "chikmagalur-dark-roast-beans",
+    "slug": "chikmagalur-dark-roast-beans",
+    "name": "Chikmagalur Dark Roast Beans",
+    "category": "Coffee Beans",
+    "description": "Dark roasted beans from Chikmagalur with deep cocoa and caramel notes.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Roasted_coffee_beans.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 399,
+        "mrp": 449,
+        "stock": 25
+      },
+      {
+        "label": "500g",
+        "price": 749,
+        "mrp": 849,
+        "stock": 12
+      }
+    ]
+  },
+  {
+    "id": "coffee-beans",
+    "slug": "coffee-beans",
+    "name": "Arabica Coffee Beans",
+    "category": "Coffee Beans",
+    "description": "Single-estate whole beans, slow roasted. Grind fresh for the fullest flavour.",
+    "rating": 4.8,
+    "reviewCount": 64,
+    "badge": "New",
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREiUYjTKOhCRFVGCbb87H-IT4zsXUagLypsCQND-wulw&s=10",
+    "sizes": [
+      {
+        "label": "250g",
+        "price": 499,
+        "stock": 15
+      },
+      {
+        "label": "500g",
+        "price": 929,
+        "mrp": 999,
+        "stock": 3
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Coffee Powder", "Coffee Beans"];
+const CATEGORY_OPTIONS = ["Coffee Powder","Coffee Beans"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },

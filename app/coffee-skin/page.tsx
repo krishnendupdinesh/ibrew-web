@@ -42,9 +42,6 @@ const formatPrice = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 // ---------------------------------------------------------------------------
 const IMAGES = {
   banner: "https://images.unsplash.com/photo-1739949816834-893c498203a1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
-  coffeeSoap: "https://your-image-url.com/coffee-soap.jpg",
-  coffeeFaceWash: "https://your-image-url.com/coffee-face-wash.jpg",
-  coffeeScrub: "https://your-image-url.com/coffee-scrub.jpg",
 };
 
 // ---------------------------------------------------------------------------
@@ -86,48 +83,133 @@ type AddToCartItem = {
 // ---------------------------------------------------------------------------
 const PRODUCTS: Product[] = [
   {
-    id: "coffee-soap",
-    name: "Coffee Soap Bar",
-    category: "Soap",
-    description: "Handmade soap with ground coffee. Gently exfoliates and leaves skin soft.",
-    rating: 4.4,
-    reviewCount: 52,
-    badge: "Top seller",
-    image: IMAGES.coffeeSoap,
-    sizes: [
-      { label: "1 bar", price: 199, stock: 40 },
-      { label: "Pack of 3", price: 549, mrp: 597, stock: 20 },
-    ],
+    "id": "coffee-face-scrub",
+    "slug": "coffee-face-scrub",
+    "name": "Coffee Face Scrub",
+    "category": "Face Care",
+    "description": "Gentle coffee and walnut scrub that removes dead skin and brightens dullness.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "badge": "Most Selling",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4NWzTOaoxyFeyNNvHFJIqXwxeeUrFT3VcFzMD4BQTMA&s=10",
+    "sizes": [
+      {
+        "label": "50g",
+        "price": 249,
+        "mrp": 299,
+        "stock": 25
+      },
+      {
+        "label": "100g",
+        "price": 449,
+        "mrp": 549,
+        "stock": 12
+      }
+    ]
   },
   {
-    id: "coffee-face-wash",
-    name: "Coffee Face Wash",
-    category: "Face Care",
-    description: "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
-    rating: 4.3,
-    reviewCount: 41,
-    image: IMAGES.coffeeFaceWash,
-    sizes: [
-      { label: "50ml", price: 249, stock: 22 },
-      { label: "100ml", price: 349, mrp: 399, stock: 9 },
-    ],
+    "id": "coffee-scrub",
+    "slug": "coffee-scrub",
+    "name": "Coffee Body Scrub",
+    "category": "Body Care",
+    "description": "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
+    "rating": 4.6,
+    "reviewCount": 33,
+    "badge": "Most Selling",
+    "isBestSeller": true,
+    "isMostSelling": true,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNRxNvKyJ5jf6QsBaFYrXCV--aZaJWUqKufojeg5h-ng&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 399,
+        "stock": 12
+      },
+      {
+        "label": "200g",
+        "price": 699,
+        "mrp": 799,
+        "stock": 6
+      }
+    ]
   },
   {
-    id: "coffee-scrub",
-    name: "Coffee Body Scrub",
-    category: "Body Care",
-    description: "Invigorating scrub that buffs away dull skin. Smells like freshly brewed coffee.",
-    rating: 4.6,
-    reviewCount: 33,
-    image: IMAGES.coffeeScrub,
-    sizes: [
-      { label: "100g", price: 399, stock: 0 },
-      { label: "200g", price: 699, mrp: 799, stock: 0 },
-    ],
+    "id": "coffee-honey-soap-bar",
+    "slug": "coffee-honey-soap-bar",
+    "name": "Coffee & Honey Soap Bar",
+    "category": "Soap",
+    "description": "Mild coffee soap enriched with honey for soft, hydrated skin.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "badge": "Bestseller",
+    "isBestSeller": true,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjXXFYSFgijacBqb-TnM_aQeLHa01Yp484KeN6DBh4g&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 159,
+        "mrp": 189,
+        "stock": 34
+      }
+    ]
   },
+  {
+    "id": "coffee-charcoal-soap-bar",
+    "slug": "coffee-charcoal-soap-bar",
+    "name": "Coffee Charcoal Soap Bar",
+    "category": "Soap",
+    "description": "Handmade soap with coffee grounds and activated charcoal to deep-clean pores.",
+    "rating": 4.5,
+    "reviewCount": 0,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8zD50qLsCaC4hvK322IhP29b1bgXbB0kfboc_H2j7sw&s=10",
+    "sizes": [
+      {
+        "label": "100g",
+        "price": 149,
+        "mrp": 179,
+        "stock": 40
+      },
+      {
+        "label": "Pack of 3",
+        "price": 399,
+        "mrp": 537,
+        "stock": 15
+      }
+    ]
+  },
+  {
+    "id": "coffee-face-wash",
+    "slug": "coffee-face-wash",
+    "name": "Coffee Face Wash",
+    "category": "Face Care",
+    "description": "Daily cleansing face wash with the goodness of coffee. Fresh, clean and bright.",
+    "rating": 4.3,
+    "reviewCount": 41,
+    "isBestSeller": false,
+    "isMostSelling": false,
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwBAcusZHNDOFVK4miAha_R9aw1KkZvm8P76MxkivQiA&s",
+    "sizes": [
+      {
+        "label": "50ml",
+        "price": 249,
+        "stock": 22
+      },
+      {
+        "label": "100ml",
+        "price": 349,
+        "mrp": 399,
+        "stock": 9
+      }
+    ]
+  }
 ];
 
-const CATEGORY_OPTIONS = ["Soap", "Face Care", "Body Care"];
+const CATEGORY_OPTIONS = ["Face Care","Body Care","Soap"];
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },
